@@ -1,6 +1,6 @@
 {
   "name": "start",
-  "homepage": "https://travel-booking-create-site.by",
+  "homepage": "http://travel-booking-create-site.by", 
   "version": "0.1.0",
   "private": true,
   "dependencies": {

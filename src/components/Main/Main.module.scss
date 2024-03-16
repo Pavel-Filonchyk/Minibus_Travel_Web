@@ -568,7 +568,7 @@ table {
 .footer {
     width: 100%;
     height: 130px;
-    background-color: rgba(59, 89, 152, 0.8);
+    background-color: rgba(59, 89, 152, 1);
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -578,9 +578,10 @@ table {
     }
     .wrapApps {
         display: flex; 
+        justify-content: space-a;
+        width: 100%;
         @media(max-width: 520px){
             height: 100%;
-            justify-content: space-between;
             margin-top: 10px;
         }
         .googlePlay {
