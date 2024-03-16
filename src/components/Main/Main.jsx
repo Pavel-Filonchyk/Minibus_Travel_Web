@@ -9,9 +9,10 @@ import style from './Main.module.scss'
 export default function Main() {
 
     const [calc, setCalc] = useState(0)
-
-    const [selectFrom, setSelectFrom] = useState("Туров")
-    const [selectTo, setSelectTo] = useState("Гомель")
+    const [changeWay, setChengeWay] = useState(true)
+    console.log(changeWay)
+    const [selectFrom, setSelectFrom] = useState("")
+    const [selectTo, setSelectTo] = useState("")
     const [date, setDate] = useState(dayjs())
 
     const [fullName, setFullName] = useState('')
@@ -42,10 +43,10 @@ export default function Main() {
                 </div>
                 <div className={style.wrapPhones}>
                     <a href="tel:+375295826000" aria-label="phone" style={{textDecoration: 'none'}}>
-                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(59, 89, 152, 0.8)'}}><span style={{color: 'red', fontWeight: '800'}}>MTS</span>&nbsp;<span>+375(29)5826000</span></div>
+                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(59, 89, 152, 0.8)'}}><span style={{color: 'red', fontWeight: '800'}}>MTS</span>&nbsp;&nbsp;<span>8(029)582-60-00</span></div>
                     </a>
                     <a href="tel:+375445826000" aria-label="phone" style={{textDecoration: 'none'}}>
-                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(59, 89, 152, 0.8)'}}><span style={{color: 'red', fontWeight: '800'}}>A<span style={{color: 'black', fontSize: 18}}>1</span></span>&nbsp;&nbsp;<span>+375(44)5826000</span></div>
+                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(59, 89, 152, 0.8)'}}><span style={{color: 'red', fontWeight: '800'}}>A<span style={{color: 'black', fontSize: 17}}>1</span></span>&nbsp;&nbsp;<span>8(044)582-60-00</span></div>
                     </a>
                 </div>
             </div>
@@ -68,13 +69,14 @@ export default function Main() {
                             <div className={style.way}>
                                 <span>Туров - Житковичи - Гомель</span>
                             </div>
-                            <div className={style.btn}>
-                                <span>
-                                    ЗАБРОНИРОВАТЬ
-                                </span>
-                            </div>
+                            <a href="#Забронировать" style={{textDecoration: 'none'}}>
+                                <div className={style.btn}>
+                                    <span>
+                                        ЗАБРОНИРОВАТЬ
+                                    </span>
+                                </div>
+                            </a>
                         </div>
-                    
                     </div>
                     <div className={style.rightBlock}>
                         <div className={style.autoPick}/>
@@ -85,103 +87,109 @@ export default function Main() {
             {/* Бронирование */}
 
             <div className={style.wrapBooking}>
+                <a name="Забронировать"></a>
                 <div className={style.booking}>
                     <span>БРОНИРОВАНИЕ ОНЛАЙН</span>
-                    <div style={{width: '80%'}}>
-                        <form onSubmit={handleSubmit}> 
-                            <div className={style.wrapForm} style={{display: calc > 0 ? 'none' : ''}}>
-                                <div className={style.wrapSelectWay}>
-                                    <div className={style.blockSelectWay}>
-                                        <span style={{marginBottom: 12, marginLeft: 5}}>Откуда</span>
-                                        <select 
-                                            value={selectFrom}
-                                            onChange={(e) => setSelectFrom(e.target.value)}
-                                            className={style.selectWay}
-                                            style={{marginRight: 20}}
-                                        >
-                                            <option>Туров</option>
-                                            <option>Житковичи</option>
-                                            <option>Малешев</option>
-                                            <option>Вересница</option>
-                                            <option>Запесочье</option>
-                                            <option>Сторожовцы</option>
-                                            <option>Озераны</option>
-                                        </select>
-                                    </div>
-                                    {/* <InteractionOutlined /> */}
-                                    <div className={style.blockSelectWay}>
-                                        <span style={{marginBottom: 12, marginLeft: 25}}>Куда</span>
-                                        <select 
-                                            value={selectTo}
-                                            onChange={(e) => setSelectTo(e.target.value)}
-                                            className={style.selectWay}
-                                            style={{marginLeft: 20}}
-                                        >
-                                            <option>Гомель</option>
-                                            <option>Житковичи</option>
-                                            <option>Малешев</option>
-                                            <option>Вересница</option>
-                                            <option>Запесочье</option>
-                                            <option>Сторожовцы</option>
-                                            <option>Озераны</option>
-                                        </select>
-                                    </div>
-                                </div>
+                    <form onSubmit={handleSubmit}> 
+                        <div className={style.wrapForm} style={{display: calc > 0 ? 'none' : ''}}>
+                            <div className={style.wrapSelectWay}>
                                 <div className={style.blockSelectWay}>
-                                <span style={{marginBottom: 12, marginLeft: 5, marginTop: 20}}>Выберите дату отправления</span>
-                                <DatePicker 
-                                    minDate={dayjs()}
-                                    locale={locale}
-                                    style={{width: 300}}
-                                    className={style.date}
-                                    dateFormat={'DD-MM-YYYY'}
-                                    defaultValue={dayjs()}
-                                    onChange={(e) => setDate(e)}
-                                />
+                                    <span style={{marginBottom: 12, marginLeft: 15}}>Откуда</span>
+                                    <select 
+                                        value={selectFrom}
+                                        onChange={(e) => setSelectFrom(e.target.value)}
+                                        className={style.selectWay}
+                                    >
+                                        <option>{changeWay ? 'Туров' : 'Гомель' }</option>
+                                        <option>Житковичи</option>
+                                        <option>Малешев</option>
+                                        <option>Вересница</option>
+                                        <option>Запесочье</option>
+                                        <option>Сторожовцы</option>
+                                        <option>Озераны</option>
+                                    </select>
                                 </div>
-
-                                <div className={style.wrapBtn}>
-                                    <input 
-                                        type="submit" 
-                                        value='Посмотреть рейсы'  
-                                        className={style.btn}
-                                        onClick={() => setCalc(1)}
-                                    />
+                                <InteractionOutlined 
+                                    onClick={() => setChengeWay(value => !value)}
+                                    className={style.arrows}
+                                />
+                                <div className={style.blockSelectWay}>
+                                    <span style={{marginBottom: 12, marginLeft: 15}}>Куда</span>
+                                    <select 
+                                        value={selectTo}
+                                        onChange={(e) => setSelectTo(e.target.value)}
+                                        className={style.selectWay}
+                                    >
+                                        <option>{changeWay ? 'Гомель' : 'Туров' }</option>
+                                        <option>Житковичи</option>
+                                        <option>Малешев</option>
+                                        <option>Вересница</option>
+                                        <option>Запесочье</option>
+                                        <option>Сторожовцы</option>
+                                        <option>Озераны</option>
+                                    </select>
                                 </div>
                             </div>
-                        </form>
+                            <div className={style.blockSelectWay}>
+                            <span style={{marginBottom: 12, marginLeft: 15, marginTop: 20}}>Выберите дату отправления</span>
+                            <DatePicker 
+                                minDate={dayjs()}
+                                locale={locale}
+                                style={{width: 320, marginLeft: 15}}
+                                className={style.date}
+                                dateFormat={'DD-MM-YYYY'}
+                                defaultValue={dayjs()}
+                                onChange={(e) => setDate(e)}
+                            />
+                            </div>
 
-                        <div className={style.routes} style={{display: calc === 1 ? '' : 'none'}}><span>Рейсы</span></div>
-                        {
-                            calc === 1 ?
+                            <div className={style.wrapBtn}>
+                                <input 
+                                    type="submit" 
+                                    value='Посмотреть рейсы'  
+                                    className={style.btn}
+                                    onClick={() => setCalc(1)}
+                                />
+                            </div>
+                        </div>
+                    </form>
+
+                    <div className={style.routes} style={{display: calc === 1 ? '' : 'none'}}><span>Рейсы</span></div>
+                    {
+                        calc === 1 ?
+                            <>
                                 <table>
                                     <tr>
-                                        <th>Направление</th>
-                                        <th>Дата отправления</th>
-                                        <th>Время отправления</th>
-                                        <th>Цена</th>
-                                        <th>Мест</th>
-                                        <th></th>
+                                        <th className={style.textTicket} style={{fontWeight: '700'}}>Направление</th>
+                                        <th className={style.textTicket}>{selectFrom} - {selectTo}</th>
+                                    </tr>
+                                    <tr> 
+                                        <th className={style.textTicket} style={{fontWeight: '700'}}>Дата отправления</th>
+                                        <th className={style.textTicket}>{date?.format('DD.MM.YYYY')}</th>
                                     </tr>
                                     <tr>
-                                        <td>{selectFrom} - {selectTo}</td>
-                                        <td>{date?.format('DD.MM.YYYY')}</td>
-                                        <td>06:00</td>
-                                        <td>23</td>
-                                        <td>3</td>
-                                        <td className={style.tdBtn}>
-                                            <div className={style.tableBtn}
-                                                onClick={() => setCalc(calc +1)}
-                                            >
-                                                <span>Заказать</span>
-                                            </div>
-                                        </td>
+                                        <th className={style.textTicket} style={{fontWeight: '700'}}>Время отправления</th>
+                                        <th className={style.textTicket}>06:00</th>
+                                    </tr>
+                                    <tr>
+                                        <th className={style.textTicket} style={{fontWeight: '700'}}>Цена</th>
+                                        <th className={style.textTicket}>23</th>
+                                    </tr>
+                                    <tr>
+                                        <th className={style.textTicket} style={{fontWeight: '700'}}>Количество мест</th>
+                                        <th className={style.textTicket}>8</th>
                                     </tr>
                                 </table>
-                            : ''
-                        }
-                    </div>
-
+                                <div className={style.tdBtn}>
+                                    <div className={style.tableBtn}
+                                        onClick={() => setCalc(calc +1)}
+                                    >
+                                        <span>Заказать</span>
+                                    </div> 
+                                </div>
+                            </>
+                        : ''
+                    }
                     <div className={style.checklist} style={{display: calc === 2 ? '' : 'none'}}>
                         <span>Направление: <span style={{fontWeight: '500'}}>{selectFrom} - {selectTo}</span></span>
                         <span>Дата отправления: <span style={{fontWeight: '500'}}>{date?.format('DD.MM.YYYY')}</span></span>
@@ -244,7 +252,7 @@ export default function Main() {
                     <div className={style.wrapTicket} style={{display: calc === 3 ? '' : 'none'}}>
                         <table style={{marginTop: 0}}>
                             <tr>
-                                <th className={style.textTicket} style={{fontWeight: '700', height: 80}}>Онлайн заказ</th>
+                                <th className={style.textTicket} style={{fontWeight: '700', height: 60}}>Онлайн заказ</th>
                                 <th className={style.textTicket}></th>
                             </tr>
                             <tr>
@@ -278,11 +286,11 @@ export default function Main() {
                             
                         </table>
                         <div className={style.wrapBtn}>
-                        <span style={{display: showCode ? 'none' : 'block', marginBottom: 20}}>Для подтверждения брони необходимо получить код на телефон</span>
+                            <span style={{display: showCode ? 'none' : 'block', marginBottom: 20}}>Для подтверждения брони необходимо получить код на телефон</span>
                             <span style={{display: showCode ? 'block' : 'none', marginBottom: 20}}>
                                 На номер <span style={{fontWeight: '600'}}>{phoneNumber}</span> был выслан код подтверждения. <br/> Введите код в поле и после подтверждения сможете завершить заказ.
                             </span>
-                            <div style={{display: 'flex'}}>
+                            <div className={style.submit}>
                                 <div className={style.getCode}
                                     onClick={() => setShowCode(true)}
                                     style={{backgroundColor: showCode ? 'green' : ''}}
@@ -290,10 +298,10 @@ export default function Main() {
                                     <span>{showCode ? 'Подтвердить' : 'Получить код'}</span>
                                 </div>
                                 <div className={style.order} 
-                                    style={{display: showCode ? 'none' : '', backgroundColor: 'rgb(38, 166, 154)', width: 230, marginTop: 0}}
+                                    style={{display: showCode ? 'none' : '', backgroundColor: 'rgb(38, 166, 154)'}}
                                     onClick={() => setCalc(0)}
                                 >
-                                    <span>Изменить данные</span>
+                                    <span>Изменить</span>
                                 </div>
                                 {showCode ? <input type="number" className={style.inputTicket} placeholder='Введите код'/> : ''}
                             </div>
@@ -301,18 +309,18 @@ export default function Main() {
                     </div>
 
                     <div className={style.blockCenter}>
-                        <span>Отмена брони</span>
+                        <span>ОТМЕНА БРОНИ</span>
                         <div className={style.wrapBlock}>
-                            <input type="number" className={style.inputTicket} style={{marginRight: 20, width: 520}} placeholder='Введите номер телефона'/>
+                            <input type="number" className={style.inputTicket} placeholder='Введите номер телефона'/>
                             <div className={style.getting}>
                                 <span>Брони</span>
                             </div>
                         </div>
                     </div>
                     <div className={style.blockCenter}>
-                        <span>Личный кабинет / Регистрация</span>
+                        <span>ЛИЧНЫЙ КАБИНЕТ</span>
                         <div className={style.wrapBlock}>
-                            <input type="number" className={style.inputTicket} style={{marginRight: 20, width: 520}} placeholder='Введите номер телефона'/>
+                            <input type="number" className={style.inputTicket} placeholder='Введите номер телефона'/>
                             <div className={style.getting} style={{backgroundColor: 'rgb(76, 175, 80)'}}>
                                 <span>Войти</span>
                             </div>
@@ -325,17 +333,17 @@ export default function Main() {
 
             <div className={style.footer}>
                 <div className={style.wrapApps}>
-                    <div className={style.appStore}/>
+                    <div className={style.appStore} style={{marginLeft: 10}}/>
                     <div className={style.googlePlay}/>
                 </div>
-                <div className={style.wrapPhones}>
+                {/* <div className={style.wrapPhones}>
                     <a href="tel:+375295826000" aria-label="phone" style={{textDecoration: 'none'}}>
-                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(59, 89, 152, 0.8)'}}><span style={{color: 'red', fontWeight: '800'}}>MTS</span>&nbsp;<span>+375(29)5826000</span></div>
+                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(59, 89, 152, 0.8)'}}><span style={{color: 'red', fontWeight: '800'}}>MTS</span>&nbsp;&nbsp;<span>582-60-00</span></div>
                     </a>
                     <a href="tel:+375445826000" aria-label="phone" style={{textDecoration: 'none'}}>
-                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(59, 89, 152, 0.8)'}}><span style={{color: 'red', fontWeight: '800'}}>A<span style={{color: 'black', fontSize: 18}}>1</span></span>&nbsp;&nbsp;<span>+375(44)5826000</span></div>
+                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(59, 89, 152, 0.8)'}}><span style={{color: 'red', fontWeight: '800'}}>A<span style={{color: 'black', fontSize: 17}}>1</span></span>&nbsp;&nbsp;<span>582-60-00</span></div>
                     </a>
-                </div>
+                </div> */}
             </div>
         </>
   )

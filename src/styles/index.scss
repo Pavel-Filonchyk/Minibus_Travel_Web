@@ -14,7 +14,9 @@ body {
   *::after {
     box-sizing: border-box;
   }
-
+  html {
+    scroll-behavior: smooth;
+  }
   ul[class],
   ol[class] {
     padding: 0;
