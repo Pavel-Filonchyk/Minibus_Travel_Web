@@ -98,6 +98,8 @@ html {
     width: 100%;
     height: calc(100vh - 4.1em);
     background-color: rgba(59, 89, 152, 1);
+	background-size: cover; 
+    background-position: center center;
     @media(max-width: 520px){
         max-width: 100vh;
         height: calc(100vh - 125px);
@@ -169,6 +171,32 @@ html {
                     }
                 }
             }
+            .orderAroundClock {
+                margin-top: 20px;
+                @media(max-width: 520px){
+                   position: absolute;
+                   left: 20px;
+                   bottom: 30px;
+                   z-index: 10;
+                }
+                > span {
+                    font-size: 20px;
+                    color: white;
+                    margin-left: 10px;
+                    @media(max-width: 520px){
+                        font-size: 16px;
+                        font-weight: 600;
+                    }
+                }
+                .clockImg {
+                    font-size: 26px;
+                    color: white;
+                    @media(max-width: 520px){
+                        font-size: 24px;
+                        font-weight: bold;
+                    }
+                }
+            }
             .btn {
                 display: flex;
                 justify-content: center;
@@ -217,17 +245,18 @@ html {
             }
             .autoPick {
                 width: 600px;
-                height: 380px;
+                height: 430px;
                 background-size: cover; 
                 background-position: center center;
-                background-image: url(images/mers6.png);
+                background-image: url(images/mers9.png);
+                opacity: 0.6;
                 @media(max-width: 1030px){
                     width: 520px;
-                    height: 260px;
+                    height: 280px;
                 }
                 @media(max-width: 520px){
                     width: 360px;
-                    height: 230px;
+                    height: 245px;
                 }
             }
         }
@@ -373,7 +402,8 @@ table {
 }
 .tdBtn {
     display: flex;
-    justify-content: center;
+    width: 95%;
+    justify-content: space-around;
 }
 .tableBtn {
     display: flex;
@@ -616,6 +646,7 @@ table {
             flex-direction: row;
             justify-content: space-around;
             width: 45%;
+            margin-top: 10px;
             @media(max-width: 1030px){
                 width: 100%;
             }
@@ -626,27 +657,30 @@ table {
             margin-bottom: 8px;
         }
         .googlePlay {
-            width: 230px;
-            height: 89px;
+            width: 227px;
+            height: 66px;
+            border-radius: 12px;
+            border: 3px solid black;
             background-size: cover; 
             background-position: center center;
-            background-image: url(images/googlePlay.png);
+            background-image: url(images/googlePlay1.png);
             cursor: pointer;
             @media(max-width: 520px){
-                width: 209px;
-                height: 81.3px;
+                width: 168px;
+                height: 53px;
             }
         }
         .appStore {
             width: 200px;
-            height: 59px;
-            margin-top: 15px;
+            height: 66px;
             background-size: cover; 
             background-position: center center;
-            background-image: url(images/appStore.png);
+            background-image: url(images/download-on-app-store-ru.webp);
             cursor: pointer;
+            border: 3px solid black;
+            border-radius: 12px;
             @media(max-width: 520px){
-                width: 182px;
+                width: 168px;
                 height: 53px;
             }
         }

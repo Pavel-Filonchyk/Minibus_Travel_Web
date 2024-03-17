@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Form, Select, Calendar, DatePicker } from 'antd'
+import { DatePicker } from 'antd'
 import dayjs from 'dayjs';
 import locale from 'antd/es/date-picker/locale/ru_RU'
-import { InteractionOutlined } from '@ant-design/icons'
+import { InteractionOutlined, ClockCircleOutlined } from '@ant-design/icons'
 
 import style from './Main.module.scss'
 
@@ -10,7 +10,7 @@ export default function Main() {
     
     const [calc, setCalc] = useState(0)
     const [changeWay, setChengeWay] = useState(true)
-    console.log(changeWay)
+
     const [selectFrom, setSelectFrom] = useState("Туров")
     const [selectTo, setSelectTo] = useState("Гомель")
     const [date, setDate] = useState(dayjs())
@@ -39,7 +39,6 @@ export default function Main() {
 
     const handleSubmit = (event) => {
         event.preventDefault()
-        //console.log(selectFrom, selectTo, date?.format('DD.MM'))
     }
     const submitChecklist = (event) => {
         event.preventDefault()
@@ -56,7 +55,7 @@ export default function Main() {
                     <span>LOGO</span>
                 </div>
                 <div className={style.wrapPhones}>
-                    <span>Звоните с 07.00 до 22.00</span>
+                    <span>Доступны с 07.00 до 22.00</span>
                     <div className={style.blockPhones}>
                         <a href="tel:+375295826000" aria-label="phone" style={{textDecoration: 'none'}}>
                             <div className={style.phoneNumber} style={{backgroundColor: 'rgba(59, 89, 152, 0.8)'}}><span style={{color: 'red', fontWeight: '800'}}>MTS</span>&nbsp;&nbsp;<span>+375(29)582-6000</span></div>
@@ -90,6 +89,11 @@ export default function Main() {
                                     </span>
                                 </div>
                             </a>
+                            <div className={style.orderAroundClock}>
+                                <ClockCircleOutlined className={style.clockImg}/>
+                                <span>ОНЛАЙН БРОНИРОВАНИЕ 24/7</span>
+
+                            </div>
                         </div>
                     </div>
                     <div className={style.rightBlock}>
@@ -191,7 +195,7 @@ export default function Main() {
                                     </tr>
                                     <tr>
                                         <th className={style.textTicket} style={{fontWeight: '700'}}>Количество свободных мест</th>
-                                        <th className={style.textTicket}>8</th>
+                                        <th className={style.textTicket}>+3</th>
                                     </tr>
                                 </table>
                                 <div className={style.tdBtn}>
@@ -199,6 +203,12 @@ export default function Main() {
                                         onClick={() => setCalc(calc +1)}
                                     >
                                         <span>Заказать</span>
+                                    </div> 
+                                    <div className={style.tableBtn}
+                                        style={{backgroundColor: 'rgb(38, 166, 190)'}}
+                                        onClick={() => setCalc(0)}
+                                    >
+                                        <span>Изменить</span>
                                     </div> 
                                 </div>
                             </>
