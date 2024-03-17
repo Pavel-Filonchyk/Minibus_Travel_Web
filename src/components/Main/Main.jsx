@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button, Form, Select, Calendar, DatePicker } from 'antd'
 import dayjs from 'dayjs';
 import locale from 'antd/es/date-picker/locale/ru_RU'
@@ -7,12 +7,12 @@ import { InteractionOutlined } from '@ant-design/icons'
 import style from './Main.module.scss'
 
 export default function Main() {
-
+    
     const [calc, setCalc] = useState(0)
     const [changeWay, setChengeWay] = useState(true)
     console.log(changeWay)
-    const [selectFrom, setSelectFrom] = useState("")
-    const [selectTo, setSelectTo] = useState("")
+    const [selectFrom, setSelectFrom] = useState("Туров")
+    const [selectTo, setSelectTo] = useState("Гомель")
     const [date, setDate] = useState(dayjs())
 
     const [fullName, setFullName] = useState('')
@@ -22,6 +22,20 @@ export default function Main() {
     const [numberSeats, setNumberSeats] = useState(1)
     
     const [showCode, setShowCode] = useState(false)
+
+    useEffect(() => {
+        if (!changeWay) {
+            setSelectFrom("Гомель")
+        }else{
+            setSelectFrom("Туров")
+        }
+        if (changeWay) {
+            setSelectTo("Гомель")
+        }else{
+            setSelectTo("Туров")
+        }
+        
+    }, [changeWay])
 
     const handleSubmit = (event) => {
         event.preventDefault()
@@ -42,12 +56,15 @@ export default function Main() {
                     <span>LOGO</span>
                 </div>
                 <div className={style.wrapPhones}>
-                    <a href="tel:+375295826000" aria-label="phone" style={{textDecoration: 'none'}}>
-                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(59, 89, 152, 0.8)'}}><span style={{color: 'red', fontWeight: '800'}}>MTS</span>&nbsp;&nbsp;<span>8(029)582-60-00</span></div>
-                    </a>
-                    <a href="tel:+375445826000" aria-label="phone" style={{textDecoration: 'none'}}>
-                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(59, 89, 152, 0.8)'}}><span style={{color: 'red', fontWeight: '800'}}>A<span style={{color: 'black', fontSize: 17}}>1</span></span>&nbsp;&nbsp;<span>8(044)582-60-00</span></div>
-                    </a>
+                    <span>Звоните с 07.00 до 22.00</span>
+                    <div className={style.blockPhones}>
+                        <a href="tel:+375295826000" aria-label="phone" style={{textDecoration: 'none'}}>
+                            <div className={style.phoneNumber} style={{backgroundColor: 'rgba(59, 89, 152, 0.8)'}}><span style={{color: 'red', fontWeight: '800'}}>MTS</span>&nbsp;&nbsp;<span>+375(29)582-6000</span></div>
+                        </a>
+                        <a href="tel:+375445826000" aria-label="phone" style={{textDecoration: 'none'}}>
+                            <div className={style.phoneNumber} style={{backgroundColor: 'rgba(59, 89, 152, 0.8)'}}><span style={{color: 'red', fontWeight: '800'}}>A<span style={{color: 'black', fontSize: 17}}>1</span></span>&nbsp;&nbsp;<span>+375(44)582-6000</span></div>
+                        </a>
+                    </div>
                 </div>
             </div>
             <div className={style.line}/>
@@ -60,9 +77,6 @@ export default function Main() {
                         <div className={style.wrapText}>
                             <span className={style.title}>
                                 ПАССАЖИРСКИЕ <br/> ПЕРЕВОЗКИ 
-                            </span>
-                            <span className={style.text}>
-                                РЕГУЛЯРНОГО СООБЩЕНИЯ
                             </span>
                         </div>
                         <div className={style.wrapWay}>
@@ -89,7 +103,7 @@ export default function Main() {
             <div className={style.wrapBooking}>
                 <a name="Забронировать"></a>
                 <div className={style.booking}>
-                    <span>БРОНИРОВАНИЕ ОНЛАЙН</span>
+                    <span>ОНЛАЙН БРОНИРОВАНИЕ</span>
                     <form onSubmit={handleSubmit}> 
                         <div className={style.wrapForm} style={{display: calc > 0 ? 'none' : ''}}>
                             <div className={style.wrapSelectWay}>
@@ -176,7 +190,7 @@ export default function Main() {
                                         <th className={style.textTicket}>23</th>
                                     </tr>
                                     <tr>
-                                        <th className={style.textTicket} style={{fontWeight: '700'}}>Количество мест</th>
+                                        <th className={style.textTicket} style={{fontWeight: '700'}}>Количество свободных мест</th>
                                         <th className={style.textTicket}>8</th>
                                     </tr>
                                 </table>
@@ -237,10 +251,10 @@ export default function Main() {
                             <div className={style.wrapBtn}>
                                 <input 
                                     type="submit" 
-                                    value='Заказать место'  
+                                    value='Забронировать'  
                                     className={style.order}
                                 />
-                                <div className={style.order} style={{backgroundColor: 'rgb(38, 166, 154)', width: 160}}
+                                <div className={style.order} style={{backgroundColor: 'rgb(38, 166, 190)', width: 160}}
                                     onClick={() => setCalc(0)}
                                 >
                                     <span>Отмена</span>
@@ -293,12 +307,11 @@ export default function Main() {
                             <div className={style.submit}>
                                 <div className={style.getCode}
                                     onClick={() => setShowCode(true)}
-                                    style={{backgroundColor: showCode ? 'green' : ''}}
                                 >
                                     <span>{showCode ? 'Подтвердить' : 'Получить код'}</span>
                                 </div>
                                 <div className={style.order} 
-                                    style={{display: showCode ? 'none' : '', backgroundColor: 'rgb(38, 166, 154)'}}
+                                    style={{display: showCode ? 'none' : '', backgroundColor: 'rgb(38, 166, 190)'}}
                                     onClick={() => setCalc(0)}
                                 >
                                     <span>Изменить</span>
@@ -321,7 +334,7 @@ export default function Main() {
                         <span>ЛИЧНЫЙ КАБИНЕТ</span>
                         <div className={style.wrapBlock}>
                             <input type="number" className={style.inputTicket} placeholder='Введите номер телефона'/>
-                            <div className={style.getting} style={{backgroundColor: 'rgb(76, 175, 80)'}}>
+                            <div className={style.getting} style={{backgroundColor: 'green'}}>
                                 <span>Войти</span>
                             </div>
                         </div>
@@ -333,17 +346,13 @@ export default function Main() {
 
             <div className={style.footer}>
                 <div className={style.wrapApps}>
-                    <div className={style.appStore} style={{marginLeft: 10}}/>
-                    <div className={style.googlePlay}/>
+                    <span>Для удобства вашего бронирования установите наше приложение на телефон</span>
+                    <div className={style.blockApps}>
+                        <div className={style.appStore} style={{marginLeft: 10}}/>
+                        <div className={style.googlePlay}/>
+                    </div>
                 </div>
-                {/* <div className={style.wrapPhones}>
-                    <a href="tel:+375295826000" aria-label="phone" style={{textDecoration: 'none'}}>
-                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(59, 89, 152, 0.8)'}}><span style={{color: 'red', fontWeight: '800'}}>MTS</span>&nbsp;&nbsp;<span>582-60-00</span></div>
-                    </a>
-                    <a href="tel:+375445826000" aria-label="phone" style={{textDecoration: 'none'}}>
-                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(59, 89, 152, 0.8)'}}><span style={{color: 'red', fontWeight: '800'}}>A<span style={{color: 'black', fontSize: 17}}>1</span></span>&nbsp;&nbsp;<span>582-60-00</span></div>
-                    </a>
-                </div> */}
+                
             </div>
         </>
   )
