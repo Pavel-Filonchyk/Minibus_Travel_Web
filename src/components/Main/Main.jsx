@@ -3,25 +3,32 @@ import { DatePicker } from 'antd'
 import dayjs from 'dayjs';
 import locale from 'antd/es/date-picker/locale/ru_RU'
 import { InteractionOutlined, ClockCircleOutlined } from '@ant-design/icons'
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+
+import { auth } from '../../firebase.config'
 
 import style from './Main.module.scss'
 
 export default function Main() {
-    
+    //onsole.log(auth)
+    const [confirmCode, setConfirmCode] = useState('')
+    const [user, setUser] = useState(null)
+    console.log(user)
     const [calc, setCalc] = useState(0)
     const [changeWay, setChengeWay] = useState(true)
+    const [showCode, setShowCode] = useState(false)
 
+    // check
     const [selectFrom, setSelectFrom] = useState("Туров")
     const [selectTo, setSelectTo] = useState("Гомель")
     const [date, setDate] = useState(dayjs())
-
     const [fullName, setFullName] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('')
     const [wayStart, setSelectWayStart] = useState("Остановка №1")
     const [wayStop, setSelectWayStop] = useState("Остановка №2")
     const [numberSeats, setNumberSeats] = useState(1)
-    
-    const [showCode, setShowCode] = useState(false)
 
     useEffect(() => {
         if (!changeWay) {
@@ -45,25 +52,63 @@ export default function Main() {
         setCalc(calc +1)
         console.log(fullName, phoneNumber)
     }
+    const onGetCode = () => {
+        setShowCode(true)
+        onSignup()
+    }
 
+    function onCaptchVerify() {
+        if (!window.recaptchaVerifier) {
+                window.recaptchaVerifier = new RecaptchaVerifier(
+                    auth, "recaptcha-container",
+                {
+                    size: "invisible",
+                    callback: (response) => {onSignup()},
+                    "expired-callback": () => {},
+                },
+                
+            )
+        }
+    }
+    function onSignup() {
+        onCaptchVerify()
+    
+        const appVerifier = window.recaptchaVerifier
+    
+        const formatPh = "+" +  phoneNumber
+    
+        signInWithPhoneNumber(auth, formatPh, appVerifier)
+          .then((confirmationResult) => {
+            window.confirmationResult = confirmationResult
+          })
+          .catch((error) => {
+            console.log(error)
+          });
+    }
+    function onOTPVerify() {
+        window.confirmationResult
+          ?.confirm(confirmCode)
+          .then(async (res) => {
+            //console.log(res)
+            setUser(res.user)
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      }
     return (
         <>
             {/* Хеадер */}
 
             <div className={style.header}>
-                <div className={style.logo}>
-                    <span>LOGO</span>
-                </div>
+                <div className={style.logo}/>
                 <div className={style.wrapPhones}>
-                    <span>Доступны с 07.00 до 22.00</span>
-                    <div className={style.blockPhones}>
-                        <a href="tel:+375295826000" aria-label="phone" style={{textDecoration: 'none'}}>
-                            <div className={style.phoneNumber} style={{backgroundColor: 'rgba(59, 89, 152, 0.8)'}}><span style={{color: 'red', fontWeight: '800'}}>MTS</span>&nbsp;&nbsp;<span>+375(29)582-6000</span></div>
-                        </a>
-                        <a href="tel:+375445826000" aria-label="phone" style={{textDecoration: 'none'}}>
-                            <div className={style.phoneNumber} style={{backgroundColor: 'rgba(59, 89, 152, 0.8)'}}><span style={{color: 'red', fontWeight: '800'}}>A<span style={{color: 'black', fontSize: 17}}>1</span></span>&nbsp;&nbsp;<span>+375(44)582-6000</span></div>
-                        </a>
-                    </div>
+                    <a href="tel:+375295826000" aria-label="phone" style={{textDecoration: 'none'}}>
+                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(59, 89, 152, 0.8)'}}><span style={{color: 'red', fontWeight: '800'}}>MTS</span>&nbsp;&nbsp;<span>+375(29)582-6000</span></div>
+                    </a>
+                    <a href="tel:+375445826000" aria-label="phone" style={{textDecoration: 'none'}}>
+                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(59, 89, 152, 0.8)'}}><span style={{color: 'red', fontWeight: '800'}}>A<span style={{color: 'black', fontSize: 17}}>1</span></span>&nbsp;&nbsp;<span>+375(44)582-6000</span></div>
+                    </a>
                 </div>
             </div>
             <div className={style.line}/>
@@ -89,10 +134,12 @@ export default function Main() {
                                     </span>
                                 </div>
                             </a>
-                            <div className={style.orderAroundClock}>
-                                <ClockCircleOutlined className={style.clockImg}/>
+                        </div>
+                        <div className={style.orderAroundClock}>
+                            <ClockCircleOutlined className={style.clockImg}/>
+                            <div className={style.wrapTextClock}>
                                 <span>ОНЛАЙН БРОНИРОВАНИЕ 24/7</span>
-
+                                <span>ТЕЛЕФОНЫ ДОСТУПНЫ С 7.00 ДО 22.00</span>
                             </div>
                         </div>
                     </div>
@@ -127,10 +174,13 @@ export default function Main() {
                                         <option>Озераны</option>
                                     </select>
                                 </div>
-                                <InteractionOutlined 
-                                    onClick={() => setChengeWay(value => !value)}
-                                    className={style.arrows}
-                                />
+                                <div 
+                                    className={style.wrapArrows}
+                                    onClick={() => setChengeWay(value => !value)}>
+                                    <InteractionOutlined   
+                                        className={style.arrows}
+                                    />
+                                </div>
                                 <div className={style.blockSelectWay}>
                                     <span style={{marginBottom: 12, marginLeft: 15}}>Куда</span>
                                     <select 
@@ -208,7 +258,7 @@ export default function Main() {
                                         style={{backgroundColor: 'rgb(38, 166, 190)'}}
                                         onClick={() => setCalc(0)}
                                     >
-                                        <span>Изменить</span>
+                                        <span>Назад</span>
                                     </div> 
                                 </div>
                             </>
@@ -225,8 +275,13 @@ export default function Main() {
                             <span className={style.label}>Введите Фамилию и Имя</span>
                             <input type="text" className={style.inputChecklist} value={fullName} onChange={(e) => setFullName(e.target.value)} required/>
                             <span className={style.label}>Номер телефона</span>
-                            <input type="number" className={style.inputChecklist} value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} required/>
-                        
+                            <PhoneInput
+                                country={'by'}
+                                value={phoneNumber}
+                                onChange={setPhoneNumber}
+                                inputStyle={{width: 260, fontSize: 16, fontWeight: 600, fontFamily: 'Montserrat'}}
+                                
+                            />
                             <span className={style.label}>Остановка посадки</span>
                             <select 
                                 value={wayStart}
@@ -267,7 +322,7 @@ export default function Main() {
                                 <div className={style.order} style={{backgroundColor: 'rgb(38, 166, 190)', width: 160}}
                                     onClick={() => setCalc(0)}
                                 >
-                                    <span>Отмена</span>
+                                    <span>Назад</span>
                                 </div>
                             </div>
                         </form>
@@ -314,27 +369,52 @@ export default function Main() {
                             <span style={{display: showCode ? 'block' : 'none', marginBottom: 20}}>
                                 На номер <span style={{fontWeight: '600'}}>{phoneNumber}</span> был выслан код подтверждения. <br/> Введите код в поле и после подтверждения сможете завершить заказ.
                             </span>
+                            <div id="recaptcha-container"></div>
                             <div className={style.submit}>
-                                <div className={style.getCode}
-                                    onClick={() => setShowCode(true)}
-                                >
-                                    <span>{showCode ? 'Подтвердить' : 'Получить код'}</span>
-                                </div>
+                                {
+                                    showCode ? 
+                                    <div className={style.getCode}
+                                        onClick={() => onOTPVerify()}
+                                    >
+                                        <span>Подтвердить</span>
+                                    </div>
+                                    : 
+                                    <div className={style.getCode}
+                                        onClick={() => onGetCode()}
+                                    >
+                                        <span>Получить код</span>
+                                    </div>
+                                }                               
                                 <div className={style.order} 
                                     style={{display: showCode ? 'none' : '', backgroundColor: 'rgb(38, 166, 190)'}}
                                     onClick={() => setCalc(0)}
                                 >
-                                    <span>Изменить</span>
+                                    <span>Назад</span>
                                 </div>
-                                {showCode ? <input type="number" className={style.inputTicket} placeholder='Введите код'/> : ''}
+                                { showCode ? 
+                                    <input 
+                                        type="number" 
+                                        className={style.inputTicket} 
+                                        placeholder='Введите код'
+                                        onChange={(e) => setConfirmCode(e.target.value)}
+                                    />  
+                                : ''}
+                                
                             </div>
+                            {
+                                user ?
+                                <div className={style.getCode} style={{width: 400, marginTop: 20}}>
+                                    <span>Рейс успешно забронирован!</span>
+                                </div>
+                                : ''
+                            }
                         </div>
                     </div>
 
                     <div className={style.blockCenter}>
                         <span>ОТМЕНА БРОНИ</span>
                         <div className={style.wrapBlock}>
-                            <input type="number" className={style.inputTicket} placeholder='Введите номер телефона'/>
+                            <input type="number" maxlength="6" className={style.inputTicket} placeholder='Введите номер телефона'/>
                             <div className={style.getting}>
                                 <span>Брони</span>
                             </div>
