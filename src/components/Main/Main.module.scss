@@ -307,7 +307,8 @@ html {
             width: 100%;
             display: flex;
             flex-direction: column;
-            justify-content: space-around;
+            justify-content: center;
+            align-items: 'center';
             font-weight: 600;
             margin-top: 30px;
             .wrapSelectWay {
@@ -338,6 +339,12 @@ html {
                     width: 340px;
                 }
             }
+            .wrapDatePicker {
+                display: flex;
+                width: 100%;
+                justify-content: center; 
+                margin-top: 30
+            }
             .wrapArrows {
                 width: 50px;
                 height: 50px;
@@ -364,7 +371,7 @@ html {
                 display: flex;
                 justify-content: center;
                 width: 100%;
-                margin-top: 40px;
+                margin-top: 30px;
                 .btn {
                     border: none;
                     font-weight: 600;
@@ -380,6 +387,10 @@ html {
                         border-radius: 8px;
                     }
                     transition: all 1s ease;
+                    &:active {
+                        box-shadow: 0 5px gray;
+                        transform: translateY(8px);
+                    }
                 }
             }
         }
@@ -442,6 +453,10 @@ table {
         color: white;
         cursor: pointer;
     }
+    &:active {
+        box-shadow: 0 5px gray;
+        transform: translateY(8px);
+    }
 }
 .checklist {
     width: 70%;
@@ -481,6 +496,17 @@ table {
         border-bottom: 2px solid #4F443B;
         font-family: 'Montserrat', sans-serif;
     }
+    .wrapError {
+        width: 100%;
+        justify-content: center;
+        margin-top: 30px;
+        .textError {
+            font-family: 'Montserrat', sans-serif;
+            color: red;
+            font-weight: 600;
+            font-size: 18px;
+        }
+    }
 }
 .wrapBtn {
     display: flex;
@@ -506,6 +532,10 @@ table {
          @media(max-width: 520px){
             border-radius: 8px;
             width: 240px;
+        };
+        &:active {
+            box-shadow: 0 5px gray;
+            transform: translateY(8px);
         }
     }
  }
@@ -536,11 +566,16 @@ table {
             justify-content: center;
             @media(max-width: 520px){
                 justify-content: space-between;
-            }
+            };
+
         }
         .order {
             width: 180px;
             margin-top: 0;
+            &:active {
+                box-shadow: 0 5px gray;
+                transform: translateY(8px);
+            }
         }
         .getCode {
             display: flex;
@@ -561,6 +596,10 @@ table {
                 font-size: 22px;
                 color: white;
                 cursor: pointer;
+            };
+            &:active {
+                box-shadow: 0 5px gray;
+                transform: translateY(8px);
             }
         }
     }

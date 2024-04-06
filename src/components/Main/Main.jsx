@@ -6,19 +6,36 @@ import { InteractionOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import _ from 'lodash'
 
 import { auth } from '../../firebase.config'
 
+import { routes1 } from '../../constants'
 import style from './Main.module.scss'
 
 export default function Main() {
-    //onsole.log(auth)
+
+    // const [person] = useAuthState(auth)
+    // console.log(person)
+
+    // const [userData, loading] = useCollectionData(
+    //     firebase.firestore().collection('userData')
+    // )
+    // console.log(userData)
+    // const onSubmit = async () => {
+    //     firebase.firestore().collection('userData').add({
+    //         fullName, phoneNumber, date, selectFrom, selectTo
+    //     })
+    // }
+
+    // auth
     const [confirmCode, setConfirmCode] = useState('')
     const [user, setUser] = useState(null)
-    console.log(user)
+    //console.log(user)
     const [calc, setCalc] = useState(0)
     const [changeWay, setChengeWay] = useState(true)
     const [showCode, setShowCode] = useState(false)
+    const [error, setError] = useState(false)
 
     // check
     const [selectFrom, setSelectFrom] = useState("Туров")
@@ -30,72 +47,140 @@ export default function Main() {
     const [wayStop, setSelectWayStop] = useState("Остановка №2")
     const [numberSeats, setNumberSeats] = useState(1)
 
+    // server data
+    const [data, setData] = useState([])
+    const [choiceRoutes, setChoiceRoutes] = useState([])
+    const routes = data.filter(item => item.dateTrip === date.format('DD.MM.YYYY') && (changeWay ? 'Гомель' : 'Туров'))
+
     useEffect(() => {
         if (!changeWay) {
-            setSelectFrom("Гомель")
+            setSelectFrom(selectTo)
         }else{
-            setSelectFrom("Туров")
+            setSelectFrom(selectFrom)
         }
         if (changeWay) {
-            setSelectTo("Гомель")
+            setSelectTo(selectTo)
         }else{
-            setSelectTo("Туров")
+            setSelectTo(selectFrom)
         }
-        
     }, [changeWay])
 
-    const handleSubmit = (event) => {
-        event.preventDefault()
+    useEffect(() => {
+        const totalSeats = choiceRoutes[0]?.totalSeats
+        const freeSeates = totalSeats > 0 ? totalSeats - numberSeats : totalSeats
+        //console.log(choiceRoutes[0]?.id)
+        if(user !== null) {
+            const response = fetch(`https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/travels/${choiceRoutes[0]?.id}.json`, {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                        tripFrom: choiceRoutes[0]?.tripFrom, tripTo: choiceRoutes[0]?.tripTo, dateTrip: choiceRoutes[0]?.dateTrip, timeTrips: choiceRoutes[0]?.timeTrips, car: choiceRoutes[0]?.car,
+                        totalSeats, freeSeates, reservedSeats: totalSeats - freeSeates, 
+                        persons: [
+                            ...choiceRoutes[0]?.persons,
+                            {fullName, tripFrom: selectFrom, wayStart, tripTo: selectTo, wayStop, phoneNumber, numberSeats, cost: 20}
+                        ]
+                })
+            })
+            console.log(response)
+            // const items = await response.json()
+            // setData(items)
+        }
+    }, [user])
+    
+    const getRoutes = async () => {
+        const response = await fetch('https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/travels.json', {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json'}
+        })
+        const items = await response.json()
+        const list = Object.keys(items).map(key => ({...items[key], id: key}))
+        setData(list) 
+        
+        setCalc(1)
     }
-    const submitChecklist = (event) => {
-        event.preventDefault()
-        setCalc(calc +1)
-        console.log(fullName, phoneNumber)
-    }
-    const onGetCode = () => {
-        setShowCode(true)
-        onSignup()
-    }
+    const onChoiceRoute = (id) => {
+        const route = routes?.filter(item => item.id === id)
+        setChoiceRoutes(route)
 
-    function onCaptchVerify() {
-        if (!window.recaptchaVerifier) {
-                window.recaptchaVerifier = new RecaptchaVerifier(
-                    auth, "recaptcha-container",
-                {
-                    size: "invisible",
-                    callback: (response) => {onSignup()},
-                    "expired-callback": () => {},
-                },
-                
-            )
+        setCalc(calc +1)
+    }
+    const submitChecklist = () => {
+        if (fullName && phoneNumber) {
+            setCalc(calc +1)
+            setError(false)
+        }
+        if (!fullName || !phoneNumber) {
+            setError(true)
         }
     }
+
+    const onGetCode = () => {
+        setShowCode(true)
+       //onSignup()
+    }
+    function onCaptchVerify() {
+        // if (!window.recaptchaVerifier) {
+        //         window.recaptchaVerifier = new RecaptchaVerifier(
+        //             auth, "recaptcha-container",
+        //         {
+        //             size: "invisible",
+        //             callback: (response) => {onSignup()},
+        //             "expired-callback": () => {},
+        //         },
+                
+        //     )
+        // }
+    }
     function onSignup() {
-        onCaptchVerify()
+        // onCaptchVerify()
     
-        const appVerifier = window.recaptchaVerifier
+        // const appVerifier = window.recaptchaVerifier
     
-        const formatPh = "+" +  phoneNumber
+        // const formatPh = "+" +  phoneNumber
     
-        signInWithPhoneNumber(auth, formatPh, appVerifier)
-          .then((confirmationResult) => {
-            window.confirmationResult = confirmationResult
-          })
-          .catch((error) => {
-            console.log(error)
-          });
+        // signInWithPhoneNumber(auth, formatPh, appVerifier)
+        //   .then((confirmationResult) => {
+        //     window.confirmationResult = confirmationResult
+        //   })
+        //   .catch((error) => {
+        //     console.log(error)
+        //   });
     }
     function onOTPVerify() {
-        window.confirmationResult
-          ?.confirm(confirmCode)
-          .then(async (res) => {
-            //console.log(res)
-            setUser(res.user)
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-      }
+        // window.confirmationResult
+        //   ?.confirm(confirmCode)
+        //   .then(async (res) => {
+        //     setUser(res.user)
+        //   })
+        //   .catch((err) => {
+        //     console.log(err)
+        //   })
+        setUser("Ivan")
+    }
+
+    const onSubmit = async () => {
+        const response = await fetch('https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/travels.json', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                tripFrom: 'ТУРОВ', tripTo: 'ГОМЕЛЬ', dateTrip:"24.04.2024", totalSeats: 10, freeSeates: 10, reservedSeats: 0, timeTrips: '08 : 00', car: 'AM 2629-3 Volkswagen Crafter', 
+                persons: [{fullName: 'Лида', tripFrom: 'ТУРОВ', wayStart: 'Остановка №1', tripTo: 'ГОМЕЛЬ', wayStop: 'Остановка №1', phoneNumber: '+375290000001', numberSeats: 1, cost: 20},]
+            })
+        })
+        const items = await response.json()
+        console.log(items)
+    }
+    const onGet = async () => {
+        const response = await fetch('https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/travels/-NumWFoNFVLzxGodMYLJ.json', {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json'}
+        })
+        const items = await response.json()
+        console.log(items)
+        // setData(Object.values(items)) 
+    }
+    
     return (
         <>
             {/* Хеадер */}
@@ -154,125 +239,148 @@ export default function Main() {
             <div className={style.wrapBooking}>
                 <a name="Забронировать"></a>
                 <div className={style.booking}>
+
+                    {/* Выбрать рейсы */}
                     <span>ОНЛАЙН БРОНИРОВАНИЕ</span>
-                    <form onSubmit={handleSubmit}> 
-                        <div className={style.wrapForm} style={{display: calc > 0 ? 'none' : ''}}>
-                            <div className={style.wrapSelectWay}>
-                                <div className={style.blockSelectWay}>
-                                    <span style={{marginBottom: 12, marginLeft: 15}}>Откуда</span>
-                                    <select 
-                                        value={selectFrom}
-                                        onChange={(e) => setSelectFrom(e.target.value)}
-                                        className={style.selectWay}
-                                    >
-                                        <option>{changeWay ? 'Туров' : 'Гомель' }</option>
-                                        <option>Житковичи</option>
-                                        <option>Малешев</option>
-                                        <option>Вересница</option>
-                                        <option>Запесочье</option>
-                                        <option>Сторожовцы</option>
-                                        <option>Озераны</option>
-                                    </select>
-                                </div>
-                                <div 
-                                    className={style.wrapArrows}
-                                    onClick={() => setChengeWay(value => !value)}>
-                                    <InteractionOutlined   
-                                        className={style.arrows}
-                                    />
-                                </div>
-                                <div className={style.blockSelectWay}>
-                                    <span style={{marginBottom: 12, marginLeft: 15}}>Куда</span>
-                                    <select 
-                                        value={selectTo}
-                                        onChange={(e) => setSelectTo(e.target.value)}
-                                        className={style.selectWay}
-                                    >
-                                        <option>{changeWay ? 'Гомель' : 'Туров' }</option>
-                                        <option>Житковичи</option>
-                                        <option>Малешев</option>
-                                        <option>Вересница</option>
-                                        <option>Запесочье</option>
-                                        <option>Сторожовцы</option>
-                                        <option>Озераны</option>
-                                    </select>
-                                </div>
+                    <div className={style.wrapForm} style={{display: calc > 0 ? 'none' : ''}}>
+                        <div className={style.wrapSelectWay}>
+                            <div className={style.blockSelectWay}>
+                                <span style={{marginBottom: 12, marginLeft: 15}}>Откуда</span>
+                                <select 
+                                    value={selectFrom}
+                                    onChange={(e) => setSelectFrom(e.target.value)}
+                                    className={style.selectWay}
+                                >
+                                    <option>{changeWay ? 'Туров' : 'Гомель'}</option>
+                                    <option>Житковичи</option>
+                                    <option>Малешев</option>
+                                    <option>Вересница</option>
+                                    <option>Запесочье</option>
+                                    <option>Сторожовцы</option>
+                                    <option>Озераны</option>
+                                </select>
+                            </div>
+                            <div 
+                                className={style.wrapArrows}
+                                onClick={() => setChengeWay(value => !value)}>
+                                <InteractionOutlined   
+                                    className={style.arrows}
+                                />
                             </div>
                             <div className={style.blockSelectWay}>
-                            <span style={{marginBottom: 12, marginLeft: 15, marginTop: 20}}>Выберите дату отправления</span>
-                            <DatePicker 
-                                minDate={dayjs()}
-                                locale={locale}
-                                style={{width: 320, marginLeft: 15}}
-                                className={style.date}
-                                dateFormat={'DD-MM-YYYY'}
-                                defaultValue={dayjs()}
-                                onChange={(e) => setDate(e)}
-                            />
+                                <span style={{marginBottom: 12, marginLeft: 15}}>Куда</span>
+                                <select 
+                                    value={selectTo}
+                                    onChange={(e) => setSelectTo(e.target.value)}
+                                    className={style.selectWay}
+                                >
+                                    <option>{changeWay ? 'Гомель' : 'Туров'}</option>
+                                    <option>Житковичи</option>
+                                    <option>Малешев</option>
+                                    <option>Вересница</option>
+                                    <option>Запесочье</option>
+                                    <option>Сторожовцы</option>
+                                    <option>Озераны</option>
+                                </select>
                             </div>
-
-                            <div className={style.wrapBtn}>
-                                <input 
-                                    type="submit" 
-                                    value='Посмотреть рейсы'  
-                                    className={style.btn}
-                                    onClick={() => setCalc(1)}
+                        </div>
+                        <div className={style.wrapDatePicker}>
+                            <div className={style.blockSelectWay}>
+                                <span style={{marginBottom: 12, marginLeft: 15, marginTop: 20}}>Выберите дату отправления</span>
+                                <DatePicker 
+                                    minDate={dayjs()}
+                                    locale={locale}
+                                    style={{width: 320, marginLeft: 15}}
+                                    className={style.date}
+                                    dateFormat={'DD-MM-YYYY'}
+                                    defaultValue={dayjs()}
+                                    onChange={(e) => setDate(e)}
                                 />
                             </div>
                         </div>
-                    </form>
 
+                        <div className={style.wrapBtn}>
+                            <input 
+                                type="submit" 
+                                value='Посмотреть рейсы'  
+                                className={style.btn}
+                                onClick={() => getRoutes()}
+                            />
+                        </div>
+                    </div>
+
+                    <br/>
+
+                    <div style={{backgroundColor: 'gray', width: 140, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 8, fontWeight: 'bold', cursor: 'pointer',  color: 'white'}}
+                            onClick={() => onSubmit()}
+                        >
+                            <span>ОТПРАВИТЬ</span> 
+                        </div>
+                        <div style={{backgroundColor: 'gray', marginTop: 20, width: 140, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 8, fontWeight: 'bold', cursor: 'pointer',  color: 'white'}}
+                            onClick={() => onGet()}
+                        >
+                            <span>ПОЛУЧИТЬ</span> 
+                        </div>
+
+                    {/* Рейсы */}
                     <div className={style.routes} style={{display: calc === 1 ? '' : 'none'}}><span>Рейсы</span></div>
                     {
                         calc === 1 ?
-                            <>
-                                <table>
-                                    <tr>
-                                        <th className={style.textTicket} style={{fontWeight: '700'}}>Направление</th>
-                                        <th className={style.textTicket}>{selectFrom} - {selectTo}</th>
-                                    </tr>
-                                    <tr> 
-                                        <th className={style.textTicket} style={{fontWeight: '700'}}>Дата отправления</th>
-                                        <th className={style.textTicket}>{date?.format('DD.MM.YYYY')}</th>
-                                    </tr>
-                                    <tr>
-                                        <th className={style.textTicket} style={{fontWeight: '700'}}>Время отправления</th>
-                                        <th className={style.textTicket}>06:00</th>
-                                    </tr>
-                                    <tr>
-                                        <th className={style.textTicket} style={{fontWeight: '700'}}>Цена</th>
-                                        <th className={style.textTicket}>23</th>
-                                    </tr>
-                                    <tr>
-                                        <th className={style.textTicket} style={{fontWeight: '700'}}>Количество свободных мест</th>
-                                        <th className={style.textTicket}>+3</th>
-                                    </tr>
-                                </table>
-                                <div className={style.tdBtn}>
-                                    <div className={style.tableBtn}
-                                        onClick={() => setCalc(calc +1)}
-                                    >
-                                        <span>Заказать</span>
-                                    </div> 
-                                    <div className={style.tableBtn}
-                                        style={{backgroundColor: 'rgb(38, 166, 190)'}}
-                                        onClick={() => setCalc(0)}
-                                    >
-                                        <span>Назад</span>
-                                    </div> 
-                                </div>
-                            </>
+                            routes?.map(item => {
+                                const freeSeats = item.totalSeats - item.reservedSeats
+                                return (
+                                    <>
+                                        <table key={item.id}>
+                                            <tr>
+                                                <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Направление</th>
+                                                <th className={style.textTicket}>{item.tripFrom} - {item.tripTo}</th>
+                                            </tr>
+                                            <tr> 
+                                                <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Дата отправления</th>
+                                                <th className={style.textTicket}>{item.dateTrip}</th>
+                                            </tr>
+                                            <tr>
+                                                <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Время отправления</th>
+                                                <th className={style.textTicket}>{item.timeTrips}</th>
+                                            </tr>
+                                            <tr>
+                                                <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Цена</th>
+                                                <th className={style.textTicket}>23</th>
+                                            </tr>
+                                            <tr>
+                                                <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Количество свободных мест</th>
+                                                <th className={style.textTicket}>{freeSeats >= 3 ? '3+' : freeSeats}</th>
+                                            </tr>
+                                        </table>
+                                        <div className={style.tdBtn}>
+                                        <div className={style.tableBtn}
+                                            onClick={() => onChoiceRoute(item.id)}
+                                        >
+                                            <span>Заказать</span>
+                                        </div> 
+                                        <div className={style.tableBtn}
+                                            style={{backgroundColor: 'rgb(38, 166, 190)'}}
+                                            onClick={() => setCalc(0)}
+                                        >
+                                            <span>Назад</span>
+                                            </div> 
+                                        </div>
+                                    </>
+                                )})  
                         : ''
                     }
+
+                    {/* Сheck list для заполнения */}
                     <div className={style.checklist} style={{display: calc === 2 ? '' : 'none'}}>
-                        <span>Направление: <span style={{fontWeight: '500'}}>{selectFrom} - {selectTo}</span></span>
-                        <span>Дата отправления: <span style={{fontWeight: '500'}}>{date?.format('DD.MM.YYYY')}</span></span>
-                        <span>Время отправления: <span style={{fontWeight: '500'}}>06:00</span></span>
+                        <span>Маршрутка до: <span style={{fontWeight: '500'}}>{choiceRoutes[0]?.tripTo}</span></span>
+                        <span>Посадка - Высадка: <span style={{fontWeight: '500'}}>{selectFrom} - {selectTo}</span></span>
+                        <span>Дата отправления: <span style={{fontWeight: '500'}}>{choiceRoutes[0]?.dateTrip}</span></span>
+                        <span>Время отправления: <span style={{fontWeight: '500'}}>{choiceRoutes[0]?.timeTrips}</span></span>
                         
-                        <form style={{display: 'flex', flexDirection: 'column'}}
+                        <div style={{display: 'flex', flexDirection: 'column'}}
                             onSubmit={submitChecklist}
                         >
-                            <span className={style.label}>Введите Фамилию и Имя</span>
+                            <span className={style.label}>Введите Имя и Фамилию</span>
                             <input type="text" className={style.inputChecklist} value={fullName} onChange={(e) => setFullName(e.target.value)} required/>
                             <span className={style.label}>Номер телефона</span>
                             <PhoneInput
@@ -313,11 +421,17 @@ export default function Main() {
                                 <option>3</option>
                             </select>
                             <span style={{fontWeight: '500', fontSize: 16, marginTop: 40}}>При оформлении заказа, Вы даете свое согласие на обработку персональных данных и проезд в составе организованной группы пассажиров.</span>
+                            
+                            {/* error */}
+                            <div className={style.wrapError} style={{display: error ? '' : 'none'}}>
+                                <span className={style.textError}>Необходимо заполнить поля фамилия, имя и телефон</span>
+                            </div>
                             <div className={style.wrapBtn}>
                                 <input 
                                     type="submit" 
                                     value='Забронировать'  
                                     className={style.order}
+                                    onClick={() => submitChecklist()}
                                 />
                                 <div className={style.order} style={{backgroundColor: 'rgb(38, 166, 190)', width: 160}}
                                     onClick={() => setCalc(0)}
@@ -325,9 +439,10 @@ export default function Main() {
                                     <span>Назад</span>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
 
+                    {/* Чек */}
                     <div className={style.wrapTicket} style={{display: calc === 3 ? '' : 'none'}}>
                         <table style={{marginTop: 0}}>
                             <tr>
@@ -335,7 +450,11 @@ export default function Main() {
                                 <th className={style.textTicket}></th>
                             </tr>
                             <tr>
-                                <th className={style.textTicket}>Направление</th>
+                                <th className={style.textTicket}>Маршрутка до:</th>
+                                <th className={style.textTicket}>{choiceRoutes[0]?.tripTo}</th>
+                            </tr>
+                            <tr>
+                                <th className={style.textTicket}>Посадка - Высадка</th>
                                 <th className={style.textTicket}>{selectFrom} - {selectTo}</th>
                             </tr>
                             <tr>
@@ -343,12 +462,16 @@ export default function Main() {
                                 <th className={style.textTicket}>{wayStart}</th>
                             </tr>
                             <tr>
-                                <th className={style.textTicket}>Дата отправления</th>
-                                <th className={style.textTicket}>{date?.format('DD.MM.YYYY')}</th>
+                                <th className={style.textTicket}>Остановка высадки</th>
+                                <th className={style.textTicket}>{wayStop}</th>
                             </tr>
                             <tr>
-                                <th className={style.textTicket}>Время</th>
-                                <th className={style.textTicket}>06:00</th>
+                                <th className={style.textTicket}>Дата отправления</th>
+                                <th className={style.textTicket}>{choiceRoutes[0]?.dateTrip}</th>
+                            </tr>
+                            <tr>
+                                <th className={style.textTicket}>Время отправления</th>
+                                <th className={style.textTicket}>{choiceRoutes[0]?.timeTrips}</th>
                             </tr>
                             <tr>
                                 <th className={style.textTicket}>Фамилия и Имя</th>
@@ -372,7 +495,7 @@ export default function Main() {
                             <div id="recaptcha-container"></div>
                             <div className={style.submit}>
                                 {
-                                    showCode ? 
+                                    showCode? 
                                     <div className={style.getCode}
                                         onClick={() => onOTPVerify()}
                                     >
@@ -411,15 +534,18 @@ export default function Main() {
                         </div>
                     </div>
 
+                    {/* Отмена брони */}
                     <div className={style.blockCenter}>
                         <span>ОТМЕНА БРОНИ</span>
                         <div className={style.wrapBlock}>
-                            <input type="number" maxlength="6" className={style.inputTicket} placeholder='Введите номер телефона'/>
+                            <input type="number" maxLength="6" className={style.inputTicket} placeholder='Введите номер телефона'/>
                             <div className={style.getting}>
                                 <span>Брони</span>
                             </div>
                         </div>
                     </div>
+
+                     {/* Личный кабинет */}
                     <div className={style.blockCenter}>
                         <span>ЛИЧНЫЙ КАБИНЕТ</span>
                         <div className={style.wrapBlock}>
@@ -433,7 +559,6 @@ export default function Main() {
             </div>
 
             {/* Футер */}
-
             <div className={style.footer}>
                 <div className={style.wrapApps}>
                     <span>Для удобства вашего бронирования установите наше приложение на телефон</span>
@@ -448,6 +573,3 @@ export default function Main() {
   )
 }
 
-
-
-//'\s{0,}\+{1,1}375\s{0,}\({0,1}(([2]{1}([5]{1}|[9]{1}))|([3]{1}[3]{1})|([4]{1}[4]{1}))\)\s{0,}[0-9]{3,3}\s{0,}[0-9]{4,4}/'
