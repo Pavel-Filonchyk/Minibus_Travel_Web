@@ -1,0 +1,133 @@
+.wrapPersonalArea {
+    width: 70%;
+    margin-top: 80px;
+    display: flex;
+    align-items: center;
+    //justify-content: center;
+    flex-direction: column;
+    @media(max-width: 520px){
+        margin-top: 60px;
+        width: 95%;
+    }
+    > span {
+        font-weight: 700;
+        font-size: 32px;
+        margin-bottom: 30px;
+        @media(max-width: 520px){
+            font-size: 20px;
+        }
+    }
+
+    // блок подтверждения через смс
+    .wrapBlockConfirm {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: 'center';
+        @media(max-width: 1030px){
+            flex-direction: column;
+        }
+        .getBtn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 180px; 
+            height: 48px;
+            border-radius: 12px;
+            background-color: green;//rgb(38, 166, 190);
+            margin-left: 60px;
+            cursor: pointer;
+            @media(max-width: 520px){
+                width: 172px;
+                margin-top: 25px;
+                margin-left: 0px;
+            }
+            &:active {
+                box-shadow: 0 5px gray;
+                transform: translateY(8px);
+            }
+            > span {
+                font-weight: 600;
+                font-size: 22px;
+                color: white;
+            }
+        }
+        .inputTicket {
+            border: none;
+            outline: none;
+            font-weight: 600;
+            font-size: 18px;
+            width: 240px;
+            border-bottom: 2px solid #4F443B;
+            font-family: 'Montserrat', sans-serif;
+            @media(max-width: 520px){
+                width: 150px;
+                margin-right: 15px;
+            }
+        }
+    }
+    
+}
+
+// брони
+.wrapTicket {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    @media(max-width: 520px){
+        width: 95%;
+        
+    }
+    table {
+        width: 70%;
+        border: 2px solid #4F443B;
+        border-radius: 10px;
+        @media(max-width: 520px){
+            width: 95%;
+        }
+        .textTicket {
+            text-align: start;
+            font-weight: 500;
+            font-size: 20px;
+            height: 50px;
+            padding-left: 10px;
+            @media(max-width: 520px){
+                font-size: 18px;
+                height: 50px;
+                padding-left: 6px;
+            }
+        }
+        
+    }
+}
+.wrapMessage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.btnBack {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 180px; 
+    height: 48px;
+    border-radius: 12px;
+    background-color: rgb(38, 166, 190);
+    margin-top: 25px;
+    cursor: pointer;
+    @media(max-width: 520px){
+        width: 120px;
+    }
+    &:active {
+        box-shadow: 0 5px gray;
+        transform: translateY(8px);
+    }
+    > span {
+        font-weight: 600;
+        font-size: 22px;
+        color: white;
+    } 
+}
