@@ -1,5 +1,5 @@
 import { takeEvery, put, call } from 'redux-saga/effects'
-import { GET_TRAVELS, getTravelsSuccess, getTravelsError } from '../actions/bookTravelActions'
+import { GET_USER, getUserSuccess, getUserError } from '../actions/canselTravelActions'
 import httpProvider from '../../common/httpProvider'
 import { TRAVELS_URL } from '../../common/api'
 
@@ -7,13 +7,13 @@ function* workerLoader() {
     try {
         const { data } = yield call(httpProvider.get, TRAVELS_URL)
     
-        yield put(getTravelsSuccess(data))
+        yield put(getUserSuccess(data))
       } catch (error) {
-        yield put(getTravelsError(error))
+        yield put(getUserError(error))
       }
   }
 
-export default function* watcherGetTravels() {
-  yield takeEvery(GET_TRAVELS, workerLoader)
+export default function* watcherGetUser() {
+  yield takeEvery(GET_USER, workerLoader)
 }
   

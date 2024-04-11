@@ -1,14 +1,14 @@
 import { takeEvery, put, call, select } from 'redux-saga/effects'
-import { POST_USER, postUserSuccess, postUserError } from '../actions/restApiActions'
+import { POST_USER, postUserSuccess, postUserError } from '../actions/bookTravelActions'
 import httpProvider from '../../common/httpProvider'
 import { travelUrl } from '../../common/api'
 
 function* workerLoader() {
     const userData = yield select(state => state.postUserReducer.userData)
-    const userDataID = yield select(state => state.postUserReducer.userDataID)
+    const blockId = yield select(state => state.postUserReducer.blockId)
 
     try {
-        const { data } = yield call(httpProvider.put, travelUrl(userDataID), {data: userData})
+        const { data } = yield call(httpProvider.put, travelUrl(blockId), {data: userData})
     
         yield put(postUserSuccess(data))
       } catch (error) {

@@ -7,13 +7,18 @@ import { InteractionOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth"
+import uuid from 'react-uuid' 
 import _ from 'lodash'
 
 import PersonalArea from '../PersonalArea/PersonalArea'
-import { getTravels, postUser } from '../../core/actions/restApiActions'
+import AdminAccount from '../AdminAccount/AdminAccount'
+import { getTravels, postUser } from '../../core/actions/bookTravelActions'
 import style from './Main.module.scss'
 
+import { auth } from '../../firebase.config'
+
 export default function Main() {
+
     const dispatch = useDispatch()
 
     const travels = useSelector(({getTravelsReducer: { travels }}) => travels)
@@ -24,7 +29,7 @@ export default function Main() {
     // auth
     const [confirmCode, setConfirmCode] = useState('')
     const [user, setUser] = useState(null)
-    //console.log(user)
+
     const [calc, setCalc] = useState(0)
     const [changeWay, setChengeWay] = useState(true)
     const [errorFilling , setErrorFilling] = useState(false)
@@ -42,10 +47,10 @@ export default function Main() {
     const [wayStop, setSelectWayStop] = useState("Остановка №2")
     const [numberSeats, setNumberSeats] = useState(1)
 
-    // PUT server data
+    // server data
     const [choiceRoutes, setChoiceRoutes] = useState([])
-    const routes = travels.filter(item => item.dateTrip === date.format('DD.MM.YYYY') && (changeWay ? 'Гомель' : 'Туров'))
-
+    const routes = travels.filter(item => item.dateTrip === date.format('DD.MM.YYYY'))
+    
     useEffect(() => {
         if (!changeWay) {
             setSelectFrom(selectTo)
@@ -62,7 +67,7 @@ export default function Main() {
     useEffect(() => {
         if(user){
             dispatch(postUser({
-                choiceRoutes, selectFrom, selectTo, fullName, phoneNumber, wayStart, wayStop, numberSeats
+                id: uuid(), choiceRoutes, selectFrom, selectTo, fullName, phoneNumber: `+${phoneNumber}`, wayStart, wayStop, numberSeats
             }))
         }
     }, [user])
@@ -73,9 +78,9 @@ export default function Main() {
         setCalc(1)
     }
     const onChoiceRoute = (id) => {
-        const route = routes?.filter(item => item.id === id)
+        const route = routes?.filter(item => item.blockId === id)
         setChoiceRoutes(route)
-
+    
         setCalc(calc +1)
     }
     const submitChecklist = () => {
@@ -133,17 +138,22 @@ export default function Main() {
         setRemovePostBtns(true)
     }
 
+    const btnBack = () => {
+        setCalc(0)
+        setUser(null)
+        //window.location.reload()
+    }
+
     const onSubmit = async () => {
         const response = await fetch('https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/travels.json', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
-                tripFrom: 'ТУРОВ', tripTo: 'ГОМЕЛЬ', dateTrip:"24.04.2024", totalSeats: 10, freeSeates: 10, reservedSeats: 0, timeTrips: '14 : 00', car: 'AM 2629-3 Volkswagen Crafter', 
-                persons: [{fullName: 'Лида', tripFrom: 'ТУРОВ', wayStart: 'Остановка №1', tripTo: 'Мелешев', wayStop: 'Остановка №1', phoneNumber: '+375250000008', numberSeats: 1, cost: 20},]
+                tripFrom: 'Гомель', tripTo: 'Туров', dateTrip:"24.04.2024", totalSeats: 0, freeSeates: 0, reservedSeats: 0, timeTrips: '', car: '', 
+                persons: [{id: '0000000', blockId: '00000000', fullName: '', tripFrom: '', wayStart: '', dateTrip:"00.00.00",  timeTrips: '', tripTo: '', wayStop: '', phoneNumber: '00000000000', numberSeats: 0, cost: 0},]
             })
         })
         const items = await response.json()
-        console.log(items)
     }
     const onGet = async () => {
         const response = await fetch('https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/travels.json', {
@@ -152,7 +162,6 @@ export default function Main() {
         })
         const items = await response.json()
         console.log(items)
-        // setData(Object.values(items)) 
     }
     
     return (
@@ -266,7 +275,7 @@ export default function Main() {
                                     locale={locale}
                                     style={{width: 320, marginLeft: 15}}
                                     className={style.date}
-                                    dateFormat={'DD-MM-YYYY'}
+                                    format={'DD-MM-YYYY'}
                                     defaultValue={dayjs()}
                                     onChange={(e) => setDate(e)}
                                 />
@@ -331,7 +340,7 @@ export default function Main() {
                                                 </table>
                                                 <div className={style.tdBtn}>
                                                 <div className={style.tableBtn}
-                                                    onClick={() => onChoiceRoute(item.id)}
+                                                    onClick={() => onChoiceRoute(item.blockId)}
                                                 >
                                                     <span>Заказать</span>
                                                 </div> 
@@ -359,7 +368,7 @@ export default function Main() {
                                 <div className={style.wrapGetError} style={{display: getError ? '' : 'none'}}>
                                     <span>Ошибка запроса рейсов <br/> Попробуйте позже еще раз</span>
                                     <div className={style.order} style={{backgroundColor: 'rgb(38, 166, 190)', width: 160, marginTop: 20, marginRight: 0}}
-                                        onClick={() => setCalc(0)}
+                                        onClick={btnBack}
                                     >
                                         <span>Назад</span>
                                     </div>
@@ -430,7 +439,7 @@ export default function Main() {
                                     onClick={() => submitChecklist()}
                                 />
                                 <div className={style.order} style={{backgroundColor: 'rgb(38, 166, 190)', width: 160}}
-                                    onClick={() => setCalc(0)}
+                                    onClick={btnBack}
                                 >
                                     <span>Назад</span>
                                 </div>
@@ -515,7 +524,7 @@ export default function Main() {
                                             </div>
                                             <div className={style.order} 
                                                 style={{backgroundColor: 'rgb(38, 166, 190)'}}
-                                                onClick={() => setCalc(0)}
+                                                onClick={btnBack}
                                             >
                                                 <span>Назад</span>
                                             </div>
@@ -527,7 +536,7 @@ export default function Main() {
                                     <span>Рейс забронирован!</span>
                                 </div>
                                 <div className={style.order} style={{display: postSuccess ? '' : 'none', backgroundColor: 'rgb(38, 166, 190)', width: 160, marginTop: 20, marginRight: 0}}
-                                    onClick={() => setCalc(0)}
+                                    onClick={btnBack}
                                 >
                                     <span>Назад</span>
                                 </div>
@@ -535,7 +544,7 @@ export default function Main() {
                             <div className={style.wrapError} style={{display: postError ? '' : 'none', marginTop: 10}}>
                                 <span>Ошибка отправки данных <br/> Попробуйте позже еще раз</span>
                                 <div className={style.order} style={{backgroundColor: 'rgb(38, 166, 190)', width: 160, marginTop: 20, marginRight: 0}}
-                                    onClick={() => setCalc(0)}
+                                    onClick={btnBack}
                                 >
                                     <span>Назад</span>
                                 </div>
@@ -551,6 +560,7 @@ export default function Main() {
                         title='ЛИЧНЫЙ КАБИНЕТ'
                         textBtn='Войти'
                     />
+                    <AdminAccount/>
                 </div>
             </div>
 
