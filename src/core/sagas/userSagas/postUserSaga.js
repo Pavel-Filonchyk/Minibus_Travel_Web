@@ -1,7 +1,7 @@
 import { takeEvery, put, call, select } from 'redux-saga/effects'
-import { POST_USER, postUserSuccess, postUserError } from '../actions/bookTravelActions'
-import httpProvider from '../../common/httpProvider'
-import { travelUrl } from '../../common/api'
+import { POST_USER, postUserSuccess, postUserError } from '../../actions/bookTravelActions'
+import httpProvider from '../../../common/httpProvider'
+import { travelUrl } from '../../../common/api'
 
 function* workerLoader() {
     const userData = yield select(state => state.postUserReducer.userData)

@@ -36,7 +36,6 @@ export default function Main() {
     const [showCode, setShowCode] = useState(false)
     const [removePostBtns, setRemovePostBtns] = useState(false)
     
-
     // check
     const [selectFrom, setSelectFrom] = useState("Туров")
     const [selectTo, setSelectTo] = useState("Гомель")
@@ -95,46 +94,46 @@ export default function Main() {
 
     const onGetCode = () => {
         setShowCode(true)
-       //onSignup()
+        onSignup()
     }
     function onCaptchVerify() {
-        // if (!window.recaptchaVerifier) {
-        //         window.recaptchaVerifier = new RecaptchaVerifier(
-        //             auth, "recaptcha-container",
-        //         {
-        //             size: "invisible",
-        //             callback: (response) => {onSignup()},
-        //             "expired-callback": () => {},
-        //         },
+        if (!window.recaptchaVerifier) {
+                window.recaptchaVerifier = new RecaptchaVerifier(
+                    auth, "recaptcha-container",
+                {
+                    size: "invisible",
+                    callback: (response) => {onSignup()},
+                    "expired-callback": () => {},
+                },
                 
-        //     )
-        // }
+            )
+        }
     }
     function onSignup() {
-        // onCaptchVerify()
+        onCaptchVerify()
     
-        // const appVerifier = window.recaptchaVerifier
+        const appVerifier = window.recaptchaVerifier
     
-        // const formatPh = "+" +  phoneNumber
+        const formatPh = "+" +  phoneNumber
     
-        // signInWithPhoneNumber(auth, formatPh, appVerifier)
-        //   .then((confirmationResult) => {
-        //     window.confirmationResult = confirmationResult
-        //   })
-        //   .catch((error) => {
-        //     console.log(error)
-        //   });
+        signInWithPhoneNumber(auth, formatPh, appVerifier)
+          .then((confirmationResult) => {
+            window.confirmationResult = confirmationResult
+          })
+          .catch((error) => {
+            console.log(error)
+          });
     }
     const onOTPVerify = () => {
-        // window.confirmationResult
-        //   ?.confirm(confirmCode)
-        //   .then(async (res) => {
-        //     setUser(res.user)
-        //   })
-        //   .catch((err) => {
-        //     console.log(err)
-        //   })
-        setUser("Ivan")
+        window.confirmationResult
+          ?.confirm(confirmCode)
+          .then(async (res) => {
+            setUser(res.user)
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+        //setUser("Ivan")
         setRemovePostBtns(true)
     }
 
@@ -142,26 +141,6 @@ export default function Main() {
         setCalc(0)
         setUser(null)
         //window.location.reload()
-    }
-
-    const onSubmit = async () => {
-        const response = await fetch('https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/travels.json', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                tripFrom: 'Гомель', tripTo: 'Туров', dateTrip:"24.04.2024", totalSeats: 0, freeSeates: 0, reservedSeats: 0, timeTrips: '', car: '', 
-                persons: [{id: '0000000', blockId: '00000000', fullName: '', tripFrom: '', wayStart: '', dateTrip:"00.00.00",  timeTrips: '', tripTo: '', wayStop: '', phoneNumber: '00000000000', numberSeats: 0, cost: 0},]
-            })
-        })
-        const items = await response.json()
-    }
-    const onGet = async () => {
-        const response = await fetch('https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/travels.json', {
-            method: 'GET',
-            headers: {'Content-Type': 'application/json'}
-        })
-        const items = await response.json()
-        console.log(items)
     }
     
     return (
@@ -294,17 +273,6 @@ export default function Main() {
 
                     <br/>
 
-                    <div style={{backgroundColor: 'gray', width: 140, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 8, fontWeight: 'bold', cursor: 'pointer',  color: 'white'}}
-                            onClick={() => onSubmit()}
-                        >
-                            <span>ОТПРАВИТЬ</span> 
-                        </div>
-                        <div style={{backgroundColor: 'gray', marginTop: 20, width: 140, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 8, fontWeight: 'bold', cursor: 'pointer',  color: 'white'}}
-                            onClick={() => onGet()}
-                        >
-                            <span>ПОЛУЧИТЬ</span> 
-                        </div>
-
                     {/* Рейсы */}
                     <div className={style.routes} style={{display: calc === 1 ? '' : 'none'}}><span>Рейсы</span></div>
                     {
@@ -331,7 +299,7 @@ export default function Main() {
                                                     </tr>
                                                     <tr>
                                                         <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Цена</th>
-                                                        <th className={style.textTicket}>23</th>
+                                                        <th className={style.textTicket}>{item.cost}</th>
                                                     </tr>
                                                     <tr>
                                                         <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Количество свободных мест</th>

@@ -1,5 +1,5 @@
 const initialState = {
-    user: '',
+    user: null,
     phoneNumber: '',
     userData: [],
     deleteUserData: [],
@@ -31,7 +31,7 @@ const restUserReducer = (state = initialState, action) => {
             return {
                 ...state,
                 userData,
-                travels: action.payload//cloneTravels
+                travels: action.payload
             }
 
         case 'DELETE_USER':

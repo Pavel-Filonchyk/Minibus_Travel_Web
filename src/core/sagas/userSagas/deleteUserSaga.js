@@ -1,7 +1,7 @@
 import { takeEvery, put, call, select } from 'redux-saga/effects'
-import { DELETE_USER, deleteUserSuccess, deleteUserError } from '../actions/canselTravelActions'
-import httpProvider from '../../common/httpProvider'
-import { travelUrl } from '../../common/api'
+import { DELETE_USER, deleteUserSuccess, deleteUserError } from '../../actions/canselTravelActions'
+import httpProvider from '../../../common/httpProvider'
+import { travelUrl } from '../../../common/api'
 
 function* workerLoader() {
     const deleteUserData = yield select(state => state.restUserReducer.deleteUserData)

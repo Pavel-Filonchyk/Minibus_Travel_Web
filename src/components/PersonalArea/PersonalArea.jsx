@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import PhoneInput from 'react-phone-input-2'
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth"
 import _ from 'lodash'
+import { auth } from '../../firebase.config'
 import { getUser, deleteUser } from '../../core/actions/canselTravelActions'
 
 import style from './PersonalArea.module.scss'
@@ -10,11 +11,10 @@ import style from './PersonalArea.module.scss'
 export default function PersonalArea({title, textBtn}) {
     const dispatch = useDispatch()
 
-    const userData = useSelector(({restUserReducer: { userData }}) => userData)
-    console.log(userData)
     const user = useSelector(({restUserReducer: { user }}) => user)
+    const userData = useSelector(({restUserReducer: { userData }}) => userData)
     const deleteUserSuccess = useSelector(({restUserReducer: { deleteUserSuccess }}) => deleteUserSuccess)
-
+    console.log(user)
     const [phoneNumber, setPhoneNumber] = useState('')
     const [showCode, setShowCode] = useState(false)
     const [showBlockConfirm, setBlockConfirm] = useState(true)
@@ -22,47 +22,46 @@ export default function PersonalArea({title, textBtn}) {
 
     const onGetCode = () => {
         setShowCode(true)
-       //onSignup()
+        onSignup()
     }
     function onCaptchVerify() {
-        // if (!window.recaptchaVerifier) {
-        //         window.recaptchaVerifier = new RecaptchaVerifier(
-        //             auth, "recaptcha-container",
-        //         {
-        //             size: "invisible",
-        //             callback: (response) => {onSignup()},
-        //             "expired-callback": () => {},
-        //         },
+        if (!window.recaptchaVerifier) {
+                window.recaptchaVerifier = new RecaptchaVerifier(
+                    auth, "recaptcha-container",
+                {
+                    size: "invisible",
+                    callback: (response) => {onSignup()},
+                    "expired-callback": () => {},
+                },
                 
-        //     )
-        // }
+            )
+        }
     }
     function onSignup() {
-        // onCaptchVerify()
+        onCaptchVerify()
     
-        // const appVerifier = window.recaptchaVerifier
+        const appVerifier = window.recaptchaVerifier
     
-        // const formatPh = "+" +  phoneNumber
+        const formatPh = "+" +  phoneNumber
     
-        // signInWithPhoneNumber(auth, formatPh, appVerifier)
-        //   .then((confirmationResult) => {
-        //     window.confirmationResult = confirmationResult
-        //   })
-        //   .catch((error) => {
-        //     console.log(error)
-        //   });
+        signInWithPhoneNumber(auth, formatPh, appVerifier)
+          .then((confirmationResult) => {
+            window.confirmationResult = confirmationResult
+          })
+          .catch((error) => {
+            console.log(error)
+          });
     }
     const onOTPVerify = async () => {
-        // window.confirmationResult
-        //   ?.confirm(confirmCode)
-        //   .then(async (res) => {
-        //     setUser(res.user)
-        //   })
-        //   .catch((err) => {
-        //     console.log(err)
-        //   })
-        
-        dispatch(getUser({user: 'Ivan', phoneNumber:`+${phoneNumber}`}))
+
+        window.confirmationResult
+          ?.confirm(confirmCode)
+          .then(async (res) => {
+            dispatch(getUser({user: res.user, phoneNumber:`+${phoneNumber}`}))
+          })
+          .catch((err) => {
+            console.log(err)
+          })
         
         setBlockConfirm(false)
     }

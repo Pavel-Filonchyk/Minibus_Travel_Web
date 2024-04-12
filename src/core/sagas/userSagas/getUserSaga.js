@@ -1,7 +1,7 @@
 import { takeEvery, put, call } from 'redux-saga/effects'
-import { GET_USER, getUserSuccess, getUserError } from '../actions/canselTravelActions'
-import httpProvider from '../../common/httpProvider'
-import { TRAVELS_URL } from '../../common/api'
+import { GET_USER, getUserSuccess, getUserError } from '../../actions/canselTravelActions'
+import httpProvider from '../../../common/httpProvider'
+import { TRAVELS_URL } from '../../../common/api'
 
 function* workerLoader() {
     try {
