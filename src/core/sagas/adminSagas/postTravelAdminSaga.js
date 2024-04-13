@@ -4,7 +4,7 @@ import httpProvider from '../../../common/httpProvider'
 import { TRAVELS_URL } from '../../../common/api'
 
 function* workerLoader() {
-    const postTravel = yield select(state => state.restAdminReducer.postTravel)
+    const postTravel = yield select(state => state.restAdminTravelReducer.postTravel)
 
     try {
         const { data } = yield call(httpProvider.post, TRAVELS_URL, {data: postTravel})

@@ -5,3 +5,4 @@ export const travelUrl = (index) => {
     return `https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/travels/${index}.json`
 }
 
+export const CITIES_URL = 'https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/cities.json'

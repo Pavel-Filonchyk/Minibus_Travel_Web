@@ -4,8 +4,8 @@ import httpProvider from '../../../common/httpProvider'
 import { travelUrl } from '../../../common/api'
 
 function* workerLoader() {
-    const deleteTravelData = yield select(state => state.restAdminReducer.deleteTravelData)
-    const blockId = yield select(state => state.restAdminReducer.blockId)
+    const deleteTravelData = yield select(state => state.restAdminTravelReducer.deleteTravelData)
+    const blockId = yield select(state => state.restAdminTravelReducer.blockId)
 
     try {
         const { data } = yield call(httpProvider.put, travelUrl(blockId), {data: deleteTravelData})

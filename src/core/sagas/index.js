@@ -7,6 +7,7 @@ import watcherDeleteUser from './userSagas/deleteUserSaga'
 import watcherGetTravelsAdmin from './adminSagas/getTravelsAdminSaga'
 import watcherDeleteTravelAdmin from './adminSagas/deleteTravelAdminSaga'
 import watcherPostTravelAdmin from './adminSagas/postTravelAdminSaga'
+import watcherPostBusstopAdmin from './adminSagas/postBusstopAdminSaga'
 
 export default function* rootSaga() {
     yield all([
@@ -16,6 +17,7 @@ export default function* rootSaga() {
         watcherDeleteUser(),
         watcherGetTravelsAdmin(),
         watcherDeleteTravelAdmin(),
-        watcherPostTravelAdmin()
+        watcherPostTravelAdmin(),
+        watcherPostBusstopAdmin()
     ])
 }

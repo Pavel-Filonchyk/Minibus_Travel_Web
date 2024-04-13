@@ -1,8 +1,9 @@
 import getTravelsReducer from './getTravelsReducer'
 import postUserReducer from './postUserReduser'
 import restUserReducer from './restUserReducer'
-import restAdminReducer from './restAdminReducer'
+import restAdminTravelReducer from './restAdminTravelReducer'
+import restAdminBusstopsReducer from './restAdminBusstopsReducer'
 
 export const rootReducer = () => {
-    return { getTravelsReducer, postUserReducer, restUserReducer, restAdminReducer }
+    return { getTravelsReducer, postUserReducer, restUserReducer, restAdminTravelReducer, restAdminBusstopsReducer }
 }

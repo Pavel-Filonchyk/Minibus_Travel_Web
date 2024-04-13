@@ -22,20 +22,20 @@ export default function PersonalArea({title, textBtn}) {
 
     const onGetCode = () => {
         setShowCode(true)
-        onSignup()
+        //onSignup()
     }
     function onCaptchVerify() {
-        if (!window.recaptchaVerifier) {
-                window.recaptchaVerifier = new RecaptchaVerifier(
-                    auth, "recaptcha-container",
-                {
-                    size: "invisible",
-                    callback: (response) => {onSignup()},
-                    "expired-callback": () => {},
-                },
+        // if (!window.recaptchaVerifier) {
+        //         window.recaptchaVerifier = new RecaptchaVerifier(
+        //             auth, "recaptcha-container",
+        //         {
+        //             size: "invisible",
+        //             callback: (response) => {onSignup()},
+        //             "expired-callback": () => {},
+        //         },
                 
-            )
-        }
+        //     )
+        // }
     }
     function onSignup() {
         onCaptchVerify()
@@ -45,24 +45,24 @@ export default function PersonalArea({title, textBtn}) {
         const formatPh = "+" +  phoneNumber
     
         signInWithPhoneNumber(auth, formatPh, appVerifier)
-          .then((confirmationResult) => {
-            window.confirmationResult = confirmationResult
-          })
-          .catch((error) => {
-            console.log(error)
-          });
+            .then((confirmationResult) => {
+                window.confirmationResult = confirmationResult
+            })
+            .catch((error) => {
+                console.log(error)
+            })
     }
     const onOTPVerify = async () => {
 
-        window.confirmationResult
-          ?.confirm(confirmCode)
-          .then(async (res) => {
-            dispatch(getUser({user: res.user, phoneNumber:`+${phoneNumber}`}))
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-        
+        // window.confirmationResult
+        //     ?.confirm(confirmCode)
+        //     .then(async (res) => {
+        //         dispatch(getUser({user: res.user, phoneNumber:`+${phoneNumber}`}))
+        //     })
+        //     .catch((err) => {
+        //         console.log(err)
+        //     })
+        dispatch(getUser({user: 'Ivan', phoneNumber:`+${phoneNumber}`}))
         setBlockConfirm(false)
     }
 
