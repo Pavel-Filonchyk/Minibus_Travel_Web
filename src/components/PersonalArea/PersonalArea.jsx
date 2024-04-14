@@ -14,7 +14,7 @@ export default function PersonalArea({title, textBtn}) {
     const user = useSelector(({restUserReducer: { user }}) => user)
     const userData = useSelector(({restUserReducer: { userData }}) => userData)
     const deleteUserSuccess = useSelector(({restUserReducer: { deleteUserSuccess }}) => deleteUserSuccess)
-    console.log(user)
+    //console.log(user)
     const [phoneNumber, setPhoneNumber] = useState('')
     const [showCode, setShowCode] = useState(false)
     const [showBlockConfirm, setBlockConfirm] = useState(true)

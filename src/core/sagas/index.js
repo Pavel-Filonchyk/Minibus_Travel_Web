@@ -8,6 +8,11 @@ import watcherGetTravelsAdmin from './adminSagas/getTravelsAdminSaga'
 import watcherDeleteTravelAdmin from './adminSagas/deleteTravelAdminSaga'
 import watcherPostTravelAdmin from './adminSagas/postTravelAdminSaga'
 import watcherPostBusstopAdmin from './adminSagas/postBusstopAdminSaga'
+import watcherGetBusstopsAdmin from './adminSagas/getBusstopsAdminSaga'
+import watcherDeleteBusstopAdmin from './adminSagas/deleteBusstopAdminSaga'
+import watcherPostCostAdmin from './adminSagas/postCostAdminSaga'
+import watcherGetCostsAdmin from './adminSagas/getCostsAdminSaga'
+import watcherDeleteCostAdmin from './adminSagas/deleteCostAdminSaga'
 
 export default function* rootSaga() {
     yield all([
@@ -18,6 +23,11 @@ export default function* rootSaga() {
         watcherGetTravelsAdmin(),
         watcherDeleteTravelAdmin(),
         watcherPostTravelAdmin(),
-        watcherPostBusstopAdmin()
+        watcherPostBusstopAdmin(),
+        watcherGetBusstopsAdmin(),
+        watcherDeleteBusstopAdmin(),
+        watcherPostCostAdmin(),
+        watcherGetCostsAdmin(),
+        watcherDeleteCostAdmin()
     ])
 }

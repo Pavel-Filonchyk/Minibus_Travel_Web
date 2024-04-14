@@ -6,7 +6,8 @@ import dayjs from 'dayjs';
 import locale from 'antd/es/date-picker/locale/ru_RU'
 
 import { getTravels, postTravel, deleteTravel } from '../../core/actions/restAdminTravelActions'
-import { postBusstop } from '../../core/actions/restAdminBusstopsActions'
+import { postBusstop, getBusstops, deleteBusstop } from '../../core/actions/restAdminBusstopsActions'
+import { postCost, getCosts, deleteCost } from '../../core/actions/restAdminCostsActions'
 import style from './AdminAccount.module.scss'
 
 export default function AdminAccount() {
@@ -14,43 +15,73 @@ export default function AdminAccount() {
 
     const [form] = Form.useForm()
 
-    const travelsData = useSelector(({restAdminTravelReducer: { travelsData }}) => travelsData)
     const user = useSelector(({restUserReducer: { user }}) => user)
-
-    // состояние добавления рейса
+    const travelsData = useSelector(({restAdminTravelReducer: { travelsData }}) => travelsData)
+    const busstopsData = useSelector(({restAdminBusstopsReducer: { busstopsData }}) => busstopsData)
+    const costsData = useSelector(({restAdminCostsReducer: { costsData }}) => costsData)
+  
+    // состояния редактирования рейсов
     const [travelFrom, setTravelFrom] = useState('')
     const [travelTo, setTravelTo] = useState('')
     const [date, setDate] = useState(dayjs())
     const [time, setTime] = useState(dayjs())
-    const [cost, setCost] = useState('')
+    //const [cost, setCost] = useState('')
     const [totalSeats, setTotalSeats] = useState('')
-
     const [errorFilling , setErrorFilling] = useState(false)
 
-    // состояние добавления остановки
+    // состояние редактирования остановок
     const [busstop, setBusstop] = useState([1])
 
+    // состояния редактирования стоимостей
+    const [wayFrom, setWayFrom] = useState('')
+    const [wayTo, setWayTo] = useState('')
+    const [cost, setCost] = useState('')
+    const [errorFillWay , setErrorFillWay] = useState(false)
 
-    const onPostRoute = () => {
-        if (travelFrom && travelTo) {
+    const onPostTravel = () => {
+        if (travelFrom && travelTo && totalSeats) {
             dispatch(postTravel({
-                travelFrom, travelTo, date: date.format('DD.MM.YYYY'), time: time.format('HH:mm'), cost, totalSeats
+                travelFrom, travelTo, date: date.format('DD.MM.YYYY'), time: time.format('HH:mm'), totalSeats
             }))
             setErrorFilling(false)
         }
-        if (!travelFrom || !travelTo) {
+        if (!travelFrom || !travelTo || !totalSeats) {
             setErrorFilling(true)
         }
     }
     const onGetTravels = () => {
         dispatch(getTravels())
     }
-    const onDeleteRoute = (blockId) => {
+    const onDeleteTravel = (blockId) => {
         dispatch(deleteTravel(blockId))
     }
 
     const onAddBusstop = (e) => {
         dispatch(postBusstop(e))
+    }
+    const onGetBusstops = () => {
+        dispatch(getBusstops())
+    }
+    const onDeleteBusstop = (blockId) => {
+        dispatch(deleteBusstop(blockId))
+    }
+
+    const onPostCost = () => {
+        if (wayFrom && wayTo && cost) {
+            dispatch(postCost({
+                wayFrom, wayTo, cost
+            }))
+            setErrorFillWay(false)
+        }
+        if (!wayFrom || !wayTo || !cost) {
+            setErrorFillWay(true)
+        }
+    }
+    const onGetCosts = () => {
+        dispatch(getCosts())
+    }
+    const onDeleteCost = (blockId) => {
+        dispatch(deleteCost(blockId))
     }
 
     return (
@@ -83,23 +114,22 @@ export default function AdminAccount() {
                     value={time}
                     onChange={(e) => setTime(e)}
                 />
-                <span className={style.label}>Стоимость</span>
-                <input type="number" className={style.inputChecklist} value={cost} onChange={(e) => setCost(e.target.value)}/>
+                {/* <span className={style.label}>Стоимость</span>
+                <input type="number" className={style.inputChecklist} value={cost} onChange={(e) => setCost(e.target.value)}/> */}
                 <span className={style.label}>Количество мест</span>
                 <input type="number" className={style.inputChecklist} style={{marginBottom: 20}} value={totalSeats} onChange={(e) => setTotalSeats(e.target.value)}/>
                 {/* error filling */}
                 <div className={style.wrapError} style={{display: errorFilling ? '' : 'none'}}>
-                    <span className={style.textError}>Необходимо ввести поля Отправление, Конечная, Дата отправления и Время отправления</span>
+                    <span className={style.textError}>Необходимо заполнить все поля</span>
                 </div>
                 <div className={style.wrapBtn}>
                     <div className={style.btn}
-                        onClick={onPostRoute}
+                        onClick={onPostTravel}
                     >
                         <span>Добавить</span>
                     </div>
                 </div>
             </div> 
-
             {/* Редактирование рейсов */}
             <span className={style.title}>Редактировать рейсы</span> 
             <div className={style.wrapBtn}>
@@ -110,47 +140,43 @@ export default function AdminAccount() {
                     <span>Рейсы</span>
                 </div>
             </div>
-                {
-                    travelsData?.length > 0 
-                    ?
-                        travelsData.map(item => {
-                            return(
-                                <div className={style.wrapTravels}>
-                                    <table style={{marginTop: 20, marginBottom: 15}}>
-                                        <tr>
-                                            <th className={style.textTicket}>Направление:</th>
-                                            <th className={style.textTicket}>{item.tripFrom}-{item.tripTo}</th>
-                                        </tr>
-                                        <tr>
-                                            <th className={style.textTicket}>Дата отправления</th>
-                                            <th className={style.textTicket}>{item.dateTrip}</th>
-                                        </tr>
-                                        <tr>
-                                            <th className={style.textTicket}>Время отправления</th>
-                                            <th className={style.textTicket}>{item.timeTrips}</th>
-                                        </tr>
-                                        <tr>
-                                            <th className={style.textTicket}>Стоимость</th>
-                                            <th className={style.textTicket}>{item.cost}</th>
-                                        </tr>
-                                        <tr>
-                                            <th className={style.textTicket}>Количество мест</th>
-                                            <th className={style.textTicket}>{item.totalSeats}</th>
-                                        </tr>
-                                    </table>
-                                    <div className={style.wrapBtn}>
-                                        <div className={style.btn} 
-                                            style={{backgroundColor: 'red', marginBottom: 0, marginTop: 0}}
-                                            onClick={() => onDeleteRoute(item.blockId)}
-                                        >
-                                            <span>Удалить</span>
-                                        </div>
+            {
+                travelsData?.length > 0 
+                ?
+                    travelsData.map(item => {
+                        return(
+                            <div className={style.wrapTravels}>
+                                <table style={{marginTop: 20, marginBottom: 15}}>
+                                    <tr>
+                                        <th className={style.textTicket}>Направление:</th>
+                                        <th className={style.textTicket}>{item.tripFrom}-{item.tripTo}</th>
+                                    </tr>
+                                    <tr>
+                                        <th className={style.textTicket}>Дата отправления</th>
+                                        <th className={style.textTicket}>{item.dateTrip}</th>
+                                    </tr>
+                                    <tr>
+                                        <th className={style.textTicket}>Время отправления</th>
+                                        <th className={style.textTicket}>{item.timeTrips}</th>
+                                    </tr>
+                                    <tr>
+                                        <th className={style.textTicket}>Количество мест</th>
+                                        <th className={style.textTicket}>{item.totalSeats}</th>
+                                    </tr>
+                                </table>
+                                <div className={style.wrapBtn}>
+                                    <div className={style.btn} 
+                                        style={{backgroundColor: 'red', marginBottom: 0, marginTop: 0}}
+                                        onClick={() => onDeleteTravel(item.blockId)}
+                                    >
+                                        <span>Удалить</span>
                                     </div>
                                 </div>
-                            )
-                        })
-                    : ''
-                }  
+                            </div>
+                        )
+                    })
+                : ''
+            }  
 
             {/* Добавление остановки */}
             <span className={style.title}>Добавить город с остановками</span> 
@@ -190,14 +216,14 @@ export default function AdminAccount() {
                     <div>
                         <PlusCircleOutlined 
                             onClick={() => setBusstop([...busstop, 1])}
-                            style={{fontSize: 28, color: 'green', marginRight: 10, paddingTop: 10, cursor: 'pointer'}}
+                            style={{fontSize: 32, color: 'green', marginRight: 10, paddingTop: 10, cursor: 'pointer'}}
                         />
                         <MinusCircleOutlined 
                             onClick={() => setBusstop(busstop.splice(0, 1))}
-                            style={{fontSize: 28, color: 'red', marginRight: 10, paddingTop: 10, cursor: 'pointer'}}
+                            style={{fontSize: 32, color: 'red', marginRight: 10, paddingTop: 10, cursor: 'pointer', marginLeft: 20}}
                         />
                     </div>
-                    <div className={style.wrapBtn} style={{height: 48}}>
+                    <div className={style.wrapBtn} style={{height: 68}}>
                         <Form.Item>
                             <Button 
                                 htmlType='submit'
@@ -210,6 +236,113 @@ export default function AdminAccount() {
                     </div>
                 </Form>
             </div>
+            {/* Редактирование остановок */}
+            <span className={style.title}>Редактирование остановок</span> 
+            <div className={style.wrapBtn}>
+                <div className={style.btn}
+                    style={{marginTop: 0}}
+                    onClick={onGetBusstops}
+                >
+                    <span>Остановки</span>
+                </div>
+            </div>
+            {
+                busstopsData?.length > 0 
+                ?
+                    busstopsData?.map(item => {
+                        return(
+                            <div className={style.wrapTravels}>
+                                <table style={{marginTop: 20, marginBottom: 15}}>
+                                    <tr>
+                                        <th className={style.textTicket} style={{width: '50%'}}>Город:</th>
+                                        <th className={style.textTicket}>{item.city}</th>
+                                    </tr>
+                                    {
+                                        item.busstops.map((elem, index) => {
+                                            return (
+                                            <tr>
+                                                <th className={style.textTicket}>Остановка{index +1}</th>
+                                                <th className={style.textTicket}>{elem}</th>
+                                            </tr>
+                                        )})
+                                    }
+                                    
+                                </table>
+                                <div className={style.wrapBtn}>
+                                    <div className={style.btn} 
+                                        style={{backgroundColor: 'red', marginBottom: 0, marginTop: 0}}
+                                        onClick={() => onDeleteBusstop(item.blockId)}
+                                    >
+                                        <span>Удалить</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    })
+                : ''
+            }
+
+            {/* Добавление стоимостей */}
+            <span className={style.title}>Добавить стоимость</span>
+            <div className={style.wrapManageTravel}>
+                <span className={style.label}>Посадка</span>
+                <input type="text" className={style.inputChecklist} value={wayFrom} onChange={(e) => setWayFrom(e.target.value)}/>
+                <span className={style.label}>Высадка</span>
+                <input type="text" className={style.inputChecklist} value={wayTo} onChange={(e) => setWayTo(e.target.value)}/>
+                <span className={style.label}>Стоимость</span>
+                <input type="number" className={style.inputChecklist} value={cost} onChange={(e) => setCost(e.target.value)}/>
+                <div className={style.wrapError} style={{display: errorFillWay ? '' : 'none', marginBottom: 0}}>
+                    <span className={style.textError}>Необходимо заполнить все поля</span>
+                </div>
+                <div className={style.wrapBtn}>
+                    <div className={style.btn}
+                        style={{marginTop: 20}}
+                        onClick={onPostCost}
+                    >
+                        <span>Добавить</span>
+                    </div>
+                </div>
+            </div>
+            {/* Редактирование стоимостей */}
+            <span className={style.title}>Редактировать стоимость</span>
+            <div className={style.wrapBtn}>
+                <div className={style.btn}
+                    style={{marginTop: 0}}
+                    onClick={onGetCosts}
+                >
+                    <span>Стоимости</span>
+                </div>
+            </div>
+            {
+                costsData?.length > 0 
+                ?
+                    costsData.map(item => {
+                        return(
+                            <div className={style.wrapTravels}>
+                                <table style={{marginTop: 20, marginBottom: 15}}>
+                                    <tr>
+                                        <th className={style.textTicket}>Направление:</th>
+                                        <th className={style.textTicket}>{item.wayFrom}-{item.wayTo}</th>
+                                    </tr>
+                                    <tr>
+                                        <th className={style.textTicket}>Стоимость</th>
+
+                                        <th className={style.textTicket}>{item.cost}</th>
+                                    </tr>
+                                </table>
+                                <div className={style.wrapBtn}>
+                                    <div className={style.btn} 
+                                        style={{backgroundColor: 'red', marginBottom: 0, marginTop: 0}}
+                                        onClick={() => onDeleteCost(item.blockId)}
+                                    >
+                                        <span>Удалить</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    })
+                : ''
+            } 
         </div>
     )
 }

@@ -4,8 +4,8 @@ import httpProvider from '../../../common/httpProvider'
 import { CITIES_URL } from '../../../common/api'
 
 function* workerLoader() {
-    const postBusstop = yield select(state => state.restAdminBusstopsReducer.busstop)
-    console.log(postBusstop)
+    const postBusstop = yield select(state => state.restAdminBusstopsReducer.postBusstop)
+
     try {
         const { data } = yield call(httpProvider.post, CITIES_URL, {data: postBusstop})
     

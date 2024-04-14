@@ -1,8 +1,15 @@
 
 export const TRAVELS_URL = 'https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/travels.json'
-
 export const travelUrl = (index) => {
     return `https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/travels/${index}.json`
 }
 
 export const CITIES_URL = 'https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/cities.json'
+export const citiesUrl = (index) => {
+    return `https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/cities/${index}.json`
+}
+
+export const COSTS_URL = 'https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/costs.json'
+export const costsUrl = (index) => {
+    return `https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/costs/${index}.json`
+}

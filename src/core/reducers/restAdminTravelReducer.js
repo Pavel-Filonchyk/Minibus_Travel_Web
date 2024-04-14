@@ -2,11 +2,9 @@ import _ from 'lodash'
 
 const initialState = {
     travelsData: [],
-    travels: [],
-    postTravel: [],
-    deleteTravelData: [],
-    blockId: '',
-
+    travels: {},
+    postTravel: {},
+    blockId: ''
 }
 
 const restAdminReducer = (state = initialState, action) => {
@@ -30,28 +28,15 @@ const restAdminReducer = (state = initialState, action) => {
             }
         case 'DELETE_TRAVEL':
             const blockId = action.payload
-            // удаление рейса на экране
-            const index = state.travelsData.findIndex(item => item.blockId === blockId)
-            let newTravelsData =  [
-                ...state.travelsData.splice(0, index),
-                ...state.travelsData.splice(index + 1)
-            ]
-            
-            // удаление рейса на сервере
-            const deleteTravelData = delete state.travels[blockId]
-            if(deleteTravelData){
+
+            if(blockId !== '-NvS829IaF_37dJptRIe'){
+                const deleteTravel = state.travelsData.filter(item => item.blockId !== blockId)
                 return {
                     ...state,
-                    travelsData: newTravelsData,
-                    deleteTravelData: state.travels
+                    travelsData: deleteTravel,  // удаление на экране
+                    blockId                     // передача id для удаления на сервере
                 }
-            }else{return state}
-        case 'DELETE_TRAVEL_SUCCESS':
-           
-            return {
-                ...state,
-                
-            }
+            }else{return {state}}
 
         default: 
         return state;  

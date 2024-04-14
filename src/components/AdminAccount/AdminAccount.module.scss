@@ -18,6 +18,9 @@
         font-size: 22px;
         margin-top: 30px;
         margin-bottom: 20px;
+        padding-left: 20px;
+        padding-right: 20px;
+        text-align: center;
     }
 
     // Добавить рейс
@@ -38,7 +41,7 @@
             margin-top: 20px;
             margin-bottom: 10px;
             font-family: 'Montserrat', sans-serif;
-            color: 'black'
+            color: black
         }
         .inputChecklist {
             border: none;
@@ -137,13 +140,4 @@
         }
     }
 
-    // Добавить остановку
-//    .wrapAddBusstop {
-
-//    }
-}
-.wrapInput {
-    font-weight: 600;
-    font-size: 20px;
-    color: black
 }
