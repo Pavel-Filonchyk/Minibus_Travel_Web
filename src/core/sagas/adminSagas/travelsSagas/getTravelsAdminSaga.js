@@ -1,7 +1,7 @@
 import { takeEvery, put, call } from 'redux-saga/effects'
-import { GET_TRAVELS, getTravelsSuccess, getTravelsError } from '../../actions/restAdminTravelActions'
-import httpProvider from '../../../common/httpProvider'
-import { TRAVELS_URL } from '../../../common/api'
+import { GET_TRAVELS, getTravelsSuccess, getTravelsError } from '../../../actions/restAdminTravelActions'
+import httpProvider from '../../../../common/httpProvider'
+import { TRAVELS_URL } from '../../../../common/api'
 
 function* workerLoader() {
     try {

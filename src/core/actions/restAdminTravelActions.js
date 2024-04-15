@@ -1,3 +1,46 @@
+const getDirections = (data) => {
+    return {
+        type: 'GET_DIRECTIONS',
+        payload: data 
+    } 
+}
+export const GET_DIRECTIONS = 'GET_DIRECTIONS'
+
+const getDirectionsSuccess = (data) => {
+    return {
+        type: 'GET_DIRECTIONS_SUCCESS',
+        payload: data 
+    } 
+}
+
+const postDirection = (data) => {
+    return {
+        type: 'POST_DIRECTION',
+        payload: data 
+    } 
+}
+export const POST_DIRECTION = 'POST_DIRECTION'
+
+const postDirectionSuccess = (data) => {
+    return {
+        type: 'POST_DIRECTION_SUCCESS',
+        payload: data 
+    } 
+}
+const deleteDirection = (data) => {
+    return {
+        type: 'DELETE_DIRECTION',
+        payload: data 
+    } 
+}
+export const DELETE_DIRECTION = 'DELETE_DIRECTION'
+const deleteDirectionSuccess = (data) => {
+    return {
+        type: 'DELETE_DIRECTION_SUCCESS',
+        payload: data 
+    } 
+}
+export const DELETE_COST = 'DELETE_DIRECTION'
 const getTravels = (data) => {
     return {
         type: 'GET_TRAVELS',
@@ -60,6 +103,12 @@ const deleteTravelError = (data) => {
 }
 
 export {
+    getDirections,
+    getDirectionsSuccess,
+    postDirection,
+    postDirectionSuccess,
+    deleteDirection,
+    deleteDirectionSuccess,
     getTravels,
     getTravelsSuccess,
     getTravelsError,

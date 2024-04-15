@@ -13,3 +13,8 @@ export const COSTS_URL = 'https://minibus-travel-default-rtdb.europe-west1.fireb
 export const costsUrl = (index) => {
     return `https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/costs/${index}.json`
 }
+
+export const DIRECTIONS_URL = 'https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/directions.json'
+export const directionsUrl = (index) => {
+    return `https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/directions/${index}.json`
+}

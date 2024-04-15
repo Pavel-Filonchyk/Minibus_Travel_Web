@@ -1,3 +1,32 @@
+const getDirections = (data) => {
+    return {
+        type: 'GET_DIRECTIONS',
+        payload: data 
+    }
+}
+export const GET_DIRECTIONS = 'GET_DIRECTIONS'
+
+const getDirectionsSuccess = (data) => {
+    return {
+        type: 'GET_DIRECTIONS_SUCCESS',
+        payload: data 
+    }
+}
+const getCities = (data) => {
+    return {
+        type: 'GET_CITIES',
+        payload: data 
+    }
+}
+export const GET_CITIES = 'GET_CITIES'
+
+const getCitiesSuccess = (data) => {
+    return {
+        type: 'GET_CITIES_SUCCESS',
+        payload: data 
+    }
+}
+
 const getTravels = (data) => {
     return {
         type: 'GET_TRAVELS',
@@ -41,10 +70,14 @@ const postUserError = (data) => {
 }
 
 export {
+    getDirections,
+    getDirectionsSuccess,
     getTravels,
     getTravelsSuccess,
     getTravelsError,
     postUser,
     postUserSuccess,
-    postUserError
+    postUserError,
+    getCities,
+    getCitiesSuccess
 }

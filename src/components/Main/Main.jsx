@@ -8,11 +8,10 @@ import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth"
 import uuid from 'react-uuid' 
-import _ from 'lodash'
 
 import PersonalArea from '../PersonalArea/PersonalArea'
 import AdminAccount from '../AdminAccount/AdminAccount'
-import { getTravels, postUser } from '../../core/actions/bookTravelActions'
+import { getCities, getTravels, postUser, getDirections } from '../../core/actions/bookTravelActions'
 import style from './Main.module.scss'
 
 import { auth } from '../../firebase.config'
@@ -21,7 +20,9 @@ export default function Main() {
 
     const dispatch = useDispatch()
 
+    const cities = useSelector(({getTravelsReducer: { cities }}) => cities)
     const travels = useSelector(({getTravelsReducer: { travels }}) => travels)
+    const directionsData = useSelector(({getTravelsReducer: { directions }}) => directions)
     const getError = useSelector(({getTravelsReducer: { getError }}) => getError)
     const postSuccess = useSelector(({postUserReducer: { postSuccess }}) => postSuccess)
     const postError = useSelector(({postUserReducer: { postError }}) => postError)
@@ -37,18 +38,27 @@ export default function Main() {
     const [removePostBtns, setRemovePostBtns] = useState(false)
     
     // check
+    const [directions, setDirections] = useState("Гомель")
     const [selectFrom, setSelectFrom] = useState("Туров")
     const [selectTo, setSelectTo] = useState("Гомель")
     const [date, setDate] = useState(dayjs())
     const [fullName, setFullName] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('')
-    const [wayStart, setSelectWayStart] = useState("Остановка №1")
-    const [wayStop, setSelectWayStop] = useState("Остановка №2")
+    const [wayStart, setSelectWayStart] = useState("")
+    const [wayStop, setSelectWayStop] = useState("")
     const [numberSeats, setNumberSeats] = useState(1)
 
     // server data
     const [choiceRoutes, setChoiceRoutes] = useState([])
-    const routes = travels.filter(item => item.dateTrip === date.format('DD.MM.YYYY'))
+    const routes = travels.filter(item => item.dateTrip === date.format('DD.MM.YYYY') && item.tripTo === directions)
+
+    useEffect(() => {
+        dispatch(getCities())
+    }, [])
+
+    useEffect(() => {
+        dispatch(getDirections())
+    }, [])
     
     useEffect(() => {
         if (!changeWay) {
@@ -94,7 +104,7 @@ export default function Main() {
 
     const onGetCode = () => {
         setShowCode(true)
-        onSignup()
+        //onSignup()
     }
     function onCaptchVerify() {
         if (!window.recaptchaVerifier) {
@@ -125,16 +135,16 @@ export default function Main() {
           });
     }
     const onOTPVerify = () => {
-        window.confirmationResult
-          ?.confirm(confirmCode)
-          .then(async (res) => {
-            setUser(res.user)
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-        //setUser("Ivan")
-        setRemovePostBtns(true)
+        // window.confirmationResult
+        //   ?.confirm(confirmCode)
+        //   .then(async (res) => {
+        //     setUser(res.user)
+        //   })
+        //   .catch((err) => {
+        //     console.log(err)
+        //   })
+        setUser("Ivan")
+        //setRemovePostBtns(true)
     }
 
     const btnBack = () => {
@@ -205,6 +215,24 @@ export default function Main() {
                     {/* Выбрать рейсы */}
                     <span>ОНЛАЙН БРОНИРОВАНИЕ</span>
                     <div className={style.wrapForm} style={{display: calc > 0 ? 'none' : ''}}>
+                        <div className={style.wrapDirection}>
+                            <span className={style.titleDirection}>Выберите направление</span>
+                            <div className={style.blockDirection}>
+                                <span>Маршрутка до: &nbsp;</span>
+                                <select 
+                                    value={directions}
+                                    onChange={(e) => setDirections(e.target.value)}
+                                    style={{margin: 0}}
+                                    className={style.selectWay}
+                                >
+                                    {
+                                        directionsData?.map(item => {return(
+                                            <option>{item?.direction}</option>
+                                        )})
+                                    }
+                                </select>
+                            </div>
+                        </div>
                         <div className={style.wrapSelectWay}>
                             <div className={style.blockSelectWay}>
                                 <span style={{marginBottom: 12, marginLeft: 15}}>Откуда</span>
@@ -213,13 +241,11 @@ export default function Main() {
                                     onChange={(e) => setSelectFrom(e.target.value)}
                                     className={style.selectWay}
                                 >
-                                    <option>{changeWay ? 'Туров' : 'Гомель'}</option>
-                                    <option>Житковичи</option>
-                                    <option>Малешев</option>
-                                    <option>Вересница</option>
-                                    <option>Запесочье</option>
-                                    <option>Сторожовцы</option>
-                                    <option>Озераны</option>
+                                    {
+                                        cities?.map(item => {return(
+                                            <option>{item?.city}</option>
+                                        )})
+                                    }
                                 </select>
                             </div>
                             <div 
@@ -236,13 +262,11 @@ export default function Main() {
                                     onChange={(e) => setSelectTo(e.target.value)}
                                     className={style.selectWay}
                                 >
-                                    <option>{changeWay ? 'Гомель' : 'Туров'}</option>
-                                    <option>Житковичи</option>
-                                    <option>Малешев</option>
-                                    <option>Вересница</option>
-                                    <option>Запесочье</option>
-                                    <option>Сторожовцы</option>
-                                    <option>Озераны</option>
+                                    {
+                                        cities?.reverse().map(item => {return(
+                                            <option>{item?.city}</option>
+                                        )})
+                                    }
                                 </select>
                             </div>
                         </div>
@@ -369,9 +393,11 @@ export default function Main() {
                                 onChange={(e) => setSelectWayStart(e.target.value)}
                                 className={style.selectСhecklist}
                             >
-                                <option>Остановка №1</option>
-                                <option>Остановка №2</option>
-                                <option>Остановка №3</option>
+                                {
+                                    cities?.filter(item => item.city === selectFrom)[0]?.busstops?.map(item => {return(
+                                        <option>{item}</option>
+                                    )})
+                                }
                             </select>
                             <span className={style.label}>Остановка высадки</span>
                             <select 
@@ -379,9 +405,11 @@ export default function Main() {
                                 onChange={(e) => setSelectWayStop(e.target.value)}
                                 className={style.selectСhecklist}
                             >
-                                <option>Остановка №1</option>
-                                <option>Остановка №2</option>
-                                <option>Остановка №3</option>
+                                {
+                                    cities?.filter(item => item.city === selectTo)[0]?.busstops?.map(item => {return(
+                                        <option>{item}</option>
+                                    )})
+                                }
                             </select>
                             <span className={style.label}>Количество мест</span>
                             <select 
@@ -397,7 +425,7 @@ export default function Main() {
                             
                             {/* error filling */}
                             <div className={style.wrapError} style={{display: errorFilling ? '' : 'none'}}>
-                                <span className={style.textError}>Необходимо ввести имя фамилию и телефон</span>
+                                <span className={style.textError}>Необходимо заполнить все поля</span>
                             </div>
                             <div className={style.wrapBtn}>
                                 <input 
@@ -424,7 +452,7 @@ export default function Main() {
                             </tr>
                             <tr>
                                 <th className={style.textTicket}>Маршрутка до:</th>
-                                <th className={style.textTicket}>{choiceRoutes[0]?.tripTo}</th>
+                                <th className={style.textTicket}>{directions}</th>
                             </tr>
                             <tr>
                                 <th className={style.textTicket}>Посадка - Высадка</th>

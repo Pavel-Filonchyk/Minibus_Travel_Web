@@ -5,7 +5,7 @@ import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs';
 import locale from 'antd/es/date-picker/locale/ru_RU'
 
-import { getTravels, postTravel, deleteTravel } from '../../core/actions/restAdminTravelActions'
+import { getTravels, postTravel, deleteTravel, postDirection, getDirections, deleteDirection } from '../../core/actions/restAdminTravelActions'
 import { postBusstop, getBusstops, deleteBusstop } from '../../core/actions/restAdminBusstopsActions'
 import { postCost, getCosts, deleteCost } from '../../core/actions/restAdminCostsActions'
 import style from './AdminAccount.module.scss'
@@ -17,6 +17,7 @@ export default function AdminAccount() {
 
     const user = useSelector(({restUserReducer: { user }}) => user)
     const travelsData = useSelector(({restAdminTravelReducer: { travelsData }}) => travelsData)
+    const directionsData = useSelector(({restAdminTravelReducer: { directionsData }}) => directionsData)
     const busstopsData = useSelector(({restAdminBusstopsReducer: { busstopsData }}) => busstopsData)
     const costsData = useSelector(({restAdminCostsReducer: { costsData }}) => costsData)
   
@@ -25,9 +26,11 @@ export default function AdminAccount() {
     const [travelTo, setTravelTo] = useState('')
     const [date, setDate] = useState(dayjs())
     const [time, setTime] = useState(dayjs())
-    //const [cost, setCost] = useState('')
     const [totalSeats, setTotalSeats] = useState('')
     const [errorFilling , setErrorFilling] = useState(false)
+
+    // состояния редактирования направлений
+    const [direction, setDirection] = useState('')
 
     // состояние редактирования остановок
     const [busstop, setBusstop] = useState([1])
@@ -54,6 +57,16 @@ export default function AdminAccount() {
     }
     const onDeleteTravel = (blockId) => {
         dispatch(deleteTravel(blockId))
+    }
+
+    const onPostDirection = () => {
+        dispatch(postDirection(direction))
+    }
+    const onGetDirections = () => {
+        dispatch(getDirections())
+    }
+    const onDeleteDirection = (blockId) =>{
+        dispatch(deleteDirection(blockId))
     }
 
     const onAddBusstop = (e) => {
@@ -163,6 +176,7 @@ export default function AdminAccount() {
                                         <th className={style.textTicket}>Количество мест</th>
                                         <th className={style.textTicket}>{item.totalSeats}</th>
                                     </tr>
+                                    
                                 </table>
                                 <div className={style.wrapBtn}>
                                     <div className={style.btn} 
@@ -177,6 +191,56 @@ export default function AdminAccount() {
                     })
                 : ''
             }  
+
+            {/* Добавление направление */}
+            <span className={style.title}>Добавить направление</span>
+            <div className={style.wrapManageTravel}>
+                <span className={style.label}>Маршрутка до:</span>
+                <input type="text" className={style.inputChecklist} value={direction} onChange={(e) => setDirection(e.target.value)}/>
+                <div className={style.wrapBtn}>
+                    <div className={style.btn}
+                        style={{marginTop: 20}}
+                        onClick={onPostDirection}
+                    >
+                        <span>Добавить</span>
+                    </div>
+                </div>
+            </div>
+            {/* Редактирование направлений */}
+            <span className={style.title}>Редактировать направление</span>
+            <div className={style.wrapBtn}>
+                <div className={style.btn}
+                    style={{marginTop: 0}}
+                    onClick={onGetDirections}
+                >
+                    <span>Направления</span>
+                </div>
+            </div>
+            {
+                directionsData?.length > 0 
+                ?
+                    directionsData.map(item => {
+                        return(
+                            <div className={style.wrapTravels}>
+                                <table style={{marginTop: 20, marginBottom: 15}}>
+                                    <tr>
+                                        <th className={style.textTicket}>Маршрутка до:</th>
+                                        <th className={style.textTicket}>{item.direction}</th>
+                                    </tr>
+                                </table>
+                                <div className={style.wrapBtn}>
+                                    <div className={style.btn} 
+                                        style={{backgroundColor: 'red', marginBottom: 0, marginTop: 0}}
+                                        onClick={() => onDeleteDirection(item.blockId)}
+                                    >
+                                        <span>Удалить</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    })
+                : ''
+            }
 
             {/* Добавление остановки */}
             <span className={style.title}>Добавить город с остановками</span> 

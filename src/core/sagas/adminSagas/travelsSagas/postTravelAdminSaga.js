@@ -1,7 +1,7 @@
 import { takeEvery, put, call, select } from 'redux-saga/effects'
-import { POST_TRAVEL, postTravelSuccess, postTravelError } from '../../actions/restAdminTravelActions'
-import httpProvider from '../../../common/httpProvider'
-import { TRAVELS_URL } from '../../../common/api'
+import { POST_TRAVEL, postTravelSuccess, postTravelError } from '../../../actions/restAdminTravelActions'
+import httpProvider from '../../../../common/httpProvider'
+import { TRAVELS_URL } from '../../../../common/api'
 
 function* workerLoader() {
     const postTravel = yield select(state => state.restAdminTravelReducer.postTravel)

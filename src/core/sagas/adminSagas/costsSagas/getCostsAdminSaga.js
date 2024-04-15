@@ -1,7 +1,7 @@
 import { takeEvery, put, call } from 'redux-saga/effects'
-import { GET_COSTS, getCostsSuccess, getCostsError } from '../../actions/restAdminCostsActions'
-import httpProvider from '../../../common/httpProvider'
-import { COSTS_URL } from '../../../common/api'
+import { GET_COSTS, getCostsSuccess, getCostsError } from '../../../actions/restAdminCostsActions'
+import httpProvider from '../../../../common/httpProvider'
+import { COSTS_URL } from '../../../../common/api'
 
 function* workerLoader() {
     try {

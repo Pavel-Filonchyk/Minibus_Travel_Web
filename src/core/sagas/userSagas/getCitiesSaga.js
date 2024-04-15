@@ -1,5 +1,5 @@
 import { takeEvery, put, call } from 'redux-saga/effects'
-import { GET_BUSSTOPS, getBusstopsSuccess, getBusstopsError } from '../../actions/restAdminBusstopsActions'
+import { GET_CITIES, getCitiesSuccess } from '../../actions/bookTravelActions'
 import httpProvider from '../../../common/httpProvider'
 import { CITIES_URL } from '../../../common/api'
 
@@ -7,13 +7,13 @@ function* workerLoader() {
     try {
         const { data } = yield call(httpProvider.get, CITIES_URL)
     
-        yield put(getBusstopsSuccess(data))
+        yield put(getCitiesSuccess(data))
       } catch (error) {
-        yield put(getBusstopsError(error))
+        yield put(console.log(error))
       }
   }
 
-export default function* watcherGetBusstopsAdmin() {
-  yield takeEvery(GET_BUSSTOPS, workerLoader)
+export default function* watcherGetCities() {
+  yield takeEvery(GET_CITIES, workerLoader)
 }
   

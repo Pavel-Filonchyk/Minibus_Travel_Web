@@ -1,7 +1,6 @@
 import _ from 'lodash' 
 
 const initialState = {
-    busstops: [],
     busstopsData: [],
     postBusstop: [],
     blockId: ''
@@ -14,7 +13,6 @@ const restAdminBusstopsReducer = (state = initialState, action) => {
             console.log(list)
             return {
                 ...state,
-                busstops: action.payload,
                 busstopsData: list,
             }
         case 'POST_BUSSTOP':

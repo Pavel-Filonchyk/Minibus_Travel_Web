@@ -1,5 +1,4 @@
 const initialState = {
-    costs: [],
     costsData: [],
     postCost: [],
     blockId: ''
@@ -11,7 +10,6 @@ const restAdminCostsReducer = (state = initialState, action) => {
             const list = Object.keys(action.payload).map(key => ({...action.payload[key], blockId: key}))
             return {
                 ...state,
-                costs: action.payload,
                 costsData: list,
             }
         case 'POST_COST':

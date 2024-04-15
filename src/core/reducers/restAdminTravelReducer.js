@@ -1,20 +1,19 @@
-import _ from 'lodash'
-
 const initialState = {
     travelsData: [],
-    travels: {},
     postTravel: {},
-    blockId: ''
+    blockId: '',
+    directionsData: [],
+    postDirection: [],
+    blockIdDirection: '',
 }
 
-const restAdminReducer = (state = initialState, action) => {
+const restAdminTravelReducer = (state = initialState, action) => {
     switch (action.type){ 
         case 'GET_TRAVELS_SUCCESS':
             const list = Object.keys(action.payload).map(key => ({...action.payload[key], blockId: key}))
             return {
                 ...state,
                 travelsData: list,
-                travels: action.payload
             }
         case 'POST_TRAVEL':
             const postData = action.payload
@@ -38,9 +37,30 @@ const restAdminReducer = (state = initialState, action) => {
                 }
             }else{return {state}}
 
+        case 'GET_DIRECTIONS_SUCCESS':
+            const directions = Object.keys(action.payload).map(key => ({...action.payload[key], blockId: key}))
+            return {
+                ...state,
+                directionsData: directions,
+            }
+        case 'POST_DIRECTION':
+            console.log(action.payload)
+            return {
+                ...state,
+                postDirection: {direction: action.payload}
+            }
+        case 'DELETE_DIRECTION':
+            const blockIdDirection = action.payload
+            const deleteDirection = state.directionsData.filter(item => item.blockId !== blockIdDirection)
+            return {
+                ...state,
+                directionsData: deleteDirection,
+                blockIdDirection
+            }   
+             
         default: 
         return state;  
     }
 }
     
-export default restAdminReducer
+export default restAdminTravelReducer
