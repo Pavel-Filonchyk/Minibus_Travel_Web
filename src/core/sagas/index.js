@@ -8,6 +8,7 @@ import watcherGetUser from './userSagas/getUserSaga'
 import watcherDeleteUser from './userSagas/deleteUserSaga'
 import watcherGetTravelsAdmin from './adminSagas/travelsSagas/getTravelsAdminSaga'
 import watcherDeleteTravelAdmin from './adminSagas/travelsSagas/deleteTravelAdminSaga'
+import watcherDeletePersonAdmin from './adminSagas/travelsSagas/deletePersonAdminSaga'
 import watcherPostTravelAdmin from './adminSagas/travelsSagas/postTravelAdminSaga'
 import watcherPostDirectionAdmin from './adminSagas/directionsSagas/postDirectionSaga'
 import watcherGetDirectionsAdmin from './adminSagas/directionsSagas/getDirectionsSaga'
@@ -29,6 +30,7 @@ export default function* rootSaga() {
         watcherDeleteUser(),
         watcherGetTravelsAdmin(),
         watcherDeleteTravelAdmin(),
+        watcherDeletePersonAdmin(),
         watcherPostTravelAdmin(),
         watcherPostBusstopAdmin(),
         watcherGetBusstopsAdmin(),

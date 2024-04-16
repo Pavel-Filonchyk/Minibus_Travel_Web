@@ -5,7 +5,7 @@ import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs';
 import locale from 'antd/es/date-picker/locale/ru_RU'
 
-import { getTravels, postTravel, deleteTravel, postDirection, getDirections, deleteDirection } from '../../core/actions/restAdminTravelActions'
+import { getTravels, postTravel, deleteTravel, deletePerson, postDirection, getDirections, deleteDirection } from '../../core/actions/restAdminTravelActions'
 import { postBusstop, getBusstops, deleteBusstop } from '../../core/actions/restAdminBusstopsActions'
 import { postCost, getCosts, deleteCost } from '../../core/actions/restAdminCostsActions'
 import style from './AdminAccount.module.scss'
@@ -41,6 +41,13 @@ export default function AdminAccount() {
     const [cost, setCost] = useState('')
     const [errorFillWay , setErrorFillWay] = useState(false)
 
+    // показать/скрыть блоки
+    const [showTravels, setShowTravels] = useState(false)
+    const [showPersons, setShowPersons] = useState(true)
+    const [showDirections, setShowDirections] = useState(false)
+    const [showBusstops, setShowBusstops] = useState(false)
+    const [showCosts, setShowCosts] = useState(false)
+
     const onPostTravel = () => {
         if (travelFrom && travelTo && totalSeats) {
             dispatch(postTravel({
@@ -54,31 +61,16 @@ export default function AdminAccount() {
     }
     const onGetTravels = () => {
         dispatch(getTravels())
-    }
-    const onDeleteTravel = (blockId) => {
-        dispatch(deleteTravel(blockId))
-    }
-
-    const onPostDirection = () => {
-        dispatch(postDirection(direction))
+        setShowTravels(item => !item)
     }
     const onGetDirections = () => {
         dispatch(getDirections())
-    }
-    const onDeleteDirection = (blockId) =>{
-        dispatch(deleteDirection(blockId))
-    }
-
-    const onAddBusstop = (e) => {
-        dispatch(postBusstop(e))
+        setShowDirections(item => !item)
     }
     const onGetBusstops = () => {
         dispatch(getBusstops())
+        setShowBusstops(item => !item)
     }
-    const onDeleteBusstop = (blockId) => {
-        dispatch(deleteBusstop(blockId))
-    }
-
     const onPostCost = () => {
         if (wayFrom && wayTo && cost) {
             dispatch(postCost({
@@ -92,9 +84,7 @@ export default function AdminAccount() {
     }
     const onGetCosts = () => {
         dispatch(getCosts())
-    }
-    const onDeleteCost = (blockId) => {
-        dispatch(deleteCost(blockId))
+        setShowCosts(item => !item)
     }
 
     return (
@@ -154,11 +144,11 @@ export default function AdminAccount() {
                 </div>
             </div>
             {
-                travelsData?.length > 0 
-                ?
-                    travelsData.map(item => {
+               
+                    travelsData?.map(item => {
                         return(
-                            <div className={style.wrapTravels}>
+                            <div className={style.wrapTravels} style={{display: showTravels ? '' : 'none'}}>
+                                {/* style={{display: showTravels ? '' : 'none'}} */}
                                 <table style={{marginTop: 20, marginBottom: 15}}>
                                     <tr>
                                         <th className={style.textTicket}>Направление:</th>
@@ -176,12 +166,49 @@ export default function AdminAccount() {
                                         <th className={style.textTicket}>Количество мест</th>
                                         <th className={style.textTicket}>{item.totalSeats}</th>
                                     </tr>
-                                    
+                                    <div className={style.wrapBtn} style={{justifyContent: 'flex-start', marginBottom: 10, marginLeft: 10}}>
+                                        <div className={style.btn} 
+                                            style={{marginBottom: 0, marginTop: 0}}
+                                            //onClick={() => setShowPersons(item => !item)}
+                                        >
+                                            <span>Пассажиры</span>
+                                        </div>
+                                    </div>
+                                    {
+                                        item.persons?.map(elem => {return(
+                                            <>
+                                                <tr >
+                                                    <th className={style.textTicket}>Имя</th>
+                                                    <th className={style.textTicket}>{elem.fullName}</th>
+                                                </tr>
+                                                <tr >
+                                                    <th className={style.textTicket}>Телефон</th>
+                                                    <th className={style.textTicket}>{elem.phoneNumber}</th>
+                                                </tr>
+                                                <tr >
+                                                    <th className={style.textTicket}>Посадка-Высадка</th>
+                                                    <th className={style.textTicket}>{elem.tripFrom}-{elem.tripTo}</th>
+                                                </tr>
+                                                <tr >
+                                                    <th className={style.textTicket}>Количество мест</th>
+                                                    <th className={style.textTicket}>{elem.numberSeats}</th>
+                                                </tr>
+                                                <div className={style.wrapBtn} style={{ justifyContent: 'flex-start', marginBottom: 12, marginLeft: 10}}>
+                                                    <div className={style.btn} 
+                                                        style={{backgroundColor: 'red', marginBottom: 0, marginTop: 0}}
+                                                        onClick={() => dispatch(deletePerson({id: elem.id, blockId: item.blockId}))}
+                                                    >
+                                                        <span>Удалить</span>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )})
+                                    }
                                 </table>
                                 <div className={style.wrapBtn}>
                                     <div className={style.btn} 
                                         style={{backgroundColor: 'red', marginBottom: 0, marginTop: 0}}
-                                        onClick={() => onDeleteTravel(item.blockId)}
+                                        onClick={() => dispatch(deleteTravel(item.blockId))}
                                     >
                                         <span>Удалить</span>
                                     </div>
@@ -189,7 +216,7 @@ export default function AdminAccount() {
                             </div>
                         )
                     })
-                : ''
+               
             }  
 
             {/* Добавление направление */}
@@ -200,7 +227,7 @@ export default function AdminAccount() {
                 <div className={style.wrapBtn}>
                     <div className={style.btn}
                         style={{marginTop: 20}}
-                        onClick={onPostDirection}
+                        onClick={() => dispatch(postDirection(direction))}
                     >
                         <span>Добавить</span>
                     </div>
@@ -221,7 +248,7 @@ export default function AdminAccount() {
                 ?
                     directionsData.map(item => {
                         return(
-                            <div className={style.wrapTravels}>
+                            <div className={style.wrapTravels} style={{display: showDirections ? '' : 'none'}}>
                                 <table style={{marginTop: 20, marginBottom: 15}}>
                                     <tr>
                                         <th className={style.textTicket}>Маршрутка до:</th>
@@ -231,7 +258,7 @@ export default function AdminAccount() {
                                 <div className={style.wrapBtn}>
                                     <div className={style.btn} 
                                         style={{backgroundColor: 'red', marginBottom: 0, marginTop: 0}}
-                                        onClick={() => onDeleteDirection(item.blockId)}
+                                        onClick={() => dispatch(deleteDirection(item.blockId))}
                                     >
                                         <span>Удалить</span>
                                     </div>
@@ -246,7 +273,7 @@ export default function AdminAccount() {
             <span className={style.title}>Добавить город с остановками</span> 
             <div className={style.wrapManageTravel}>
                 <Form
-                    onFinish={(e) => onAddBusstop(e)}
+                    onFinish={(e) => dispatch(postBusstop(e))}
                     form={form}
                     initialValues={{
                         remember: false
@@ -315,7 +342,7 @@ export default function AdminAccount() {
                 ?
                     busstopsData?.map(item => {
                         return(
-                            <div className={style.wrapTravels}>
+                            <div className={style.wrapTravels} style={{display: showBusstops ? '' : 'none'}}>
                                 <table style={{marginTop: 20, marginBottom: 15}}>
                                     <tr>
                                         <th className={style.textTicket} style={{width: '50%'}}>Город:</th>
@@ -335,7 +362,7 @@ export default function AdminAccount() {
                                 <div className={style.wrapBtn}>
                                     <div className={style.btn} 
                                         style={{backgroundColor: 'red', marginBottom: 0, marginTop: 0}}
-                                        onClick={() => onDeleteBusstop(item.blockId)}
+                                        onClick={() => dispatch(deleteBusstop(item.blockId))}
                                     >
                                         <span>Удалить</span>
                                     </div>
@@ -382,7 +409,7 @@ export default function AdminAccount() {
                 ?
                     costsData.map(item => {
                         return(
-                            <div className={style.wrapTravels}>
+                            <div className={style.wrapTravels} style={{display: showCosts ? '' : 'none'}}>
                                 <table style={{marginTop: 20, marginBottom: 15}}>
                                     <tr>
                                         <th className={style.textTicket}>Направление:</th>
@@ -397,7 +424,7 @@ export default function AdminAccount() {
                                 <div className={style.wrapBtn}>
                                     <div className={style.btn} 
                                         style={{backgroundColor: 'red', marginBottom: 0, marginTop: 0}}
-                                        onClick={() => onDeleteCost(item.blockId)}
+                                        onClick={() => dispatch(deleteCost(item.blockId))}
                                     >
                                         <span>Удалить</span>
                                     </div>

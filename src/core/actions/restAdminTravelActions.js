@@ -40,7 +40,7 @@ const deleteDirectionSuccess = (data) => {
         payload: data 
     } 
 }
-export const DELETE_COST = 'DELETE_DIRECTION'
+
 const getTravels = (data) => {
     return {
         type: 'GET_TRAVELS',
@@ -61,6 +61,20 @@ const getTravelsError = (data) => {
         payload: data 
     } 
 }
+const deletePerson = (data) => {
+    return {
+        type: 'DELETE_PERSON',
+        payload: data 
+    } 
+}
+export const DELETE_PERSON = 'DELETE_PERSON'
+const deletePersonSuccess = (data) => {
+    return {
+        type: 'DELETE_PERSON_SUCCESS',
+        payload: data 
+    } 
+}
+
 const postTravel = (data) => {
     return {
         type: 'POST_TRAVEL',
@@ -112,6 +126,8 @@ export {
     getTravels,
     getTravelsSuccess,
     getTravelsError,
+    deletePerson,
+    deletePersonSuccess,
     postTravel,
     postTravelSuccess,
     postTravelError,

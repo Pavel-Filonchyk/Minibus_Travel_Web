@@ -27,7 +27,6 @@ const restUserReducer = (state = initialState, action) => {
             }
 
             const userData = peoples.filter(item => item?.phoneNumber === state.phoneNumber)
-            console.log(userData)
             return {
                 ...state,
                 userData,
