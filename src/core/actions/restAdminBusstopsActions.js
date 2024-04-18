@@ -18,6 +18,18 @@ const getBusstopsError = (data) => {
         payload: data 
     } 
 }
+const busstopCollector = (data) => {
+    return {
+        type: 'BUSSTOP_COLLECTOR',
+        payload: data 
+    }
+}
+const deleteBusstopCollector = (index) => {
+    return {
+        type: 'DELETE_BUSSTOP_COLLECTOR',
+        payload: index 
+    }
+}
 const postBusstop = (data) => {
     return {
         type: 'POST_BUSSTOP',
@@ -63,6 +75,8 @@ export {
     getBusstops,
     getBusstopsSuccess,
     getBusstopsError,
+    busstopCollector,
+    deleteBusstopCollector,
     postBusstop,
     postBusstopSuccess,
     postBusstopError,

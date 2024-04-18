@@ -3,27 +3,66 @@ import _ from 'lodash'
 const initialState = {
     busstopsData: [],
     postBusstop: [],
-    blockId: ''
+    blockId: '',
+    citiesCollect: []
 }
 
 const restAdminBusstopsReducer = (state = initialState, action) => {
     switch (action.type){ 
         case 'GET_BUSSTOPS_SUCCESS':
             const list = Object.keys(action.payload).map(key => ({...action.payload[key], blockId: key}))
-            console.log(list)
             return {
                 ...state,
                 busstopsData: list,
             }
-        case 'POST_BUSSTOP':
-            const busstops = []
-            for (let item in action.payload) {
-                busstops.push({[item]: action.payload[item]})
+            
+        case 'BUSSTOP_COLLECTOR':
+            const city = action.payload.city
+            const busstop = action.payload.busstop
+            const time = action.payload.timeBusstop
+            
+            let citiesCollect
+            if(state.citiesCollect.length > 0){
+                for (let item of state.citiesCollect) {
+                    if(item.city === city){
+                        const index = state.citiesCollect.indexOf(item)
+                        const newItem = {
+                            city, 
+                            busstops: [...item.busstops, {busstop, time}]
+                        }
+                        citiesCollect = [
+                            ...state.citiesCollect.splice(0, index),
+                            newItem,
+                            ...state.citiesCollect.splice(index + 1)
+                        ]
+                    }else{
+                        citiesCollect = [...state.citiesCollect, {city, busstops: [{busstop, time}]}]
+                    }
+                }
+                return {
+                    ...state,
+                    citiesCollect
+                }
+            }else{
+                return {
+                    ...state,
+                    citiesCollect: [{city, busstops: [{busstop, time}]}]
+                }
             }
-            const cityBusstops = {city: busstops[0].city, busstops: busstops.slice(1, busstops.length).map(item => Object.values(item)).flat()}
+        
+        case 'DELETE_BUSSTOP_COLLECTOR':
+            const index = action.payload
             return {
                 ...state,
-                postBusstop: cityBusstops
+                citiesCollect: [
+                    ...state.citiesCollect.splice(0, index),
+                    ...state.citiesCollect.splice(index + 1)
+                ]
+            }
+        case 'POST_BUSSTOP':
+            return {
+                ...state,
+                postBusstop: action.payload
             }
         case 'DELETE_BUSSTOP':
             const blockId = action.payload

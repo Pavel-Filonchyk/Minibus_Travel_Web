@@ -22,6 +22,7 @@ const restAdminTravelReducer = (state = initialState, action) => {
         case 'POST_TRAVEL':
             const postData = action.payload
             const postTravel = {
+                cities: postData.cities,
                 tripFrom: postData.travelFrom, tripTo: postData.travelTo, dateTrip: postData.date, totalSeats: postData.totalSeats, freeSeates: 0, reservedSeats: 0, timeTrips: postData.time, cost: postData.cost, 
                 persons: [{id: '00000000', blockId: '00000000', fullName: '', tripFrom: '', wayStart: '', dateTrip:"00.00.00",  timeTrips: '', tripTo: '', wayStop: '', phoneNumber: '00000000000', numberSeats: 0},]
             }
@@ -32,14 +33,14 @@ const restAdminTravelReducer = (state = initialState, action) => {
         case 'DELETE_TRAVEL':
             const blockId = action.payload
 
-            if(blockId !== '-NvagtU0V3zwBcEFzIOx'){
+            //if(blockId !== '-NvagtU0V3zwBcEFzIOx'){
                 const deleteTravel = state.travelsData.filter(item => item.blockId !== blockId)
                 return {
                     ...state,
                     travelsData: deleteTravel,  // удаление на экране
                     blockId                     // передача id для удаления на сервере
                 }
-            }else{return {state}}
+            //}else{return {state}}
 
         case 'DELETE_PERSON':
         const id = action.payload.id

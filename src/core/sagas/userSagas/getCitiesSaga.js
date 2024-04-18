@@ -5,9 +5,9 @@ import { CITIES_URL } from '../../../common/api'
 
 function* workerLoader() {
     try {
-        const { data } = yield call(httpProvider.get, CITIES_URL)
+        //const { data } = yield call(httpProvider.get, CITIES_URL)
     
-        yield put(getCitiesSuccess(data))
+        //yield put(getCitiesSuccess(data))
       } catch (error) {
         yield put(console.log(error))
       }

@@ -41,7 +41,7 @@
             margin-top: 20px;
             margin-bottom: 10px;
             font-family: 'Montserrat', sans-serif;
-            color: black
+            color: black;
         }
         .inputChecklist {
             border: none;
@@ -69,6 +69,19 @@
                 font-weight: 600;
                 font-size: 18px;
             }
+        }
+        .selectWay {
+            border: none;
+            outline: none;
+            font-weight: 600;
+            font-size: 18px;
+            width: 100%;
+            margin: 8px;
+            border-bottom: 2px solid #4F443B;
+            font-family: 'Montserrat', sans-serif;
+            // @media(max-width: 520px){
+            //     width: 340px;
+            // }
         }
     }
     .wrapBtn {

@@ -5,7 +5,6 @@ import { CITIES_URL } from '../../../../common/api'
 
 function* workerLoader() {
     const postBusstop = yield select(state => state.restAdminBusstopsReducer.postBusstop)
-
     try {
         const { data } = yield call(httpProvider.post, CITIES_URL, {data: postBusstop})
     

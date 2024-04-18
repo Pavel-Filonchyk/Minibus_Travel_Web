@@ -6,7 +6,6 @@ import { DIRECTIONS_URL } from '../../../common/api'
 function* workerLoader() {
     try {
         const { data } = yield call(httpProvider.get, DIRECTIONS_URL)
-        console.log(data)
         yield put(getDirectionsSuccess(data))
         
       } catch (error) {

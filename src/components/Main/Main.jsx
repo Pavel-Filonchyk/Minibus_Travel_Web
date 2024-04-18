@@ -51,7 +51,8 @@ export default function Main() {
     // server data
     const [choiceRoutes, setChoiceRoutes] = useState([])
     const routes = travels.filter(item => item.dateTrip === date.format('DD.MM.YYYY') && item.tripTo === directions)
-
+    // console.log(travels)
+    // console.log(routes)
     useEffect(() => {
         dispatch(getCities())
     }, [])
@@ -406,9 +407,9 @@ export default function Main() {
                                 className={style.selectСhecklist}
                             >
                                 {
-                                    cities?.filter(item => item.city === selectTo)[0]?.busstops?.map(item => {return(
-                                        <option>{item}</option>
-                                    )})
+                                    // routes[0]?.cities.map(item => {return(
+                                    //     <option>{item.ci}</option>
+                                    // )})
                                 }
                             </select>
                             <span className={style.label}>Количество мест</span>
