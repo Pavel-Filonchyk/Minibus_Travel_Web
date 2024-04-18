@@ -24,12 +24,12 @@ export default function AdminAccount() {
     const [travelFrom, setTravelFrom] = useState('')
     const [travelTo, setTravelTo] = useState('')
     const [date, setDate] = useState(dayjs())
-    const [time, setTime] = useState(dayjs().format('HH:mm'))
+    const [time, setTime] = useState('')
     const [totalSeats, setTotalSeats] = useState('')
     const [errorFilling , setErrorFilling] = useState(false)
    
     const filterCities = busstopsData?.filter(item => item.direction === travelTo)
-
+    console.log(filterCities)
     // состояния редактирования направлений
     const [direction, setDirection] = useState('')
 
@@ -54,7 +54,7 @@ export default function AdminAccount() {
     const [showCosts, setShowCosts] = useState(false)
 
     const onPostTravel = () => {
-        const cities = filterCities?.filter(item => dayjs(item?.cities[0].time).format('HH:mm') === time)
+        const cities = filterCities?.filter(item => item?.cities[0]?.busstops[0]?.time === time)
         if (travelFrom && travelTo && totalSeats) {
             dispatch(postTravel({
                 cities: cities[0],
@@ -113,9 +113,9 @@ export default function AdminAccount() {
             {/* Добавление рейса*/}
             <span className={style.title}>Добавить рейс</span>
             <div className={style.wrapManageTravel}>
-                <span className={style.label}>Отправление от</span>
+                <span className={style.label}>Отправление</span>
                 <input type="text" className={style.inputChecklist} value={travelFrom} onChange={(e) => setTravelFrom(e.target.value)}/>
-                <span className={style.label}>Конечная</span>
+                <span className={style.label}>Прибытие</span>
                 <input type="text" className={style.inputChecklist} value={travelTo} onChange={(e) => setTravelTo(e.target.value)}/>
                 <span className={style.label}>Дата отправления</span>
                 <DatePicker 
@@ -146,13 +146,17 @@ export default function AdminAccount() {
                 >
                     <option selected="selected">Сделайте выбор</option>
                     {
-                       filterCities?.map(item => {return(
-                            <option>{dayjs(item?.cities[0].time).format('HH:mm')}</option>
-                        )})
+                        filterCities?.map(item => {
+                            return(
+                                <option>{item?.cities[0]?.busstops[0]?.time}</option>
+                            )
+                        })
+                        
                     }
                 </select>
                 <span className={style.label}>Количество мест</span>
                 <input type="number" className={style.inputChecklist} style={{marginBottom: 20}} value={totalSeats} onChange={(e) => setTotalSeats(e.target.value)}/>
+                
                 {/* error filling */}
                 <div className={style.wrapError} style={{display: errorFilling ? '' : 'none'}}>
                     <span className={style.textError}>Необходимо заполнить все поля</span>
