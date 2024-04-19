@@ -16,10 +16,8 @@ export default function AdminAccount() {
     const travelsData = useSelector(({restAdminTravelReducer: { travelsData }}) => travelsData)
     const directionsData = useSelector(({restAdminTravelReducer: { directionsData }}) => directionsData)
     const busstopsData = useSelector(({restAdminBusstopsReducer: { busstopsData }}) => busstopsData)
-    console.log(busstopsData)
     const collectBusstops = useSelector(({restAdminBusstopsReducer: {citiesCollect  }}) => citiesCollect)
     const costsData = useSelector(({restAdminCostsReducer: { costsData }}) => costsData)
- 
     // состояния редактирования рейсов
     const [travelFrom, setTravelFrom] = useState('')
     const [travelTo, setTravelTo] = useState('')
@@ -28,8 +26,8 @@ export default function AdminAccount() {
     const [totalSeats, setTotalSeats] = useState('')
     const [errorFilling , setErrorFilling] = useState(false)
    
-    const filterCities = busstopsData?.filter(item => item.direction === travelTo)
-    console.log(filterCities)
+    const filterCities = busstopsData?.filter(item => item?.cities[0]?.city === travelFrom && item?.cities[item?.cities.length -1]?.city === travelTo)
+  
     // состояния редактирования направлений
     const [direction, setDirection] = useState('')
 
@@ -38,7 +36,6 @@ export default function AdminAccount() {
     const [city, setCity] = useState('')
     const [busstop, setBusstop] =  useState('')
     const [timeBusstop, setTimeBusstop] =  useState('')
-    //const [collectBusstops, setCollectBusstops] = useState([])
 
     // состояния редактирования стоимостей
     const [wayFrom, setWayFrom] = useState('')
@@ -57,7 +54,7 @@ export default function AdminAccount() {
         const cities = filterCities?.filter(item => item?.cities[0]?.busstops[0]?.time === time)
         if (travelFrom && travelTo && totalSeats) {
             dispatch(postTravel({
-                cities: cities[0],
+                cities: cities?.[0]?.cities,
                 travelFrom, travelTo, date: date.format('DD.MM.YYYY'), time, totalSeats
             }))
             setErrorFilling(false)
@@ -71,8 +68,8 @@ export default function AdminAccount() {
         setShowTravels(item => !item)
     }
     const onGetDirections = () => {
-        // dispatch(getDirections())
-        // setShowDirections(item => !item)
+        dispatch(getDirections())
+        setShowDirections(item => !item)
     }
 
     const onCollectBusstops = () => {
@@ -83,7 +80,7 @@ export default function AdminAccount() {
         dispatch(deleteBusstopCollector(index))
     }
     const onPostBusstop = () => {
-        dispatch(postBusstop({direction: cityDirection, cities: collectBusstops}))
+        dispatch(postBusstop({cities: collectBusstops}))
     }
     const onGetBusstops = () => {
         dispatch(getBusstops())
@@ -253,61 +250,9 @@ export default function AdminAccount() {
                 })
             }  
 
-            {/* Добавление направление */}
-            <span className={style.title}>Добавить направление</span>
+            {/* Добавление рассписания */}
+            <span className={style.title}>Добавить рассписание</span> 
             <div className={style.wrapManageTravel}>
-                <span className={style.label}>Маршрутка до:</span>
-                <input type="text" className={style.inputChecklist} value={direction} onChange={(e) => setDirection(e.target.value)}/>
-                <div className={style.wrapBtn}>
-                    <div className={style.btn}
-                        style={{marginTop: 20}}
-                        onClick={() => dispatch(postDirection(direction))}
-                    >
-                        <span>Добавить</span>
-                    </div>
-                </div>
-            </div>
-            {/* Редактирование направлений */}
-            <span className={style.title}>Редактировать направление</span>
-            <div className={style.wrapBtn}>
-                <div className={style.btn}
-                    style={{marginTop: 0}}
-                    onClick={onGetDirections}
-                >
-                    <span>Направления</span>
-                </div>
-            </div>
-            {
-                directionsData?.length > 0 
-                ?
-                    directionsData.map(item => {
-                        return(
-                            <div className={style.wrapTravels} style={{display: showDirections ? '' : 'none'}}>
-                                <table style={{marginTop: 20, marginBottom: 15}}>
-                                    <tr>
-                                        <th className={style.textTicket}>Маршрутка до:</th>
-                                        <th className={style.textTicket}>{item.direction}</th>
-                                    </tr>
-                                </table>
-                                <div className={style.wrapBtn}>
-                                    <div className={style.btn} 
-                                        style={{backgroundColor: 'red', marginBottom: 0, marginTop: 0}}
-                                        onClick={() => dispatch(deleteDirection(item.blockId))}
-                                    >
-                                        <span>Удалить</span>
-                                    </div>
-                                </div>
-                            </div>
-                        )
-                    })
-                : ''
-            }
-
-            {/* Добавление остановки */}
-            <span className={style.title}>Добавить город с остановками</span> 
-            <div className={style.wrapManageTravel}>
-                <span className={style.label} style={{fontWeight :'bold'}}>Направление</span>
-                <input type="text" className={style.inputChecklist} value={cityDirection} onChange={(e) => setCityDirection(e.target.value)}/>
                 <span className={style.label} style={{fontWeight :'bold'}}>Город</span>
                 <input type="text" className={style.inputChecklist} value={city} onChange={(e) => setCity(e.target.value)}/>
                 <span className={style.label} style={{fontWeight :'bold'}}>Остановка</span>
@@ -370,8 +315,8 @@ export default function AdminAccount() {
                     </div>
                 </div> 
             </div>
-            {/* Редактирование остановок */}
-            <span className={style.title}>Редактирование остановок</span> 
+            {/* Редактирование рассписаний */}
+            <span className={style.title}>Редактирование рассписания</span> 
             <div className={style.wrapBtn}>
                 <div className={style.btn}
                     style={{marginTop: 0}}
@@ -493,6 +438,56 @@ export default function AdminAccount() {
                     })
                 : ''
             } 
+
+             {/* Добавление городов следования (direction) */}
+             <span className={style.title}>Добавить направление</span>
+            <div className={style.wrapManageTravel}>
+                <span className={style.label}>Город:</span>
+                <input type="text" className={style.inputChecklist} value={direction} onChange={(e) => setDirection(e.target.value)}/>
+                <div className={style.wrapBtn}>
+                    <div className={style.btn}
+                        style={{marginTop: 20}}
+                        onClick={() => dispatch(postDirection(direction))}
+                    >
+                        <span>Добавить</span>
+                    </div>
+                </div>
+            </div>
+            {/* Редактирование городов */}
+            <span className={style.title}>Редактировать города</span>
+            <div className={style.wrapBtn}>
+                <div className={style.btn}
+                    style={{marginTop: 0}}
+                    onClick={onGetDirections}
+                >
+                    <span>Города</span>
+                </div>
+            </div>
+            {
+                directionsData?.length > 0 
+                ?
+                    directionsData.map(item => {
+                        return(
+                            <div className={style.wrapTravels} style={{display: showDirections ? '' : 'none'}}>
+                                <table style={{marginTop: 20, marginBottom: 15}}>
+                                    <tr>
+                                        <th className={style.textTicket}>Город:</th>
+                                        <th className={style.textTicket}>{item.direction}</th>
+                                    </tr>
+                                </table>
+                                <div className={style.wrapBtn}>
+                                    <div className={style.btn} 
+                                        style={{backgroundColor: 'red', marginBottom: 0, marginTop: 0}}
+                                        onClick={() => dispatch(deleteDirection(item.blockId))}
+                                    >
+                                        <span>Удалить</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    })
+                : ''
+            }
         </div>
     )
 }

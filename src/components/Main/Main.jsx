@@ -11,7 +11,8 @@ import uuid from 'react-uuid'
 
 import PersonalArea from '../PersonalArea/PersonalArea'
 import AdminAccount from '../AdminAccount/AdminAccount'
-import { getCities, getTravels, postUser, getDirections } from '../../core/actions/bookTravelActions'
+import { getTravels, postUser, getDirections } from '../../core/actions/bookTravelActions'
+import { getCosts } from '../../core/actions/restAdminCostsActions'
 import style from './Main.module.scss'
 
 import { auth } from '../../firebase.config'
@@ -20,25 +21,20 @@ export default function Main() {
 
     const dispatch = useDispatch()
 
-    const cities = useSelector(({getTravelsReducer: { cities }}) => cities)
+    // список всех рейсов
     const travels = useSelector(({getTravelsReducer: { travels }}) => travels)
-    const directionsData = useSelector(({getTravelsReducer: { directions }}) => directions)
+    // список городов по направлению
+    const directions = useSelector(({getTravelsReducer: { directions }}) => directions)
+    const costs = useSelector(({restAdminCostsReducer: { costsData }}) => costsData)
     const getError = useSelector(({getTravelsReducer: { getError }}) => getError)
     const postSuccess = useSelector(({postUserReducer: { postSuccess }}) => postSuccess)
     const postError = useSelector(({postUserReducer: { postError }}) => postError)
-
+    
     // auth
     const [confirmCode, setConfirmCode] = useState('')
     const [user, setUser] = useState(null)
 
-    const [calc, setCalc] = useState(0)
-    const [changeWay, setChengeWay] = useState(true)
-    const [errorFilling , setErrorFilling] = useState(false)
-    const [showCode, setShowCode] = useState(false)
-    const [removePostBtns, setRemovePostBtns] = useState(false)
-    
     // check
-    const [directions, setDirections] = useState("Гомель")
     const [selectFrom, setSelectFrom] = useState("Туров")
     const [selectTo, setSelectTo] = useState("Гомель")
     const [date, setDate] = useState(dayjs())
@@ -48,17 +44,18 @@ export default function Main() {
     const [wayStop, setSelectWayStop] = useState("")
     const [numberSeats, setNumberSeats] = useState(1)
 
+    const [calc, setCalc] = useState(0)
+    const [changeWay, setChengeWay] = useState(true)
+    const [errorFilling , setErrorFilling] = useState(false)
+    const [showCode, setShowCode] = useState(false)
+    const [removePostBtns, setRemovePostBtns] = useState(false)
+
     // server data
     const [choiceRoutes, setChoiceRoutes] = useState([])
-    const routes = travels.filter(item => item.dateTrip === date.format('DD.MM.YYYY') && item.tripTo === directions)
-    // console.log(travels)
-    // console.log(routes)
-    useEffect(() => {
-        dispatch(getCities())
-    }, [])
-
+  
     useEffect(() => {
         dispatch(getDirections())
+        dispatch(getCosts())
     }, [])
     
     useEffect(() => {
@@ -82,13 +79,25 @@ export default function Main() {
         }
     }, [user])
     
+    let costRoute
+    for (let item of costs) {
+        const findCost = () => {
+            if(item.wayFrom === selectFrom && item.wayTo === selectTo){
+                return item.cost
+            }else{return null}
+        }
+        if(findCost() !== null){
+            costRoute = findCost()
+        }  
+    }
+
     const getRoutes = async () => {
-        dispatch(getTravels())
+        dispatch(getTravels({selectFrom, selectTo, date: date.format('DD.MM.YYYY')}))
 
         setCalc(1)
     }
     const onChoiceRoute = (id) => {
-        const route = routes?.filter(item => item.blockId === id)
+        const route = travels?.filter(item => item.blockId === id)
         setChoiceRoutes(route)
     
         setCalc(calc +1)
@@ -216,24 +225,6 @@ export default function Main() {
                     {/* Выбрать рейсы */}
                     <span>ОНЛАЙН БРОНИРОВАНИЕ</span>
                     <div className={style.wrapForm} style={{display: calc > 0 ? 'none' : ''}}>
-                        <div className={style.wrapDirection}>
-                            <span className={style.titleDirection}>Выберите направление</span>
-                            <div className={style.blockDirection}>
-                                <span>Маршрутка до: &nbsp;</span>
-                                <select 
-                                    value={directions}
-                                    onChange={(e) => setDirections(e.target.value)}
-                                    style={{margin: 0}}
-                                    className={style.selectWay}
-                                >
-                                    {
-                                        directionsData?.map(item => {return(
-                                            <option>{item?.direction}</option>
-                                        )})
-                                    }
-                                </select>
-                            </div>
-                        </div>
                         <div className={style.wrapSelectWay}>
                             <div className={style.blockSelectWay}>
                                 <span style={{marginBottom: 12, marginLeft: 15}}>Откуда</span>
@@ -243,8 +234,8 @@ export default function Main() {
                                     className={style.selectWay}
                                 >
                                     {
-                                        cities?.map(item => {return(
-                                            <option>{item?.city}</option>
+                                        directions?.map(item => {return(
+                                            <option>{item?.direction}</option>
                                         )})
                                     }
                                 </select>
@@ -264,8 +255,8 @@ export default function Main() {
                                     className={style.selectWay}
                                 >
                                     {
-                                        cities?.reverse().map(item => {return(
-                                            <option>{item?.city}</option>
+                                        directions?.reverse().map(item => {return(
+                                            <option>{item?.direction}</option>
                                         )})
                                     }
                                 </select>
@@ -305,7 +296,7 @@ export default function Main() {
                         ?
                             <> 
                                 {
-                                    routes?.map(item => {
+                                    travels?.map(item => {
                                         const freeSeats = item.totalSeats - item.reservedSeats
                                         return (
                                             <>
@@ -321,10 +312,6 @@ export default function Main() {
                                                     <tr>
                                                         <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Время отправления</th>
                                                         <th className={style.textTicket}>{item.timeTrips}</th>
-                                                    </tr>
-                                                    <tr>
-                                                        <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Цена</th>
-                                                        <th className={style.textTicket}>{item.cost}</th>
                                                     </tr>
                                                     <tr>
                                                         <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Количество свободных мест</th>
@@ -348,7 +335,7 @@ export default function Main() {
                                         )
                                     }) 
                                 }
-                                <div className={style.wrapBtn} style={{display: routes.length > 0 || getError ? 'none' : '', flexDirection: 'column', alignItems: 'center'}}>
+                                <div className={style.wrapBtn} style={{display: travels.length > 0 || getError ? 'none' : '', flexDirection: 'column', alignItems: 'center'}}>
                                     <span>На выбранные даты рейсов нет</span>
                                     <div className={style.order} style={{backgroundColor: 'rgb(38, 166, 190)', width: 160}}
                                         onClick={() => setCalc(0)}
@@ -376,7 +363,7 @@ export default function Main() {
                         <span>Посадка - Высадка: <span style={{fontWeight: '500'}}>{selectFrom} - {selectTo}</span></span>
                         <span>Дата отправления: <span style={{fontWeight: '500'}}>{choiceRoutes[0]?.dateTrip}</span></span>
                         <span>Время отправления: <span style={{fontWeight: '500'}}>{choiceRoutes[0]?.timeTrips}</span></span>
-                        
+                        <span>Цена: <span style={{fontWeight: '500'}}>{costRoute} б.р.</span></span>
                         <div style={{display: 'flex', flexDirection: 'column'}}>
                             <span className={style.label}>Введите имя и фамилию</span>
                             <input type="text" className={style.inputChecklist} value={fullName} onChange={(e) => setFullName(e.target.value)} required/>
@@ -395,8 +382,9 @@ export default function Main() {
                                 className={style.selectСhecklist}
                             >
                                 {
-                                    cities?.filter(item => item.city === selectFrom)[0]?.busstops?.map(item => {return(
-                                        <option>{item}</option>
+                                    choiceRoutes[0]?.cities.filter(item => item.city === selectFrom)[0]
+                                        ?.busstops?.map(elem => {return(
+                                            <option>{elem.busstop}</option>
                                     )})
                                 }
                             </select>
@@ -407,9 +395,10 @@ export default function Main() {
                                 className={style.selectСhecklist}
                             >
                                 {
-                                    // routes[0]?.cities.map(item => {return(
-                                    //     <option>{item.ci}</option>
-                                    // )})
+                                    choiceRoutes[0]?.cities.filter(item => item.city === selectTo)[0]
+                                        ?.busstops?.map(elem => {return(
+                                            <option>{elem.busstop}</option>
+                                    )})
                                 }
                             </select>
                             <span className={style.label}>Количество мест</span>
@@ -450,10 +439,6 @@ export default function Main() {
                             <tr>
                                 <th className={style.textTicket} style={{fontWeight: '700', height: 60}}>Онлайн заказ</th>
                                 <th className={style.textTicket}></th>
-                            </tr>
-                            <tr>
-                                <th className={style.textTicket}>Маршрутка до:</th>
-                                <th className={style.textTicket}>{directions}</th>
                             </tr>
                             <tr>
                                 <th className={style.textTicket}>Посадка - Высадка</th>

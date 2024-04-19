@@ -102,7 +102,6 @@ const restAdminTravelReducer = (state = initialState, action) => {
                 directionsData: directions,
             }
         case 'POST_DIRECTION':
-            console.log(action.payload)
             return {
                 ...state,
                 postDirection: {direction: action.payload}
