@@ -51,8 +51,24 @@ export default function Main() {
 
     // server data
     const [choiceRoutes, setChoiceRoutes] = useState([])
-    console.log(travels)
-    console.log(choiceRoutes)
+  
+    let costRoute
+    for (let item of costs) {
+        const findCost = () => {
+            if(item.wayFrom === selectFrom && item.wayTo === selectTo){
+                return item.cost
+            }else{return null}
+        }
+        if(findCost() !== null){
+            costRoute = findCost()
+        }  
+    }
+    
+    const timeStart = choiceRoutes[0]?.cities.filter(item => item.city === selectFrom)[0]
+        ?.busstops.filter(elem => elem.busstop === wayStart)[0]?.time
+    const timeStop = choiceRoutes[0]?.cities.filter(item => item.city === selectTo)[0]
+        ?.busstops.filter(elem => elem.busstop === wayStop)[0]?.time
+
     useEffect(() => {
         dispatch(getDirections())
         dispatch(getCosts())
@@ -74,27 +90,11 @@ export default function Main() {
     useEffect(() => {
         if(user){
             dispatch(postUser({
-                id: uuid(), choiceRoutes, selectFrom, selectTo, fullName, phoneNumber: `+${phoneNumber}`, wayStart, wayStop, numberSeats
+                id: uuid(), choiceRoutes, selectFrom, selectTo, fullName, phoneNumber: `+${phoneNumber}`, 
+                wayStart, wayStop, timeStart, timeStop, costRoute: costRoute * numberSeats, numberSeats
             }))
         }
     }, [user])
-    
-    let costRoute
-    for (let item of costs) {
-        const findCost = () => {
-            if(item.wayFrom === selectFrom && item.wayTo === selectTo){
-                return item.cost
-            }else{return null}
-        }
-        if(findCost() !== null){
-            costRoute = findCost()
-        }  
-    }
-    
-    const timeStart = choiceRoutes[0]?.cities.filter(item => item.city === selectFrom)[0]
-        ?.busstops.filter(elem => elem.busstop === wayStart)[0]?.time
-    const timeStop = choiceRoutes[0]?.cities.filter(item => item.city === selectTo)[0]
-        ?.busstops.filter(elem => elem.busstop === wayStop)[0]?.time
     
     const getRoutes = async () => {
         dispatch(getTravels({selectFrom, selectTo, date: date.format('DD.MM.YYYY')}))
@@ -107,12 +107,16 @@ export default function Main() {
     
         setCalc(calc +1)
     }
+    const onNumberSeats = (e) => {
+        setNumberSeats(e.target.value)
+        //setCost(cost * e.target.value)
+    }
     const submitChecklist = () => {
-        if (fullName && phoneNumber) {
+        if (fullName && phoneNumber && wayStart && wayStop) {
             setCalc(calc +1)
             setErrorFilling(false)
         }
-        if (!fullName || !phoneNumber) {
+        if (!fullName || !phoneNumber || !wayStart || !wayStop) {
             setErrorFilling(true)
         }
     }
@@ -302,7 +306,7 @@ export default function Main() {
                             <> 
                                 {
                                     travels?.map(item => {
-                                        const freeSeats = item.totalSeats - item.reservedSeats
+                                       
                                         return (
                                             <>
                                                 <table key={item.id}>
@@ -344,7 +348,7 @@ export default function Main() {
                                                     </tr>
                                                     <tr>
                                                         <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Количество свободных мест</th>
-                                                        <th className={style.textTicket}>{freeSeats >= 3 ? '3+' : freeSeats}</th>
+                                                        <th className={style.textTicket}>{item.freeSeats >= 3 ? '3+' : item.freeSeats}</th>
                                                     </tr>
                                                 </table>
                                                 <div className={style.tdBtn}>
@@ -393,7 +397,7 @@ export default function Main() {
                         <span>Дата отправления: <span style={{fontWeight: '500'}}>{choiceRoutes[0]?.dateTrip}</span></span>
                         <span>Время отправления: <span style={{fontWeight: '500'}}>{timeStart}</span></span>
                         <span>Время прибытия: <span style={{fontWeight: '500'}}>{timeStop}</span></span>
-                        <span>Цена: <span style={{fontWeight: '500'}}>{costRoute} б.р.</span></span>
+                        <span>Цена: <span style={{fontWeight: '500'}}>{costRoute * numberSeats} б.р.</span></span>
                         <div style={{display: 'flex', flexDirection: 'column'}}>
                             <span className={style.label}>Введите имя и фамилию</span>
                             <input type="text" className={style.inputChecklist} value={fullName} onChange={(e) => setFullName(e.target.value)} required/>
@@ -436,7 +440,7 @@ export default function Main() {
                             <span className={style.label}>Количество мест</span>
                             <select 
                                 value={numberSeats}
-                                onChange={(e) => setNumberSeats(e.target.value)}
+                                onChange={(e) => onNumberSeats(e)}
                                 className={style.selectСhecklist}
                             >
                                 <option>1</option>
@@ -489,8 +493,8 @@ export default function Main() {
                                 <th className={style.textTicket}>{choiceRoutes[0]?.dateTrip}</th>
                             </tr>
                             <tr>
-                                <th className={style.textTicket}>Время отправления</th>
-                                <th className={style.textTicket}>{choiceRoutes[0]?.timeTrips}</th>
+                                <th className={style.textTicket}>Время отправления - прибытия</th>
+                                <th className={style.textTicket}>{timeStart} - {timeStop}</th>
                             </tr>
                             <tr>
                                 <th className={style.textTicket}>Фамилия и Имя</th>
@@ -503,6 +507,10 @@ export default function Main() {
                             <tr>
                                 <th className={style.textTicket}>Количество мест</th>
                                 <th className={style.textTicket}>{numberSeats}</th>
+                            </tr>
+                            <tr>
+                                <th className={style.textTicket}>Стоимость</th>
+                                <th className={style.textTicket}>{costRoute * numberSeats}</th>
                             </tr>
                             
                         </table>

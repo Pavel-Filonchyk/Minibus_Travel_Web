@@ -23,8 +23,10 @@ const restAdminTravelReducer = (state = initialState, action) => {
             const postData = action.payload
             const postTravel = {
                 cities: postData.cities,
-                tripFrom: postData.travelFrom, tripTo: postData.travelTo, dateTrip: postData.date, totalSeats: postData.totalSeats, freeSeates: 0, reservedSeats: 0, timeTrips: postData.time, cost: postData.cost, 
-                persons: [{id: '00000000', blockId: '00000000', fullName: '', tripFrom: '', wayStart: '', dateTrip:"00.00.00",  timeTrips: '', tripTo: '', wayStop: '', phoneNumber: '00000000000', numberSeats: 0},]
+                tripFrom: postData.travelFrom, tripTo: postData.travelTo, dateTrip: postData.date, freeSeats: postData.freeSeats, timeTrips: postData.time,
+                persons: [{id: '00000000', blockId: '00000000', fullName: '', tripFrom: '', wayStart: '', dateTrip:"00:00:00",  
+                    timeTrips: '', tripTo: '', wayStop: '', phoneNumber: '00000000000', numberSeats: 0, timeStart: '00:00', timeStop: '00:00', cost: 0
+                }]
             }
             return {
                 ...state,
@@ -53,11 +55,8 @@ const restAdminTravelReducer = (state = initialState, action) => {
                 tripFrom: i.tripFrom,
                 tripTo: i.tripTo,
                 dateTrip: i.dateTrip,
-                totalSeats: i.totalSeats,
-                freeSeates: i.freeSeates, 
-                reservedSeats: i.reservedSeats, 
-                timeTrips: i.timeTrips, 
-                cost: i.cost,
+                freeSeats: i.freeSeats, 
+                timeTrips: i.timeTrips,
                 persons: i.persons?.filter(item => {
                     if(item.id !== '00000000'){
                         return item.id !== id
@@ -80,11 +79,8 @@ const restAdminTravelReducer = (state = initialState, action) => {
             tripFrom: personTravel[0]?.tripFrom,
             tripTo: personTravel[0]?.tripTo,
             dateTrip: personTravel[0]?.dateTrip,
-            totalSeats: personTravel[0]?.totalSeats,
-            freeSeates: personTravel[0]?.freeSeates, 
-            reservedSeats: personTravel[0]?.reservedSeats, 
+            freeSeats: personTravel[0]?.freeSeats,  
             timeTrips: personTravel[0]?.timeTrips, 
-            cost: personTravel[0]?.cost,
             persons: deletePersonTravel
         }
      

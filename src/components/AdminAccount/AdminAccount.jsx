@@ -23,7 +23,7 @@ export default function AdminAccount() {
     const [travelTo, setTravelTo] = useState('')
     const [date, setDate] = useState(dayjs())
     const [time, setTime] = useState('')
-    const [totalSeats, setTotalSeats] = useState('')
+    const [freeSeats, setFreeSeats] = useState('')
     const [errorFilling , setErrorFilling] = useState(false)
    
     const filterCities = busstopsData?.filter(item => item?.cities[0]?.city === travelFrom && item?.cities[item?.cities.length -1]?.city === travelTo)
@@ -52,14 +52,14 @@ export default function AdminAccount() {
 
     const onPostTravel = () => {
         const cities = filterCities?.filter(item => item?.cities[0]?.busstops[0]?.time === time)
-        if (travelFrom && travelTo && totalSeats) {
+        if (travelFrom && travelTo && freeSeats) {
             dispatch(postTravel({
                 cities: cities?.[0]?.cities,
-                travelFrom, travelTo, date: date.format('DD.MM.YYYY'), time, totalSeats
+                travelFrom, travelTo, date: date.format('DD.MM.YYYY'), time, freeSeats
             }))
             setErrorFilling(false)
         }
-        if (!travelFrom || !travelTo || !totalSeats) {
+        if (!travelFrom || !travelTo || !freeSeats) {
             setErrorFilling(true)
         }
     }
@@ -89,7 +89,7 @@ export default function AdminAccount() {
     const onPostCost = () => {
         if (wayFrom && wayTo && cost) {
             dispatch(postCost({
-                wayFrom, wayTo, cost
+                wayFrom, wayTo, cost: Number(cost)
             }))
             setErrorFillWay(false)
         }
@@ -151,8 +151,8 @@ export default function AdminAccount() {
                         
                     }
                 </select>
-                <span className={style.label}>Количество мест</span>
-                <input type="number" className={style.inputChecklist} style={{marginBottom: 20}} value={totalSeats} onChange={(e) => setTotalSeats(e.target.value)}/>
+                <span className={style.label}>Свободные места</span>
+                <input type="number" className={style.inputChecklist} style={{marginBottom: 20}} value={freeSeats} onChange={(e) => setFreeSeats(e.target.value)}/>
                 
                 {/* error filling */}
                 <div className={style.wrapError} style={{display: errorFilling ? '' : 'none'}}>
@@ -196,7 +196,7 @@ export default function AdminAccount() {
                                 </tr>
                                 <tr>
                                     <th className={style.textTicket}>Количество мест</th>
-                                    <th className={style.textTicket}>{item.totalSeats}</th>
+                                    <th className={style.textTicket}>{item.freeSeats}</th>
                                 </tr>
                                 <div className={style.wrapBtn} style={{justifyContent: 'flex-start', marginBottom: 10, marginLeft: 10}}>
                                     <div className={style.btn} 

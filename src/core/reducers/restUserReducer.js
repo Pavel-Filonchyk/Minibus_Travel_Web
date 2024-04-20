@@ -36,7 +36,7 @@ const restUserReducer = (state = initialState, action) => {
         case 'DELETE_USER':
             const blockId = action.payload.blockId
             const id = action.payload.id
-            
+            const numberSeats = action.payload.numberSeats
             // удаление из массива на экране
             const inx = state.userData.findIndex(item => item.id === id)
             let newUserData =  [
@@ -46,16 +46,15 @@ const restUserReducer = (state = initialState, action) => {
 
             // изменение на сервере 
             const findBlockId = state.travels[blockId]
-                // места
-                const totalSeats = findBlockId?.totalSeats
-                const freeSeates = totalSeats > 0 ? totalSeats - findBlockId.numberSeats : totalSeats
+            const freeSeats = findBlockId?.freeSeats + numberSeats
             const index = findBlockId?.persons.findIndex(item => item.id === id)
             
             let deleteUserData
             if (findBlockId?.persons.length > 1){
                 deleteUserData = {
-                    tripFrom: findBlockId?.tripFrom, tripTo: findBlockId?.tripTo, dateTrip: findBlockId?.dateTrip, timeTrips: findBlockId?.timeTrips, car: findBlockId?.car,
-                    totalSeats, freeSeates, reservedSeats: totalSeats - freeSeates, blockId,
+                    cities: findBlockId?.cities,
+                    tripFrom: findBlockId?.tripFrom, tripTo: findBlockId?.tripTo, dateTrip: findBlockId?.dateTrip, timeTrips: findBlockId?.timeTrips, blockId,
+                    freeSeats, 
                     persons:  [
                         ...findBlockId?.persons.splice(0, index),
                         ...findBlockId?.persons.splice(index + 1)

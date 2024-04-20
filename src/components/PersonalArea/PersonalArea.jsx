@@ -14,7 +14,6 @@ export default function PersonalArea({title, textBtn}) {
     const user = useSelector(({restUserReducer: { user }}) => user)
     const userData = useSelector(({restUserReducer: { userData }}) => userData)
     const deleteUserSuccess = useSelector(({restUserReducer: { deleteUserSuccess }}) => deleteUserSuccess)
-    //console.log(user)
     const [phoneNumber, setPhoneNumber] = useState('')
     const [showCode, setShowCode] = useState(false)
     const [showBlockConfirm, setBlockConfirm] = useState(true)
@@ -22,20 +21,20 @@ export default function PersonalArea({title, textBtn}) {
 
     const onGetCode = () => {
         setShowCode(true)
-        //onSignup()
+        onSignup()
     }
     function onCaptchVerify() {
-        // if (!window.recaptchaVerifier) {
-        //         window.recaptchaVerifier = new RecaptchaVerifier(
-        //             auth, "recaptcha-container",
-        //         {
-        //             size: "invisible",
-        //             callback: (response) => {onSignup()},
-        //             "expired-callback": () => {},
-        //         },
+        if (!window.recaptchaVerifier) {
+                window.recaptchaVerifier = new RecaptchaVerifier(
+                    auth, "recaptcha-container",
+                {
+                    size: "invisible",
+                    callback: (response) => {onSignup()},
+                    "expired-callback": () => {},
+                },
                 
-        //     )
-        // }
+            )
+        }
     }
     function onSignup() {
         onCaptchVerify()
@@ -54,15 +53,15 @@ export default function PersonalArea({title, textBtn}) {
     }
     const onOTPVerify = async () => {
 
-        // window.confirmationResult
-        //     ?.confirm(confirmCode)
-        //     .then(async (res) => {
-        //         dispatch(getUser({user: res.user, phoneNumber:`+${phoneNumber}`}))
-        //     })
-        //     .catch((err) => {
-        //         console.log(err)
-        //     })
-        dispatch(getUser({user: 'Ivan', phoneNumber:`+${phoneNumber}`}))
+        window.confirmationResult
+            ?.confirm(confirmCode)
+            .then(async (res) => {
+                dispatch(getUser({user: res.user, phoneNumber:`+${phoneNumber}`}))
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+        dispatch(getUser({user, phoneNumber:`+${phoneNumber}`}))
         setBlockConfirm(false)
     }
 
@@ -70,8 +69,8 @@ export default function PersonalArea({title, textBtn}) {
         setBlockConfirm(true)
         setShowCode(false)
     }
-    const onCloseBooking = (ids) => {
-        dispatch(deleteUser(ids))
+    const onCloseBooking = (data) => {
+        dispatch(deleteUser(data))
     }
     return (
         <div className={style.wrapPersonalArea}>
@@ -138,23 +137,23 @@ export default function PersonalArea({title, textBtn}) {
                                     <th className={style.textTicket}></th>
                                 </tr>
                                 <tr>
-                                    <th className={style.textTicket}>Маршрутка до:</th>
-                                    <th className={style.textTicket}>{item.tripTo}</th>
+                                    <th className={style.textTicket}>Посадка</th>
+                                    <th className={style.textTicket}>{item.tripFrom}, ост. {item.wayStart}</th>
                                 </tr>
                                 <tr>
-                                    <th className={style.textTicket} style={{width: '50%'}}>Посадка - Высадка</th>
-                                    <th className={style.textTicket}>{item.wayStart}-{item.wayStop}</th>
+                                    <th className={style.textTicket} style={{width: '50%'}}>Высадка</th>
+                                    <th className={style.textTicket}>{item.tripTo}, ост. {item.wayStop}</th>
                                 </tr>
                                 <tr>
                                     <th className={style.textTicket}>Дата отправления</th>
                                     <th className={style.textTicket}>{item.dateTrip}</th>
                                 </tr>
                                 <tr>
-                                    <th className={style.textTicket}>Время отправления</th>
-                                    <th className={style.textTicket}>{item.timeTrips}</th>
+                                    <th className={style.textTicket}>Время отправления - прибытия</th>
+                                    <th className={style.textTicket}>{item.timeStart} - {item.timeStop}</th>
                                 </tr>
                                 <tr>
-                                    <th className={style.textTicket}>Фамилия и Имя</th>
+                                    <th className={style.textTicket}>Имя и фамилия</th>
                                     <th className={style.textTicket}>{item.fullName}</th>
                                 </tr>
                                 <tr>
@@ -165,6 +164,10 @@ export default function PersonalArea({title, textBtn}) {
                                     <th className={style.textTicket}>Количество мест</th>
                                     <th className={style.textTicket}>{item.numberSeats}</th>
                                 </tr>
+                                <tr>
+                                    <th className={style.textTicket}>Стоимость</th>
+                                    <th className={style.textTicket}>{item.cost} б.р.</th>
+                                </tr>
                             </table>
                             <div style={{display: 'flex', flexDirection: 'row'}}>
                                 <div className={style.btnBack}
@@ -174,7 +177,7 @@ export default function PersonalArea({title, textBtn}) {
                                 </div>
                                 <div className={style.btnBack}
                                     style={{width: 220, marginLeft: 16, backgroundColor: 'red'}}
-                                    onClick={() => onCloseBooking({blockId: item.blockId, id: item.id})}
+                                    onClick={() => onCloseBooking({blockId: item.blockId, id: item.id, numberSeats: item.numberSeats})}
                                 >
                                     <span>Отменить бронь</span>
                                 </div>
