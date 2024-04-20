@@ -29,7 +29,6 @@ export default function Main() {
     const getError = useSelector(({getTravelsReducer: { getError }}) => getError)
     const postSuccess = useSelector(({postUserReducer: { postSuccess }}) => postSuccess)
     const postError = useSelector(({postUserReducer: { postError }}) => postError)
-    
     // auth
     const [confirmCode, setConfirmCode] = useState('')
     const [user, setUser] = useState(null)
@@ -52,7 +51,8 @@ export default function Main() {
 
     // server data
     const [choiceRoutes, setChoiceRoutes] = useState([])
-  
+    console.log(travels)
+    console.log(choiceRoutes)
     useEffect(() => {
         dispatch(getDirections())
         dispatch(getCosts())
@@ -90,7 +90,12 @@ export default function Main() {
             costRoute = findCost()
         }  
     }
-
+    
+    const timeStart = choiceRoutes[0]?.cities.filter(item => item.city === selectFrom)[0]
+        ?.busstops.filter(elem => elem.busstop === wayStart)[0]?.time
+    const timeStop = choiceRoutes[0]?.cities.filter(item => item.city === selectTo)[0]
+        ?.busstops.filter(elem => elem.busstop === wayStop)[0]?.time
+    
     const getRoutes = async () => {
         dispatch(getTravels({selectFrom, selectTo, date: date.format('DD.MM.YYYY')}))
 
@@ -302,16 +307,40 @@ export default function Main() {
                                             <>
                                                 <table key={item.id}>
                                                     <tr>
-                                                        <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Направление</th>
-                                                        <th className={style.textTicket}>{item.tripFrom} - {item.tripTo}</th>
+                                                        <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Отправление</th>
+                                                        <th className={style.textTicket}>
+                                                            {
+                                                                item.cities.filter(elem => elem.city === selectFrom)[0]?.city
+                                                            }
+                                                        </th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Прибытие</th>
+                                                        <th className={style.textTicket}>
+                                                            {
+                                                                item.cities.filter(elem => elem.city === selectTo)[0]?.city
+                                                            }
+                                                        </th>
                                                     </tr>
                                                     <tr> 
                                                         <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Дата отправления</th>
                                                         <th className={style.textTicket}>{item.dateTrip}</th>
                                                     </tr>
-                                                    <tr>
+                                                    <tr> 
                                                         <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Время отправления</th>
-                                                        <th className={style.textTicket}>{item.timeTrips}</th>
+                                                        <th className={style.textTicket}>
+                                                            {
+                                                                item.cities.filter(elem => elem.city === selectFrom)[0]?.busstops[0]?.time
+                                                            }
+                                                        </th>
+                                                    </tr>
+                                                    <tr> 
+                                                        <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Время прибытия</th>
+                                                        <th className={style.textTicket}>
+                                                            {
+                                                                item.cities.filter(elem => elem.city === selectTo)[0]?.busstops[0]?.time
+                                                            }
+                                                        </th>
                                                     </tr>
                                                     <tr>
                                                         <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Количество свободных мест</th>
@@ -362,7 +391,8 @@ export default function Main() {
                         <span>Маршрутка до: <span style={{fontWeight: '500'}}>{choiceRoutes[0]?.tripTo}</span></span>
                         <span>Посадка - Высадка: <span style={{fontWeight: '500'}}>{selectFrom} - {selectTo}</span></span>
                         <span>Дата отправления: <span style={{fontWeight: '500'}}>{choiceRoutes[0]?.dateTrip}</span></span>
-                        <span>Время отправления: <span style={{fontWeight: '500'}}>{choiceRoutes[0]?.timeTrips}</span></span>
+                        <span>Время отправления: <span style={{fontWeight: '500'}}>{timeStart}</span></span>
+                        <span>Время прибытия: <span style={{fontWeight: '500'}}>{timeStop}</span></span>
                         <span>Цена: <span style={{fontWeight: '500'}}>{costRoute} б.р.</span></span>
                         <div style={{display: 'flex', flexDirection: 'column'}}>
                             <span className={style.label}>Введите имя и фамилию</span>
@@ -381,6 +411,7 @@ export default function Main() {
                                 onChange={(e) => setSelectWayStart(e.target.value)}
                                 className={style.selectСhecklist}
                             >
+                                <option selected>Сделайте выбор</option>
                                 {
                                     choiceRoutes[0]?.cities.filter(item => item.city === selectFrom)[0]
                                         ?.busstops?.map(elem => {return(
@@ -394,6 +425,7 @@ export default function Main() {
                                 onChange={(e) => setSelectWayStop(e.target.value)}
                                 className={style.selectСhecklist}
                             >
+                                <option selected="selected">Сделайте выбор</option>
                                 {
                                     choiceRoutes[0]?.cities.filter(item => item.city === selectTo)[0]
                                         ?.busstops?.map(elem => {return(

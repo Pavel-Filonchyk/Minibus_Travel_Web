@@ -21,13 +21,11 @@ const getTravelsReducer = (state = initialState, action) => {
             }
         case 'GET_TRAVELS_SUCCESS':
             const list = Object.keys(action.payload).map(key => ({...action.payload[key], blockId: key}))
-          
-            const selectFrom = state.getTravelsData.selectFrom
-            const selectTo = state.getTravelsData.selectTo
-            const date = state.getTravelsData.date
-
+            const selectFrom = state.getTravelsData?.selectFrom
+            const selectTo = state.getTravelsData?.selectTo
+            const date = state.getTravelsData?.date
+            
             const findDateRoutes = list.filter(item => item.dateTrip === date)
-
             let collectRoutes = []
             for (let item of findDateRoutes) {
                 const findRoutes = () => {

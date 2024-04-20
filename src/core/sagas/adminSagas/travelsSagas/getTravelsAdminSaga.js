@@ -9,7 +9,7 @@ function* workerLoader() {
     
         yield put(getTravelsSuccess(data))
       } catch (error) {
-        yield put(getTravelsError(error))
+        yield console.log(error)
       }
   }
 

@@ -258,7 +258,7 @@ export default function AdminAccount() {
                 <span className={style.label} style={{fontWeight :'bold'}}>Остановка</span>
                 <input type="text" className={style.inputChecklist} value={busstop} onChange={(e) => setBusstop(e.target.value)}/>
                 <span className={style.label} style={{fontWeight :'bold'}}>Время</span>
-                <input type="number" className={style.inputChecklist} value={timeBusstop} onChange={(e) => setTimeBusstop(e.target.value)}/>
+                <input type="text" className={style.inputChecklist} value={timeBusstop} onChange={(e) => setTimeBusstop(e.target.value)}/>
                 <div className={style.wrapBtn} style={{justifyContent: 'flex-start'}}>
                     <div className={style.btn} 
                         style={{backgroundColor: '#1560BD', marginBottom: 10, marginTop: 20}}
@@ -322,7 +322,7 @@ export default function AdminAccount() {
                     style={{marginTop: 0}}
                     onClick={onGetBusstops}
                 >
-                    <span>Остановки</span>
+                    <span>Рассписания</span>
                 </div>
             </div>
             {

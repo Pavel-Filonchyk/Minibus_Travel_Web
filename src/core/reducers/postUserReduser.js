@@ -11,9 +11,11 @@ const postUserReducer = (state = initialState, action) => {
             const ticketData = action.payload
             const blockId = ticketData?.choiceRoutes[0]?.blockId
             const id = ticketData.id
+            const cities = ticketData?.choiceRoutes[0]?.cities
             const totalSeats = ticketData.choiceRoutes[0]?.totalSeats
             const freeSeates = totalSeats > 0 ? totalSeats - ticketData.numberSeats : totalSeats
             const userData = {
+                cities,
                 tripFrom: ticketData.choiceRoutes[0]?.tripFrom, tripTo: ticketData.choiceRoutes[0]?.tripTo, dateTrip: ticketData.choiceRoutes[0]?.dateTrip, timeTrips: ticketData.choiceRoutes[0]?.timeTrips, car: ticketData.choiceRoutes[0]?.car,
                 totalSeats, freeSeates, reservedSeats: totalSeats - freeSeates, blockId,
                 persons: [
