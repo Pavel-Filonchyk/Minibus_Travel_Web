@@ -3,8 +3,9 @@ import { useSelector, useDispatch } from 'react-redux'
 import { DatePicker } from 'antd'
 import dayjs from 'dayjs';
 import locale from 'antd/es/date-picker/locale/ru_RU'
-
-import { getTravels, postTravel, deleteTravel, deletePerson, postDirection, getDirections, deleteDirection } from '../../core/actions/restAdminTravelActions'
+import {PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons'
+import { getTravels, postTravel, deleteTravel, deletePerson, postDirection, 
+    getDirections, deleteDirection, changeSeats, getQueues, deleteQueue } from '../../core/actions/restAdminTravelActions'
 import { postBusstop, getBusstops, deleteBusstop, busstopCollector, deleteBusstopCollector } from '../../core/actions/restAdminBusstopsActions'
 import { postCost, getCosts, deleteCost } from '../../core/actions/restAdminCostsActions'
 import style from './AdminAccount.module.scss'
@@ -14,10 +15,12 @@ export default function AdminAccount() {
 
     const user = useSelector(({restUserReducer: { user }}) => user)
     const travelsData = useSelector(({restAdminTravelReducer: { travelsData }}) => travelsData)
+    const queuesData = useSelector(({restAdminTravelReducer: { queuesData }}) => queuesData)
     const directionsData = useSelector(({restAdminTravelReducer: { directionsData }}) => directionsData)
     const busstopsData = useSelector(({restAdminBusstopsReducer: { busstopsData }}) => busstopsData)
     const collectBusstops = useSelector(({restAdminBusstopsReducer: {citiesCollect  }}) => citiesCollect)
     const costsData = useSelector(({restAdminCostsReducer: { costsData }}) => costsData)
+
     // состояния редактирования рейсов
     const [travelFrom, setTravelFrom] = useState('')
     const [travelTo, setTravelTo] = useState('')
@@ -25,7 +28,7 @@ export default function AdminAccount() {
     const [time, setTime] = useState('')
     const [freeSeats, setFreeSeats] = useState('')
     const [errorFilling , setErrorFilling] = useState(false)
-   
+
     const filterCities = busstopsData?.filter(item => item?.cities[0]?.city === travelFrom && item?.cities[item?.cities.length -1]?.city === travelTo)
   
     // состояния редактирования направлений
@@ -45,6 +48,7 @@ export default function AdminAccount() {
 
     // показать/скрыть блоки
     const [showTravels, setShowTravels] = useState(false)
+    const [showQueues, setShowQueues] = useState(false)
     const [showPersons, setShowPersons] = useState(true)
     const [showDirections, setShowDirections] = useState(false)
     const [showBusstops, setShowBusstops] = useState(false)
@@ -55,7 +59,7 @@ export default function AdminAccount() {
         if (travelFrom && travelTo && freeSeats) {
             dispatch(postTravel({
                 cities: cities?.[0]?.cities,
-                travelFrom, travelTo, date: date.format('DD.MM.YYYY'), time, freeSeats
+                travelFrom, travelTo, date: date.format('DD.MM.YYYY'), time, freeSeats: Number(freeSeats)
             }))
             setErrorFilling(false)
         }
@@ -67,9 +71,19 @@ export default function AdminAccount() {
         dispatch(getTravels())
         setShowTravels(item => !item)
     }
+
+    const onGetQueues =() => {
+        dispatch(getQueues())
+        setShowQueues(item => !item)
+    }
+
     const onGetDirections = () => {
         dispatch(getDirections())
         setShowDirections(item => !item)
+    }
+
+    const onChangeFreeSeats = (arg) => {
+        dispatch(changeSeats(arg))
     }
 
     const onCollectBusstops = () => {
@@ -180,11 +194,10 @@ export default function AdminAccount() {
                 travelsData?.map(item => {
                     return(
                         <div className={style.wrapTravels} style={{display: showTravels ? '' : 'none'}}>
-                            {/* style={{display: showTravels ? '' : 'none'}} */}
                             <table style={{marginTop: 20, marginBottom: 15}}>
                                 <tr>
                                     <th className={style.textTicket}>Направление:</th>
-                                    <th className={style.textTicket}>{item.tripFrom}-{item.tripTo}</th>
+                                    <th className={style.textTicket}>{item.tripFrom} - {item.tripTo}</th>
                                 </tr>
                                 <tr>
                                     <th className={style.textTicket}>Дата отправления</th>
@@ -195,22 +208,38 @@ export default function AdminAccount() {
                                     <th className={style.textTicket}>{item.timeTrips}</th>
                                 </tr>
                                 <tr>
-                                    <th className={style.textTicket}>Количество мест</th>
+                                    <th className={style.textTicket}>Количество свободных мест</th>
                                     <th className={style.textTicket}>{item.freeSeats}</th>
                                 </tr>
-                                <div className={style.wrapBtn} style={{justifyContent: 'flex-start', marginBottom: 10, marginLeft: 10}}>
-                                    <div className={style.btn} 
-                                        style={{marginBottom: 0, marginTop: 0, backgroundColor: '#1560BD'}}
-                                        //onClick={() => setShowPersons(item => !item)}
-                                    >
-                                        <span>Пассажиры</span>
-                                    </div>
-                                </div>
+                                <tr>
+                                    <th>
+                                        <div className={style.wrapBtn} style={{justifyContent: 'flex-start', marginBottom: 10, marginLeft: 10}}>
+                                            <div className={style.btn} 
+                                                style={{marginBottom: 0, marginTop: 0, backgroundColor: '#1560BD'}}
+                                                //onClick={() => setShowPersons(item => !item)}
+                                            >
+                                                <span>Пассажиры</span>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div style={{display: 'flex', justifyContent: 'flex-start'}}>
+                                            <MinusCircleOutlined 
+                                                style={{fontSize: 38, color: 'red', marginLeft: 8}}
+                                                onClick={() => onChangeFreeSeats({volue: 'minus', blockId: item.blockId})}
+                                            />
+                                            <PlusCircleOutlined 
+                                                style={{fontSize: 38, color: 'green', marginLeft: 40}}
+                                                onClick={() => onChangeFreeSeats({volue: 'plus', blockId: item.blockId})}
+                                            />
+                                        </div>
+                                    </th> 
+                                </tr>
                                 {
                                     item.persons?.map(elem => {return(
                                         <>
                                             <tr >
-                                                <th className={style.textTicket}>Имя</th>
+                                                <th className={style.textTicket}>Имя и фамилия</th>
                                                 <th className={style.textTicket}>{elem.fullName}</th>
                                             </tr>
                                             <tr >
@@ -218,7 +247,7 @@ export default function AdminAccount() {
                                                 <th className={style.textTicket}>{elem.phoneNumber}</th>
                                             </tr>
                                             <tr >
-                                                <th className={style.textTicket}>Посадка-Высадка</th>
+                                                <th className={style.textTicket}>Посадка-Высадка:</th>
                                                 <th className={style.textTicket}>{elem.tripFrom}-{elem.tripTo}</th>
                                             </tr>
                                             <tr >
@@ -249,6 +278,55 @@ export default function AdminAccount() {
                     )
                 })
             }  
+
+            {/* Очередники */}
+            <span className={style.title}>Смотреть очередников</span>
+            <div className={style.wrapBtn}>
+                <div className={style.btn}
+                    style={{marginTop: 0}}
+                    onClick={onGetQueues}
+                >
+                    <span>Очередники</span>
+                </div>
+            </div>
+            {
+                queuesData?.map(item => {
+                    return(
+                        <div className={style.wrapTravels} style={{display: showQueues ? '' : 'none'}}>
+                            <table style={{marginTop: 20, marginBottom: 15}}>
+                                <tr>
+                                    <th className={style.textTicket}>Посадка - Высадка:</th>
+                                    <th className={style.textTicket}>{item.tripFrom} - {item.tripTo}</th>
+                                </tr>
+                                <tr>
+                                    <th className={style.textTicket}>Дата отправления</th>
+                                    <th className={style.textTicket}>{item.dateTrip}</th>
+                                </tr>
+                                <tr>
+                                    <th className={style.textTicket}>Время отправления</th>
+                                    <th className={style.textTicket}>{item.time}</th>
+                                </tr>
+                                <tr>
+                                    <th className={style.textTicket}>Имя и фамилия</th>
+                                    <th className={style.textTicket}>{item.fullName}</th>
+                                </tr>
+                                <tr>
+                                    <th className={style.textTicket}>Телефон</th>
+                                    <th className={style.textTicket}>{item.phoneNumber}</th>
+                                </tr>
+                            </table>
+                            <div className={style.wrapBtn}>
+                                <div className={style.btn} 
+                                    style={{backgroundColor: 'red', marginBottom: 0, marginTop: 0}}
+                                    onClick={() => dispatch(deleteQueue(item.blockId))}
+                                >
+                                    <span>Удалить</span>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                })
+            }
 
             {/* Добавление рассписания */}
             <span className={style.title}>Добавить рассписание</span> 

@@ -11,7 +11,7 @@ import uuid from 'react-uuid'
 
 import PersonalArea from '../PersonalArea/PersonalArea'
 import AdminAccount from '../AdminAccount/AdminAccount'
-import { getTravels, postUser, getDirections } from '../../core/actions/bookTravelActions'
+import { getTravels, postUser, getDirections, postQueue } from '../../core/actions/bookTravelActions'
 import { getCosts } from '../../core/actions/restAdminCostsActions'
 import style from './Main.module.scss'
 
@@ -46,12 +46,13 @@ export default function Main() {
     const [calc, setCalc] = useState(0)
     const [changeWay, setChengeWay] = useState(true)
     const [errorFilling , setErrorFilling] = useState(false)
+    const [errorCostRoute, setErrorCostRoute] = useState(false)
     const [showCode, setShowCode] = useState(false)
     const [removePostBtns, setRemovePostBtns] = useState(false)
 
     // server data
     const [choiceRoutes, setChoiceRoutes] = useState([])
-  
+   
     let costRoute
     for (let item of costs) {
         const findCost = () => {
@@ -61,9 +62,8 @@ export default function Main() {
         }
         if(findCost() !== null){
             costRoute = findCost()
-        }  
+        } 
     }
-    
     const timeStart = choiceRoutes[0]?.cities.filter(item => item.city === selectFrom)[0]
         ?.busstops.filter(elem => elem.busstop === wayStart)[0]?.time
     const timeStop = choiceRoutes[0]?.cities.filter(item => item.city === selectTo)[0]
@@ -107,17 +107,21 @@ export default function Main() {
     
         setCalc(calc +1)
     }
-    const onNumberSeats = (e) => {
-        setNumberSeats(e.target.value)
-        //setCost(cost * e.target.value)
+
+    const onPostQueue = (dataTrip) => {
+        dispatch(postQueue({...dataTrip, fullName, phoneNumber: `+${phoneNumber}`}))
+
     }
     const submitChecklist = () => {
-        if (fullName && phoneNumber && wayStart && wayStop) {
+        if (costRoute && fullName && phoneNumber && wayStart && wayStop) {
             setCalc(calc +1)
             setErrorFilling(false)
         }
         if (!fullName || !phoneNumber || !wayStart || !wayStop) {
             setErrorFilling(true)
+        }
+        if(costRoute === undefined){
+            setErrorCostRoute(true)
         }
     }
 
@@ -169,6 +173,7 @@ export default function Main() {
     const btnBack = () => {
         setCalc(0)
         setUser(null)
+        setErrorCostRoute(false)
         //window.location.reload()
     }
     
@@ -244,7 +249,7 @@ export default function Main() {
                                 >
                                     {
                                         directions?.map(item => {return(
-                                            <option>{item?.direction}</option>
+                                            <option >{item?.direction}</option>
                                         )})
                                     }
                                 </select>
@@ -309,7 +314,7 @@ export default function Main() {
                                        
                                         return (
                                             <>
-                                                <table key={item.id}>
+                                                <table key={item.blockId}>
                                                     <tr>
                                                         <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Отправление</th>
                                                         <th className={style.textTicket}>
@@ -346,22 +351,57 @@ export default function Main() {
                                                             }
                                                         </th>
                                                     </tr>
+                                                    <tr> 
+                                                        <th className={style.textTicket} style={{display: item.freeSeats === 0 ? '' : 'none', fontWeight: '700', width: '60%',color: 'red', fontWeight: '600'}}>Нет свободных мест</th>
+                                                    </tr>
+                                                    
                                                     <tr>
                                                         <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Количество свободных мест</th>
                                                         <th className={style.textTicket}>{item.freeSeats >= 3 ? '3+' : item.freeSeats}</th>
                                                     </tr>
                                                 </table>
+                                                <div className={style.wrapQueue} style={{display: item.freeSeats === 0 ? '' : 'none'}} >
+                                                    <span>Как только появятся свободные места, мы вам сообщим</span>
+                                                    <span className={style.label}>Введите имя и фамилию</span>
+                                                    <input type="text" className={style.inputChecklist} value={fullName} onChange={(e) => setFullName(e.target.value)} required/>
+                                                    <span className={style.label}>Номер телефона</span>
+                                                    <PhoneInput
+                                                        country={'by'}
+                                                        value={phoneNumber}
+                                                        onChange={setPhoneNumber}
+                                                        inputStyle={{width: 260, fontSize: 16, fontWeight: 600, fontFamily: 'Montserrat'}}
+                                                        
+                                                    />
+                                                </div>
                                                 <div className={style.tdBtn}>
-                                                <div className={style.tableBtn}
-                                                    onClick={() => onChoiceRoute(item.blockId)}
-                                                >
-                                                    <span>Заказать</span>
-                                                </div> 
-                                                <div className={style.tableBtn}
-                                                    style={{backgroundColor: 'rgb(38, 166, 190)'}}
-                                                    onClick={() => setCalc(0)}
-                                                >
-                                                    <span>Назад</span>
+                                                    {
+                                                        item.freeSeats === 0 
+                                                        ? 
+                                                            <div className={style.tableBtn}
+                                                                style={{width: 260, textAlign: 'center'}}
+                                                                onClick={() => onPostQueue(
+                                                                    {
+                                                                        tripFrom: item.cities.filter(elem => elem.city === selectFrom)[0]?.city,
+                                                                        tripTo: item.cities.filter(elem => elem.city === selectTo)[0]?.city,
+                                                                        dateTrip: item.dateTrip,
+                                                                        time: item.cities.filter(elem => elem.city === selectFrom)[0]?.busstops[0]?.time,
+                                                                    })}
+                                                            >
+                                                                <span style={{fontSize: 20}} >Стать в очередь</span>
+                                                            </div>
+                                                        : 
+                                                            <div className={style.tableBtn}
+                                                                onClick={() => onChoiceRoute(item.blockId)}
+                                                            >
+                                                                <span>Заказать</span>
+                                                            </div>
+                                                    }
+                                                     
+                                                    <div className={style.tableBtn}
+                                                        style={{backgroundColor: 'rgb(38, 166, 190)'}}
+                                                        onClick={() => setCalc(0)}
+                                                    >
+                                                        <span>Назад</span>
                                                     </div> 
                                                 </div>
                                             </>
@@ -397,7 +437,7 @@ export default function Main() {
                         <span>Дата отправления: <span style={{fontWeight: '500'}}>{choiceRoutes[0]?.dateTrip}</span></span>
                         <span>Время отправления: <span style={{fontWeight: '500'}}>{timeStart}</span></span>
                         <span>Время прибытия: <span style={{fontWeight: '500'}}>{timeStop}</span></span>
-                        <span>Цена: <span style={{fontWeight: '500'}}>{costRoute * numberSeats} б.р.</span></span>
+                        <span>Цена: <span style={{fontWeight: '500'}}>{costRoute ? costRoute * numberSeats : '-'} б.р.</span></span>
                         <div style={{display: 'flex', flexDirection: 'column'}}>
                             <span className={style.label}>Введите имя и фамилию</span>
                             <input type="text" className={style.inputChecklist} value={fullName} onChange={(e) => setFullName(e.target.value)} required/>
@@ -440,18 +480,32 @@ export default function Main() {
                             <span className={style.label}>Количество мест</span>
                             <select 
                                 value={numberSeats}
-                                onChange={(e) => onNumberSeats(e)}
+                                onChange={(e) => setNumberSeats(e.target.value)}
                                 className={style.selectСhecklist}
                             >
-                                <option>1</option>
-                                <option>2</option>
-                                <option>3</option>
+                                {
+                                   choiceRoutes[0]?.freeSeats >= 3
+                                    ? 
+                                        <>
+                                            <option>1</option>
+                                            <option>2</option>
+                                            <option>3</option>
+                                        </>
+                                    : Array(choiceRoutes[0]?.freeSeats).fill({id: uuid()}).map((item, index) => {return (
+                                        <option key={item.id}>{index +1}</option>
+                                      )})
+                                }
+                                
                             </select>
                             <span style={{fontWeight: '500', fontSize: 16, marginTop: 40}}>При оформлении заказа, Вы даете свое согласие на обработку персональных данных и проезд в составе организованной группы пассажиров.</span>
                             
                             {/* error filling */}
                             <div className={style.wrapError} style={{display: errorFilling ? '' : 'none'}}>
                                 <span className={style.textError}>Необходимо заполнить все поля</span>
+                            </div>
+                            <div className={style.wrapError} style={{display: errorCostRoute ? '' : 'none'}}>
+                                <span className={style.textError}>На выбранный промежуток маршрута возможности забронировать нет
+                            </span>
                             </div>
                             <div className={style.wrapBtn}>
                                 <input 
@@ -477,16 +531,12 @@ export default function Main() {
                                 <th className={style.textTicket}></th>
                             </tr>
                             <tr>
-                                <th className={style.textTicket}>Посадка - Высадка</th>
-                                <th className={style.textTicket}>{selectFrom} - {selectTo}</th>
+                                <th className={style.textTicket}>Посадка</th>
+                                <th className={style.textTicket}>{selectFrom}, ост. {wayStart}</th>
                             </tr>
                             <tr>
-                                <th className={style.textTicket}>Остановка посадки</th>
-                                <th className={style.textTicket}>{wayStart}</th>
-                            </tr>
-                            <tr>
-                                <th className={style.textTicket}>Остановка высадки</th>
-                                <th className={style.textTicket}>{wayStop}</th>
+                                <th className={style.textTicket}>Высадка</th>
+                                <th className={style.textTicket}>{selectTo}, ост. {wayStop}</th>
                             </tr>
                             <tr>
                                 <th className={style.textTicket}>Дата отправления</th>
@@ -510,7 +560,7 @@ export default function Main() {
                             </tr>
                             <tr>
                                 <th className={style.textTicket}>Стоимость</th>
-                                <th className={style.textTicket}>{costRoute * numberSeats}</th>
+                                <th className={style.textTicket}>{costRoute * numberSeats} б.р.</th>
                             </tr>
                             
                         </table>

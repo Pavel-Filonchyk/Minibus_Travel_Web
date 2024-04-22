@@ -25,9 +25,9 @@ const getTravelsReducer = (state = initialState, action) => {
             const selectFrom = state.getTravelsData?.selectFrom
             const selectTo = state.getTravelsData?.selectTo
             const date = state.getTravelsData?.date
-            console.log(selectFrom, selectTo,date )
+           
             const findDateRoutes = list.filter(item => item.dateTrip === date)
-            console.log(findDateRoutes)
+      
             let collectRoutes = []
             for (let item of findDateRoutes) {
                 const findRoutes = () => {
@@ -46,7 +46,6 @@ const getTravelsReducer = (state = initialState, action) => {
                     collectRoutes.push(findRoute[0])
                 }
             }   
-            console.log(collectRoutes)
             return {
                 ...state,
                 travels: collectRoutes,

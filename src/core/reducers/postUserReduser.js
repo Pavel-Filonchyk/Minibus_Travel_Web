@@ -2,7 +2,9 @@ const initialState = {
     userData: [],
     blockId: '',
     postSuccess: false,
-    postError: false
+    postError: false,
+
+    postQueue: {}
 }
 
 const postUserReducer = (state = initialState, action) => {
@@ -39,11 +41,18 @@ const postUserReducer = (state = initialState, action) => {
                 ...state,
                 postSuccess: action.payload,
             }
-        case 'POST_USER_ERROR':
+        case 'POST_QUEUE':
             return {
                 ...state,
-                postError: action.payload,
+                postQueue: action.payload
             }
+
+        case 'POST_QUEUE_SUCCESS':
+            return {
+                ...state,
+                
+            } 
+         
         default: 
         return state;  
     }

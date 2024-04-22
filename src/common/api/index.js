@@ -18,3 +18,8 @@ export const DIRECTIONS_URL = 'https://minibus-travel-default-rtdb.europe-west1.
 export const directionsUrl = (index) => {
     return `https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/directions/${index}.json`
 }
+
+export const QUEUES_URL = 'https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/queues.json'
+export const queuesUrl = (index) => {
+    return `https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/queues/${index}.json`
+}

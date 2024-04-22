@@ -68,6 +68,19 @@ const postUserError = (data) => {
         payload: data 
     } 
 }
+const postQueue = (data) => {
+    return {
+        type: 'POST_QUEUE',
+        payload: data 
+    } 
+}
+export const POST_QUEUE = 'POST_QUEUE'
+const postQueueSuccess = (data) => {
+    return {
+        type: 'POST_QUEUE_SUCCESS',
+        payload: data 
+    } 
+}
 
 export {
     getDirections,
@@ -79,5 +92,7 @@ export {
     postUserSuccess,
     postUserError,
     getCities,
-    getCitiesSuccess
+    getCitiesSuccess,
+    postQueue,
+    postQueueSuccess
 }

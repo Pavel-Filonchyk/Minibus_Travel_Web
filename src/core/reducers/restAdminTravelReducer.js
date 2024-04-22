@@ -3,6 +3,12 @@ const initialState = {
     travelsData: [],
     postTravel: {},
 
+    blockIdQueue: '',
+    queuesData: [],
+
+    blockIdSeats: '',
+    changeSeatsTravel: {},
+
     blockIdPerson: '',
     newPersonTravel: {},
 
@@ -43,6 +49,31 @@ const restAdminTravelReducer = (state = initialState, action) => {
                     blockId                     // передача id для удаления на сервере
                 }
             //}else{return {state}}
+
+        case 'CHANGE_SEATS':
+            const findBlock = state.travelsData.find(item => item.blockId === action.payload.blockId)
+            const findIndexBlock = state.travelsData.indexOf(findBlock)
+            const changeSeatsTravel = {
+                cities: findBlock.cities,
+                tripFrom: findBlock.tripFrom, 
+                tripTo: findBlock.tripTo,
+                dateTrip: findBlock.dateTrip, 
+                freeSeats: action.payload.volue === 'plus' ? findBlock.freeSeats +1 : findBlock.freeSeats > 0 && action.payload.volue === 'minus' ? findBlock.freeSeats -1 : findBlock.freeSeats , 
+                timeTrips: findBlock.timeTrips,
+                persons: findBlock.persons,
+                blockId: findBlock.blockId
+            }
+
+            return {
+                ...state,
+                travelsData: [
+                    ...state.travelsData.splice(0, findIndexBlock),
+                    changeSeatsTravel,
+                    ...state.travelsData.splice(findIndexBlock + 1)
+                ],
+                blockIdSeats: action.payload.blockId,
+                changeSeatsTravel
+            }
 
         case 'DELETE_PERSON':
         const id = action.payload.id
@@ -90,6 +121,21 @@ const restAdminTravelReducer = (state = initialState, action) => {
             blockIdPerson,
             newPersonTravel                
         }
+
+        case 'GET_QUEUES_SUCCESS':
+            const queuesList = Object.keys(action.payload).map(key => ({...action.payload[key], blockId: key}))
+            return {
+                ...state,
+                queuesData: queuesList,
+            }
+        case 'DELETE_QUEUE':
+            console.log(action.payload)
+            const deleteQueue = state.queuesData.filter(item => item.blockId !== action.payload)
+            return {
+                ...state,
+                blockIdQueue: action.payload,
+                queuesData: deleteQueue
+            }
 
         case 'GET_DIRECTIONS_SUCCESS':
             const directions = Object.keys(action.payload).map(key => ({...action.payload[key], blockId: key}))

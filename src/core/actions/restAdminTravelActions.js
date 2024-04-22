@@ -115,7 +115,46 @@ const deleteTravelError = (data) => {
         payload: data 
     } 
 }
+const changeSeats = (data) => {
+    return {
+        type: 'CHANGE_SEATS',
+        payload: data 
+    } 
+}
+export const CHANGE_SEATS = 'CHANGE_SEATS'
+const changeSeatsSuccess = (data) => {
+    return {
+        type: 'CHANGE_SEATS_SUCCESS',
+        payload: data 
+    } 
+}
+const getQueues = (data) => {
+    return {
+        type: 'GET_QUEUES',
+        payload: data 
+    } 
+}
+export const GET_QUEUES = 'GET_QUEUES'
+const getQueuesSuccess = (data) => {
+    return {
+        type: 'GET_QUEUES_SUCCESS',
+        payload: data 
+    } 
+}
+const deleteQueue = (data) => {
+    return {
+        type: 'DELETE_QUEUE',
+        payload: data 
+    } 
+}
+export const DELETE_QUEUE = 'DELETE_QUEUE'
 
+const deleteQueueSuccess = (data) => {
+    return {
+        type: 'DELETE_QUEUE_SUCCESS',
+        payload: data 
+    } 
+}
 export {
     getDirections,
     getDirectionsSuccess,
@@ -133,5 +172,11 @@ export {
     postTravelError,
     deleteTravel,
     deleteTravelSuccess,
-    deleteTravelError
+    deleteTravelError,
+    changeSeats,
+    changeSeatsSuccess,
+    getQueues,
+    getQueuesSuccess,
+    deleteQueue,
+    deleteQueueSuccess
 }
