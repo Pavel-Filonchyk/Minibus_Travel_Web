@@ -30,8 +30,8 @@ const restAdminTravelReducer = (state = initialState, action) => {
             const postTravel = {
                 cities: postData.cities,
                 tripFrom: postData.travelFrom, tripTo: postData.travelTo, dateTrip: postData.date, freeSeats: postData.freeSeats, timeTrips: postData.time,
-                persons: [{id: '00000000', blockId: '00000000', fullName: '', tripFrom: '', wayStart: '', dateTrip:"00:00:00",  
-                    timeTrips: '', tripTo: '', wayStop: '', phoneNumber: '00000000000', numberSeats: 0, timeStart: '00:00', timeStop: '00:00', cost: 0
+                persons: [{id: '00000000', blockId: '00000000', fullName: 'DEFAULT', tripFrom: '', wayStart: '', dateTrip:"00:00:00",  
+                    timeTrips: '', tripTo: '', wayStop: '', phoneNumber: '-', numberSeats: 0, timeStart: '00:00', timeStop: '00:00', cost: 0
                 }]
             }
             return {
@@ -78,7 +78,7 @@ const restAdminTravelReducer = (state = initialState, action) => {
         case 'DELETE_PERSON':
         const id = action.payload.id
         const blockIdPerson = action.payload.blockId
-       
+        const numberSeats = action.payload.numberSeats
         // удаление на экране (возвращает массив из всех рейсов, в одном из которых удален нужный юзер)
         const deletePerson = []
         for (let i of state.travelsData) {
@@ -107,10 +107,11 @@ const restAdminTravelReducer = (state = initialState, action) => {
             }else{return elem}
         })
         const newPersonTravel = {
+            cities: personTravel[0]?.cities,
             tripFrom: personTravel[0]?.tripFrom,
             tripTo: personTravel[0]?.tripTo,
             dateTrip: personTravel[0]?.dateTrip,
-            freeSeats: personTravel[0]?.freeSeats,  
+            freeSeats: personTravel[0]?.freeSeats + Number(numberSeats),  
             timeTrips: personTravel[0]?.timeTrips, 
             persons: deletePersonTravel
         }

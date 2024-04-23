@@ -21,31 +21,31 @@ const getTravelsReducer = (state = initialState, action) => {
             }
         case 'GET_TRAVELS_SUCCESS':
             const list = Object.keys(action.payload).map(key => ({...action.payload[key], blockId: key}))
-            
+         
             const selectFrom = state.getTravelsData?.selectFrom
             const selectTo = state.getTravelsData?.selectTo
             const date = state.getTravelsData?.date
-           
+            
             const findDateRoutes = list.filter(item => item.dateTrip === date)
-      
+            
             let collectRoutes = []
             for (let item of findDateRoutes) {
                 const findRoutes = () => {
-                    const findStartCity = item?.cities?.find(elem => elem.city === selectFrom)
+                    const findStartCity = item?.cities?.find(elem => elem?.city === selectFrom)
                     const findIndexFrom = item?.cities?.indexOf(findStartCity)
-                    const findFinishCity = item?.cities?.find(elem => elem.city === selectTo)
+                    const findFinishCity = item?.cities?.find(elem => elem?.city === selectTo)
                     const findIndexTo = item?.cities?.indexOf(findFinishCity)
                     if(findIndexTo > findIndexFrom){
                         return item.blockId
                     }else{
                         return null
                     }
-                }
+                } // не показывает, т.к. пропадает cities при удалении
                 if(findRoutes() !== null){
                     const findRoute = list.filter(item => item.blockId === findRoutes())
                     collectRoutes.push(findRoute[0])
                 }
-            }   
+            }  
             return {
                 ...state,
                 travels: collectRoutes,

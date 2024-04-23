@@ -14,14 +14,14 @@ export default function PersonalArea({title, textBtn}) {
     const user = useSelector(({restUserReducer: { user }}) => user)
     const userData = useSelector(({restUserReducer: { userData }}) => userData)
     const deleteUserSuccess = useSelector(({restUserReducer: { deleteUserSuccess }}) => deleteUserSuccess)
-    const [phoneNumber, setPhoneNumber] = useState('')
+    const [phoneNumber, setPhoneNumber] = useState('37500')
     const [showCode, setShowCode] = useState(false)
     const [showBlockConfirm, setBlockConfirm] = useState(true)
     const [confirmCode, setConfirmCode] = useState('')
 
     const onGetCode = () => {
         setShowCode(true)
-        onSignup()
+        //onSignup()
     }
     function onCaptchVerify() {
         if (!window.recaptchaVerifier) {
@@ -53,15 +53,15 @@ export default function PersonalArea({title, textBtn}) {
     }
     const onOTPVerify = async () => {
 
-        window.confirmationResult
-            ?.confirm(confirmCode)
-            .then(async (res) => {
-                dispatch(getUser({user: res.user, phoneNumber:`+${phoneNumber}`}))
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-        dispatch(getUser({user, phoneNumber:`+${phoneNumber}`}))
+        // window.confirmationResult
+        //     ?.confirm(confirmCode)
+        //     .then(async (res) => {
+        //         dispatch(getUser({user: res.user, phoneNumber:`+${phoneNumber}`}))
+        //     })
+        //     .catch((err) => {
+        //         console.log(err)
+        //     })
+        dispatch(getUser({user: 'Ivan', phoneNumber:`+${phoneNumber}`}))
         setBlockConfirm(false)
     }
 

@@ -23,6 +23,7 @@ export default function Main() {
 
     // список всех рейсов
     const travels = useSelector(({getTravelsReducer: { travels }}) => travels)
+    console.log(travels)
     // список городов по направлению
     const directions = useSelector(({getTravelsReducer: { directions }}) => directions)
     const costs = useSelector(({restAdminCostsReducer: { costsData }}) => costsData)
@@ -109,7 +110,14 @@ export default function Main() {
     }
 
     const onPostQueue = (dataTrip) => {
-        dispatch(postQueue({...dataTrip, fullName, phoneNumber: `+${phoneNumber}`}))
+        if (fullName && phoneNumber) {
+            dispatch(postQueue({...dataTrip, fullName, phoneNumber: `+${phoneNumber}`}))
+            setErrorFilling(false)
+        }
+        if (!fullName || !phoneNumber) {
+            setErrorFilling(true)
+        }
+        
 
     }
     const submitChecklist = () => {
@@ -174,6 +182,7 @@ export default function Main() {
         setCalc(0)
         setUser(null)
         setErrorCostRoute(false)
+        setNumberSeats(1)
         //window.location.reload()
     }
     
@@ -359,7 +368,7 @@ export default function Main() {
                                                         <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Количество свободных мест</th>
                                                         <th className={style.textTicket}>{item.freeSeats >= 3 ? '3+' : item.freeSeats}</th>
                                                     </tr>
-                                                </table>
+                                                </table>     
                                                 <div className={style.wrapQueue} style={{display: item.freeSeats === 0 ? '' : 'none'}} >
                                                     <span>Как только появятся свободные места, мы вам сообщим</span>
                                                     <span className={style.label}>Введите имя и фамилию</span>
@@ -372,7 +381,12 @@ export default function Main() {
                                                         inputStyle={{width: 260, fontSize: 16, fontWeight: 600, fontFamily: 'Montserrat'}}
                                                         
                                                     />
+                                                    {/* error filling */}
+                                                    <div className={style.wrapError} style={{display: errorFilling ? '' : 'none'}}>
+                                                        <span className={style.textError}>Необходимо заполнить все поля</span>
+                                                    </div>
                                                 </div>
+                                                
                                                 <div className={style.tdBtn}>
                                                     {
                                                         item.freeSeats === 0 

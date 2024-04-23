@@ -46,7 +46,7 @@ const restUserReducer = (state = initialState, action) => {
 
             // изменение на сервере 
             const findBlockId = state.travels[blockId]
-            const freeSeats = findBlockId?.freeSeats + numberSeats
+            const freeSeats = findBlockId?.freeSeats + Number(numberSeats)
             const index = findBlockId?.persons.findIndex(item => item.id === id)
             
             let deleteUserData

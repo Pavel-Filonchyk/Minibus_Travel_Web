@@ -49,7 +49,7 @@ export default function AdminAccount() {
     // показать/скрыть блоки
     const [showTravels, setShowTravels] = useState(false)
     const [showQueues, setShowQueues] = useState(false)
-    const [showPersons, setShowPersons] = useState(true)
+    const [showPersons, setShowPersons] = useState(false)
     const [showDirections, setShowDirections] = useState(false)
     const [showBusstops, setShowBusstops] = useState(false)
     const [showCosts, setShowCosts] = useState(false)
@@ -216,7 +216,7 @@ export default function AdminAccount() {
                                         <div className={style.wrapBtn} style={{justifyContent: 'flex-start', marginBottom: 10, marginLeft: 10}}>
                                             <div className={style.btn} 
                                                 style={{marginBottom: 0, marginTop: 0, backgroundColor: '#1560BD'}}
-                                                //onClick={() => setShowPersons(item => !item)}
+                                                onClick={() => setShowPersons(item => !item)}
                                             >
                                                 <span>Пассажиры</span>
                                             </div>
@@ -238,26 +238,26 @@ export default function AdminAccount() {
                                 {
                                     item.persons?.map(elem => {return(
                                         <>
-                                            <tr >
+                                            <tr style={{display: showPersons ? '' : 'none'}}>
                                                 <th className={style.textTicket}>Имя и фамилия</th>
                                                 <th className={style.textTicket}>{elem.fullName}</th>
                                             </tr>
-                                            <tr >
+                                            <tr style={{display: showPersons ? '' : 'none'}}>
                                                 <th className={style.textTicket}>Телефон</th>
                                                 <th className={style.textTicket}>{elem.phoneNumber}</th>
                                             </tr>
-                                            <tr >
+                                            <tr style={{display: showPersons ? '' : 'none'}}>
                                                 <th className={style.textTicket}>Посадка-Высадка:</th>
                                                 <th className={style.textTicket}>{elem.tripFrom}-{elem.tripTo}</th>
                                             </tr>
-                                            <tr >
+                                            <tr style={{display: showPersons ? '' : 'none'}}>
                                                 <th className={style.textTicket}>Количество мест</th>
                                                 <th className={style.textTicket}>{elem.numberSeats}</th>
                                             </tr>
-                                            <div className={style.wrapBtn} style={{ justifyContent: 'flex-start', marginBottom: 12, marginLeft: 10}}>
+                                            <div className={style.wrapBtn} style={{display: showPersons ? '' : 'none', justifyContent: 'flex-start', marginBottom: 12, marginLeft: 10}}>
                                                 <div className={style.btn} 
                                                     style={{backgroundColor: 'red', marginBottom: 0, marginTop: 0}}
-                                                    onClick={() => dispatch(deletePerson({id: elem.id, blockId: item.blockId}))}
+                                                    onClick={() => dispatch(deletePerson({id: elem.id, blockId: item.blockId, numberSeats: elem.numberSeats}))}
                                                 >
                                                     <span>Удалить</span>
                                                 </div>

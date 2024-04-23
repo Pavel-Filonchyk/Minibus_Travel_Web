@@ -518,6 +518,8 @@ html {
     }
     @media(max-width: 520px){
         width: 90%;
+        padding-left: 10px;
+        padding-right: 10px;
     }
 }
 table {
@@ -646,16 +648,16 @@ table {
         border-bottom: 2px solid #4F443B;
         font-family: 'Montserrat', sans-serif;
     }
-    .wrapError {
-        width: 100%;
-        justify-content: center;
-        margin-top: 30px;
-        .textError {
-            font-family: 'Montserrat', sans-serif;
-            color: red;
-            font-weight: 600;
-            font-size: 18px;
-        }
+}
+.wrapError {
+    width: 100%;
+    justify-content: center;
+    margin-top: 30px;
+    .textError {
+        font-family: 'Montserrat', sans-serif;
+        color: red;
+        font-weight: 600;
+        font-size: 18px;
     }
 }
 .wrapBtn {
