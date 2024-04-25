@@ -39,12 +39,42 @@ const deleteUserError = (data) => {
         payload: data 
     } 
 }
+const getQueue = (data) => {
+    return {
+        type: 'GET_QUEUE',
+        payload: data 
+    } 
+}
+export const GET_QUEUE = 'GET_QUEUE'
+const getQueueSuccess = (data) => {
+    return {
+        type: 'GET_QUEUE_SUCCESS',
+        payload: data 
+    } 
+}
+const deleteQueue = (data) => {
+    return {
+        type: 'DELETE_QUEUE',
+        payload: data 
+    } 
+}
+export const DELETE_QUEUE = 'DELETE_QUEUE'
 
+const deleteQueueSuccess = (data) => {
+    return {
+        type: 'DELETE_QUEUE_SUCCESS',
+        payload: data 
+    } 
+}
 export {
     getUser,
     getUserSuccess,
     getUserError,
     deleteUser,
     deleteUserSuccess,
-    deleteUserError
+    deleteUserError,
+    getQueue,
+    getQueueSuccess,
+    deleteQueue,
+    deleteQueueSuccess
 }

@@ -4,7 +4,8 @@ const initialState = {
     postSuccess: false,
     postError: false,
 
-    postQueue: {}
+    postQueue: {},
+    postQueueSuccess: false
 }
 
 const postUserReducer = (state = initialState, action) => {
@@ -39,8 +40,15 @@ const postUserReducer = (state = initialState, action) => {
         case 'POST_USER_SUCCESS':
             return {
                 ...state,
-                postSuccess: action.payload,
+                postSuccess: true,
             }
+            
+        case 'CLOSE_POST_SUCCESS':
+        return {
+            ...state,
+            postSuccess: false,
+            postQueueSuccess: false
+        }
         case 'POST_QUEUE':
             return {
                 ...state,
@@ -50,7 +58,7 @@ const postUserReducer = (state = initialState, action) => {
         case 'POST_QUEUE_SUCCESS':
             return {
                 ...state,
-                
+                postQueueSuccess: true
             } 
          
         default: 

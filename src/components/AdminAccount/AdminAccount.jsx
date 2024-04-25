@@ -119,7 +119,7 @@ export default function AdminAccount() {
     return (
         <div className={style.wrapAdmidAccount} >
             {/* style={{display: user?.phoneNumber === '+375291738113' ? '' : 'none'}} */}
-            <span>УПРАВЛЕНИЕ РЕЙСАМИ</span>
+            <span style={{color: 'white'}}>УПРАВЛЕНИЕ РЕЙСАМИ</span>
 
             {/* Добавление рейса*/}
             <span className={style.title}>Добавить рейс</span>

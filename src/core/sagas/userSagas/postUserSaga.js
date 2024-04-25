@@ -8,12 +8,12 @@ function* workerLoader() {
     const blockId = yield select(state => state.postUserReducer.blockId)
 
     try {
-        const { data } = yield call(httpProvider.put, travelUrl(blockId), {data: userData})
-    
-        yield put(postUserSuccess(data))
-      } catch (error) {
-        yield put(postUserError(error))
-      }
+      const { data } = yield call(httpProvider.put, travelUrl(blockId), {data: userData})
+  
+      yield put(postUserSuccess(data))
+    } catch (error) {
+      yield put(postUserError(error))
+    }
   }
 
 export default function* watcherPostUser() {

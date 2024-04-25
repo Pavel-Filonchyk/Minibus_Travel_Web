@@ -6,7 +6,11 @@ const initialState = {
     travels: [],
     blockId: '',
     deleteUserSuccess: false,
-    getUserError: false
+    getUserError: false,
+
+    userQueue: [],
+    blockIdQueue: '',
+    deleteQueueSuccess: false
 }
 
 const restUserReducer = (state = initialState, action) => {
@@ -32,7 +36,6 @@ const restUserReducer = (state = initialState, action) => {
                 userData,
                 travels: action.payload
             }
-
         case 'DELETE_USER':
             const blockId = action.payload.blockId
             const id = action.payload.id
@@ -67,19 +70,39 @@ const restUserReducer = (state = initialState, action) => {
                 userData: newUserData,
                 deleteUserData,
             }
-        case 'DELETE_USER_SUCCESS':
-            
+        case 'DELETE_USER_SUCCESS':   
         return {
             ...state,
-            getUserSuccess: true
+            deleteUserSuccess: true
         }
-
         case 'GET_USER_ERROR':
             return {
                 ...state,
                 getUserError: action.payload,
             }
 
+        case 'GET_QUEUE_SUCCESS':
+            const listQueue = Object.keys(action.payload).map(key => ({...action.payload[key], blockId: key}))
+            const findUserQueue = listQueue?.filter(item => item.phoneNumber === state.phoneNumber)
+            return {
+                ...state,
+                userQueue: findUserQueue
+            }
+        case 'DELETE_QUEUE':
+            const deleteQueue = state.userQueue?.filter(item => item.blockId !== action.payload)
+            return {
+                ...state,
+                blockIdQueue: action.payload,
+                userQueue: deleteQueue
+            }
+        case 'DELETE_QUEUE_SUCCESS':
+            // console.log(action.payload)
+            // const deleteQueue = state.userQueue?.filter(item => item.blockId !== state.blockIdQueue)
+            // console.log(deleteQueue)
+            return {
+                ...state,
+                //userQueue: deleteQueue
+            }
         default: 
         return state;  
     }

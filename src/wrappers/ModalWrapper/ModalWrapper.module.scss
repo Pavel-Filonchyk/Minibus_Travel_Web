@@ -1,0 +1,61 @@
+.darkBG {
+  background-color: rgba( 127,199,255,0.7);//rgba(255, 253, 208, 0.8); 
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: fixed;
+  @media(max-width: 520px){
+    width: 100vh;
+    height: 100%;
+  }
+}
+
+.centered {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.modal {
+  z-index: 100;
+  animation: scaling 1s;
+}
+.closeModal {
+  z-index: 100;
+  animation: scalingBack 2s;
+}
+@keyframes scaling {
+	From {
+		-webkit-transform: scale(0);
+	}
+	To {
+		-webkit-transform: scale(1.0);
+	}
+}
+@keyframes scalingBack {
+	From {
+		-webkit-transform: scale(1.0);
+	}
+	To {
+		-webkit-transform: scale(0);
+	}
+  // 0% {transform: translateY(0);}
+  // 100% {transform: translateY(-150%);}
+}
+
+// .modal {
+//   overflow: hidden;
+//   left: 0;
+//   right: 0;
+//   top: 0;
+//   bottom: 0;
+//   margin: auto;
+//   position: fixed;
+//   width: 100px;
+//   height: 100px;
+//   background-color:transparent;
+// }

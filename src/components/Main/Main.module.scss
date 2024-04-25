@@ -7,10 +7,13 @@ html {
 .header {
     width: 100%;
     height: 96px;
-    background-color: #4F9BDE;
+    //background-color: rgba( 127,199,255,1); //#4F9BDE;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-size: cover; 
+    //background-position: center;
+    background-image: url(images/cloud.jpg);
     @media(max-width: 520px){
         max-width: 100vh;
         height: 115px;
@@ -57,7 +60,7 @@ html {
         .phoneNumber {
             width: 260px;
             height: 58px;
-            background-color: rgb(76, 175, 80);
+            //background-color: rgb(76, 175, 80);
             border: 3px solid white;
             border-radius: 12px;
             margin-right: 20px;
@@ -97,7 +100,7 @@ html {
 .main {
     width: 100%;
     height: calc(100vh - 4.1em);
-    background-color: rgba(59, 89, 152, 1);
+    background-color: rgba(18, 54, 106, 1); //rgba(59, 89, 152, 1);
     @media(max-width: 520px){
         max-width: 100vh;
         height: calc(100vh - 115px);
@@ -265,7 +268,7 @@ html {
                 @media(max-width: 1030px){
                     width: 520px;
                     height: 280px;
-                    opacity: 0.6;
+                    opacity: 0.9;
                 }
                 @media(max-width: 520px){
                     width: 360px;
@@ -282,8 +285,12 @@ html {
     width: 100%; 
     display: flex;
     justify-content: center;
+    //background-color: rgba(79, 155, 222, 0.6);
+    background-image: url(./images/route1.jpg);
+    background-size: cover; 
+    background-position: center center;
     .booking {
-        width: 80%;
+        width: 100%;
         display: flex;
         margin-top: 80px;
         margin-bottom: 120px;
@@ -299,20 +306,26 @@ html {
             font-weight: 700;
             border-bottom: 4px solid #f22127;
             margin-bottom: 30px;
+            color: white;
             @media(max-width: 520px){
                 font-size: 20px;
                 margin-bottom: 20px;
             }
         }
         .wrapForm {
-            width: 100%;
+            width: 60%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: 'center';
             font-weight: 600;
             margin-top: 30px;
+            padding: 20px;
+            border: 2px solid #4F443B;
+            background-color: white;
+            border-radius: 20px;
             @media(max-width: 1030px){
+                width: 95%;
                 margin-top: 18px;
             }
             .wrapDirection {
@@ -347,7 +360,7 @@ html {
                 display: flex;
                 flex-direction: row;
                 justify-content: center;
-                @media(max-width: 1030px){
+                @media(max-width: 1600px){
                     flex-direction: column;
                     align-items: center;
                     justify-content: center;
@@ -356,25 +369,28 @@ html {
             .blockSelectWay {
                 display: flex;
                 flex-direction: column;
+                width: 100%;
+                align-items: center;
             }
             .selectWay {
                 border: none;
                 outline: none;
                 font-weight: 600;
                 font-size: 22px;
-                width: 420px;
+                width: 100%;
                 margin: 8px;
                 border-bottom: 2px solid #4F443B;
                 font-family: 'Montserrat', sans-serif;
                 @media(max-width: 520px){
-                    width: 340px;
+                    width: 100%;
                 }
             }
             .wrapDatePicker {
                 display: flex;
                 width: 100%;
                 justify-content: center; 
-                margin-top: 30
+                margin-top: 30;
+                align-items: center;
             }
             .wrapArrows {
                 width: 50px;
@@ -394,9 +410,17 @@ html {
             }
             
             .date {
-                border: 2px solid #4F443B;
+                border: 3px solid white;
                 font-family: 'Montserrat', sans-serif;
                 margin-bottom: 20px;
+                color: black;
+                border: 2px solid black;
+                font-weight: 700;
+                font-size: 25px;
+                width: 360px;
+                @media(max-width: 520px){
+                    width: 100%;
+                }
             }
             .wrapBtn {
                 display: flex;
@@ -434,10 +458,6 @@ html {
     width: 100%;
     display: flex;
     justify-content: center;
-    margin-top: 20px;
-    @media(max-width: 520px){
-        margin-top: 0px;
-    }
     > span {
         font-weight: 700;
         font-size: 22px;
@@ -483,22 +503,24 @@ html {
     
 }
 .wrapQueue {
-    width: 68%;
+    width: 50%;
     display: flex;
     flex-direction: column;
     margin-top: 20px;
     .label {
-        font-weight: 500;
-        font-size: 16px;
+        font-weight: 600;
+        font-size: 18px;
         margin-top: 20px;
         margin-bottom: 10px;
+        color: white;
     }
     .inputChecklist {
         border: none;
         outline: none;
-        font-weight: 600;
-        font-size: 18px;
-        border-bottom: 2px solid #4F443B;
+        font-weight: 700;
+        font-size: 19px;
+        border-bottom: 3px solid white;
+        background-color: transparent;
         font-family: 'Montserrat', sans-serif;
     }
     .selectСhecklist {
@@ -522,13 +544,18 @@ html {
         padding-right: 10px;
     }
 }
+.wrapTable {
+    width: 100%;
+}
 table {
     margin-top: 30px;
-    width: 70%;
+    width: 60%;
     border: 2px solid #4F443B;
-    border-radius: 10px;
+    border-radius: 20px;
+    background-color: white;
+    padding: 20px;
     @media(max-width: 520px){
-        width: 90%;
+        width: 95%;
     }
     .textTicket {
         text-align: start;
@@ -611,10 +638,15 @@ table {
 
 // Чеклист для заполнения
 .checklist {
-    width: 70%;
+    width: 60%;
     margin-top: 30px;
     display: flex;
     flex-direction: column;
+    background-color: white;
+    padding: 10px;
+    border-radius: 20px;
+    border: 2px solid #4F443B;
+    padding: 20px;
     @media(max-width: 520px){
         width: 95%;
         margin-top: 10px; 
@@ -663,7 +695,7 @@ table {
 .wrapBtn {
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-around;
     align-items: 'center';
     width: 100%;
     > span {
@@ -707,7 +739,7 @@ table {
     justify-content: center;
     align-items: center;
     @media(max-width: 520px){
-        width: 95%;
+        //width: 95%;
         
     }
     .textTicket {
@@ -716,7 +748,7 @@ table {
         height: 40px;
     }
     .wrapBtn {
-        width: 100%;
+        width: 90%;
         display: flex;
         flex-direction: column;
         margin-top: 30px;
@@ -783,25 +815,56 @@ table {
     font-weight: 600;
     font-size: 18px;
     width: 240px;
-    border-bottom: 2px solid #4F443B;
+    border-bottom: 3px solid black;
     font-family: 'Montserrat', sans-serif;
+    background-color: transparent;
+    color: black;
+    font-weight: 800;
+    font-size: 22px;
     @media(max-width: 520px){
         width: 160px;
     }
 }
+.inputTicket::placeholder {
+    color: black;
+    font-weight: 800;
+  }
 
-
+  .wrapModal {
+    width: 310px;
+    height: 230px;
+    background-color: #4F9BDE;
+    border-radius: 36px;
+    border: 3px solid rgba(18, 54, 106, 1);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+    .title {
+        font-family: 'Montserrat', sans-serif;
+        margin-top: 10px;
+        font-weight: 600;
+        font-size: 28px;
+        color: white;
+        line-height: 36px;
+    }
+    .smile {
+        font-size: 48px;
+        color: rgba(18, 54, 106, 1);
+    }
+  }
 // Футер
 .footer {
     width: 100%;
     height: 130px;
-    background-color: rgba(59, 89, 152, 1);
+    background-color: rgba(37,38,32,1);
     display: flex;
     justify-content: space-around;
     align-items: center;
     @media(max-width: 520px){
         flex-direction: column;
-        height: 135px;
+        height: 130px;
     }
     .wrapApps {
         display: flex; 
@@ -813,7 +876,7 @@ table {
             color: white;
             font-size: 18px;
             margin-left: 10px;
-            margin-top: 5px;
+            margin-top: 0px;
             text-align: center;
             @media(max-width: 520px){
                 font-size: 15px;
@@ -835,33 +898,33 @@ table {
             margin-bottom: 8px;
         }
         .googlePlay {
-            width: 230px;
-            height: 73px;
-            border-radius: 14px;
-            border: 3px solid black;
+            width: 249px;
+            height: 74px;
+            border-radius: 15px;
+            //border: 3px solid black;
             background-size: cover; 
             background-position: center center;
-            background-image: url(images/googlePlay.png);
+            background-image: url(images/app2.jpg);
             cursor: pointer;
             @media(max-width: 520px){
                 border-radius: 10px;
-                width: 153px;
-                height: 50px;
+                width: 156px;
+                height: 46px;
             }
         }
         .appStore {
-            width: 228px;
-            height: 73px;
+            width: 249px;
+            height: 74px;
             background-size: cover; 
             background-position: center center;
-            background-image: url(images/appStore.png);
+            background-image: url(images/app1.jpg);
             cursor: pointer;
-            border: 3px solid black;
-            border-radius: 14px;
+            //border: 3px solid black;
+            border-radius: 15px;
             @media(max-width: 520px){
                 border-radius: 10px;
-                width: 153px;
-                height: 50px;
+                width: 156px;
+                height: 46px;
             }
         }
     }  

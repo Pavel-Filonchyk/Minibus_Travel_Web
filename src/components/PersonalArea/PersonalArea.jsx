@@ -4,7 +4,7 @@ import PhoneInput from 'react-phone-input-2'
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth"
 import _ from 'lodash'
 import { auth } from '../../firebase.config'
-import { getUser, deleteUser } from '../../core/actions/canselTravelActions'
+import { getUser, deleteUser, getQueue, deleteQueue } from '../../core/actions/canselTravelActions'
 
 import style from './PersonalArea.module.scss'
 
@@ -14,6 +14,7 @@ export default function PersonalArea({title, textBtn}) {
     const user = useSelector(({restUserReducer: { user }}) => user)
     const userData = useSelector(({restUserReducer: { userData }}) => userData)
     const deleteUserSuccess = useSelector(({restUserReducer: { deleteUserSuccess }}) => deleteUserSuccess)
+    const userQueue = useSelector(({restUserReducer: { userQueue }}) => userQueue)
     const [phoneNumber, setPhoneNumber] = useState('37500')
     const [showCode, setShowCode] = useState(false)
     const [showBlockConfirm, setBlockConfirm] = useState(true)
@@ -62,6 +63,7 @@ export default function PersonalArea({title, textBtn}) {
         //         console.log(err)
         //     })
         dispatch(getUser({user: 'Ivan', phoneNumber:`+${phoneNumber}`}))
+        dispatch(getQueue())
         setBlockConfirm(false)
     }
 
@@ -72,9 +74,12 @@ export default function PersonalArea({title, textBtn}) {
     const onCloseBooking = (data) => {
         dispatch(deleteUser(data))
     }
+    const onCloseQueue = (blockId) => {
+        dispatch(deleteQueue(blockId))
+    }
     return (
         <div className={style.wrapPersonalArea}>
-            <span>{title}</span>
+            <span>ЛИЧНЫЙ КАБИНЕТ И<br/> ОТМЕНА БРОНИ</span>
 
             {/* блок подтверждения через смс */}
             <div className={style.wrapBlockConfirm} style={{display: showBlockConfirm ? '' : 'none'}}>
@@ -88,18 +93,18 @@ export default function PersonalArea({title, textBtn}) {
                                 onChange={setPhoneNumber}
                                 inputStyle={{width: 320, fontSize: 18, fontWeight: 600, height: 48, fontFamily: 'Montserrat'}}
                                 buttonStyle={{height: 48}}
-                                containerStyle={{width: 320}}
+                                containerStyle={{width: 320, borderColor: 'black'}}
                                 
                             />
                             <div className={style.getBtn}
                                 onClick={onGetCode}
                             >
-                                <span>{textBtn}</span>
+                                <span>Войти</span>
                             </div>
                         </>
                     : 
                         <div style={{flexDirection: 'column'}}>
-                            <span style={{fontSize: 18, fontWeight: '600'}}>
+                            <span style={{fontSize: 18, fontWeight: '600', color: 'white'}}>
                                 На номер {phoneNumber} был выслан код подтверждения
                             </span>
                             <div style={{display: 'flex', flexDirection: 'row', marginTop: 20}}>
@@ -116,7 +121,7 @@ export default function PersonalArea({title, textBtn}) {
                                 </div>
                             </div>
                             <div className={style.getBtn}
-                                style={{marginLeft: 0, marginTop: 20, backgroundColor: 'rgb(38, 166, 190)'}}
+                                style={{marginLeft: 0, marginTop: 20, backgroundColor: '#1560BD'}}
                                 onClick={() => setShowCode(false)}
                             >
                                 <span>Назад</span>
@@ -127,7 +132,7 @@ export default function PersonalArea({title, textBtn}) {
 
             {/* брони */}
             {
-                user && userData.length > 0
+                user && userData?.length > 0
                 ?   userData?.map(item => {
                     return (
                         <div className={style.wrapTicket} key={item.id}>
@@ -193,9 +198,59 @@ export default function PersonalArea({title, textBtn}) {
                             <span>Назад</span>
                         </div>
                     </div>
+            }
+            {
+                user && userQueue?.length > 0
+                ? userQueue.map(item => {return (
+                    <div className={style.wrapTicket} key={item.blockId}>
+                        <table style={{marginTop: 0}}>
+                            <tr>
+                                <th className={style.textTicket} style={{fontWeight: '700', height: 60}}>Очередь</th>
+                                <th className={style.textTicket}></th>
+                            </tr>
+                            <tr>
+                                <th className={style.textTicket}>Посадка</th>
+                                <th className={style.textTicket}>{item.tripFrom}</th>
+                            </tr>
+                            <tr>
+                                <th className={style.textTicket} style={{width: '50%'}}>Высадка</th>
+                                <th className={style.textTicket}>{item.tripTo}</th>
+                            </tr>
+                            <tr>
+                                <th className={style.textTicket}>Дата отправления</th>
+                                <th className={style.textTicket}>{item.dateTrip}</th>
+                            </tr>
+                            <tr>
+                                <th className={style.textTicket}>Время отправления</th>
+                                <th className={style.textTicket}>{item.time}</th>
+                            </tr>
+                        </table>
+                        <div style={{display: 'flex', flexDirection: 'row'}}>
+                            <div className={style.btnBack}
+                                onClick={onBack}
+                            >
+                                <span>Назад</span>
+                            </div>
+                            <div className={style.btnBack}
+                                style={{width: 220, marginLeft: 16, backgroundColor: 'red'}}
+                                onClick={() => onCloseQueue(item.blockId)}
+                            >
+                                <span>Отменить очередь</span>
+                            </div>
+                        </div>
+                    </div>
+                )})
+                : 
+                    <div className={style.wrapMessage} style={{display: showBlockConfirm ? 'none' : ''}}>
+                    <span style={{fontSize: 18, fontWeight: '600'}}>Вы не стоите в очереди на рейс</span>
+                    <div className={style.btnBack}
+                        onClick={onBack}
+                    >
+                        <span>Назад</span>
+                    </div>
+            </div>
 
             }
-
         </div>
     )
 }

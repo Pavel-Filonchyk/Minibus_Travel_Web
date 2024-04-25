@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { DatePicker } from 'antd'
-import dayjs from 'dayjs';
+import dayjs from 'dayjs'
 import locale from 'antd/es/date-picker/locale/ru_RU'
 import { InteractionOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth"
+import { SmileOutlined } from '@ant-design/icons'
 import uuid from 'react-uuid' 
 
 import PersonalArea from '../PersonalArea/PersonalArea'
 import AdminAccount from '../AdminAccount/AdminAccount'
-import { getTravels, postUser, getDirections, postQueue } from '../../core/actions/bookTravelActions'
+import ModalWrapper from '../../wrappers/ModalWrapper/ModalWrapper'
+import { getTravels, postUser, getDirections, closePostSuccess, postQueue } from '../../core/actions/bookTravelActions'
 import { getCosts } from '../../core/actions/restAdminCostsActions'
 import style from './Main.module.scss'
 
@@ -23,13 +25,13 @@ export default function Main() {
 
     // список всех рейсов
     const travels = useSelector(({getTravelsReducer: { travels }}) => travels)
-    console.log(travels)
     // список городов по направлению
     const directions = useSelector(({getTravelsReducer: { directions }}) => directions)
     const costs = useSelector(({restAdminCostsReducer: { costsData }}) => costsData)
     const getError = useSelector(({getTravelsReducer: { getError }}) => getError)
     const postSuccess = useSelector(({postUserReducer: { postSuccess }}) => postSuccess)
     const postError = useSelector(({postUserReducer: { postError }}) => postError)
+    const postQueueSuccess = useSelector(({postUserReducer: { postQueueSuccess }}) => postQueueSuccess)
     // auth
     const [confirmCode, setConfirmCode] = useState('')
     const [user, setUser] = useState(null)
@@ -46,10 +48,11 @@ export default function Main() {
 
     const [calc, setCalc] = useState(0)
     const [changeWay, setChengeWay] = useState(true)
+    const [showModal, setShowModal] = useState(false)
+    const [textModal, setTextModal] = useState('')
     const [errorFilling , setErrorFilling] = useState(false)
     const [errorCostRoute, setErrorCostRoute] = useState(false)
     const [showCode, setShowCode] = useState(false)
-    const [removePostBtns, setRemovePostBtns] = useState(false)
 
     // server data
     const [choiceRoutes, setChoiceRoutes] = useState([])
@@ -97,9 +100,30 @@ export default function Main() {
         }
     }, [user])
     
-    const getRoutes = async () => {
-        dispatch(getTravels({selectFrom, selectTo, date: date.format('DD.MM.YYYY')}))
+    useEffect(() => {
+        setTextModal('Бронирование успешно завершено!')
+        if(postSuccess){
+            setShowModal(true)
+            setTimeout(() => {
+                setShowModal(false)
+                dispatch(closePostSuccess())
+            },2000)
+        }
+    }, [postSuccess])
+    
+    useEffect(() => {
+        setTextModal('Вы записаны в очередь!')
+        if(postQueueSuccess){
+            setShowModal(true)
+            setTimeout(() => {
+                setShowModal(false)
+                dispatch(closePostSuccess())
+            },2000)
+        }
+    }, [postQueueSuccess])
 
+    const getRoutes = () => {
+        dispatch(getTravels({selectFrom, selectTo, date: date.format('DD.MM.YYYY')}))
         setCalc(1)
     }
     const onChoiceRoute = (id) => {
@@ -113,6 +137,7 @@ export default function Main() {
         if (fullName && phoneNumber) {
             dispatch(postQueue({...dataTrip, fullName, phoneNumber: `+${phoneNumber}`}))
             setErrorFilling(false)
+            setCalc(0)
         }
         if (!fullName || !phoneNumber) {
             setErrorFilling(true)
@@ -175,6 +200,7 @@ export default function Main() {
         //     console.log(err)
         //   })
         setUser("Ivan")
+        setCalc(0)
         //setRemovePostBtns(true)
     }
 
@@ -194,10 +220,10 @@ export default function Main() {
                 <div className={style.logo}/>
                 <div className={style.wrapPhones}>
                     <a href="tel:+375295826000" aria-label="phone" style={{textDecoration: 'none'}}>
-                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(59, 89, 152, 0.8)'}}><span style={{color: 'red', fontWeight: '800'}}>MTS</span>&nbsp;&nbsp;<span>+375(29)582-6000</span></div>
+                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(18, 54, 106, 1)'}}><span style={{color: 'red', fontWeight: '800'}}>MTS</span>&nbsp;&nbsp;<span>+375(29)582-6000</span></div>
                     </a>
                     <a href="tel:+375445826000" aria-label="phone" style={{textDecoration: 'none'}}>
-                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(59, 89, 152, 0.8)'}}><span style={{color: 'red', fontWeight: '800'}}>A<span style={{color: 'black', fontSize: 17}}>1</span></span>&nbsp;&nbsp;<span>+375(44)582-6000</span></div>
+                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(18, 54, 106, 1)'}}><span style={{color: 'red', fontWeight: '800'}}>A<span style={{color: 'black', fontSize: 17}}>1</span></span>&nbsp;&nbsp;<span>+375(44)582-6000</span></div>
                     </a>
                 </div>
             </div>
@@ -243,6 +269,7 @@ export default function Main() {
 
             <div className={style.wrapBooking}>
                 <a name="Забронировать"></a>
+        
                 <div className={style.booking}>
 
                     {/* Выбрать рейсы */}
@@ -291,7 +318,6 @@ export default function Main() {
                                 <DatePicker 
                                     minDate={dayjs()}
                                     locale={locale}
-                                    style={{width: 320, marginLeft: 15}}
                                     className={style.date}
                                     format={'DD-MM-YYYY'}
                                     defaultValue={dayjs()}
@@ -323,7 +349,7 @@ export default function Main() {
                                        
                                         return (
                                             <>
-                                                <table key={item.blockId}>
+                                                <table key={item.blockId} >
                                                     <tr>
                                                         <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Отправление</th>
                                                         <th className={style.textTicket}>
@@ -361,7 +387,7 @@ export default function Main() {
                                                         </th>
                                                     </tr>
                                                     <tr> 
-                                                        <th className={style.textTicket} style={{display: item.freeSeats === 0 ? '' : 'none', fontWeight: '700', width: '60%',color: 'red', fontWeight: '600'}}>Нет свободных мест</th>
+                                                        <th className={style.textTicket} style={{display: item.freeSeats === 0 ? '' : 'none', fontWeight: '700', width: '60%',color: 'red'}}>Нет свободных мест</th>
                                                     </tr>
                                                     
                                                     <tr>
@@ -412,7 +438,7 @@ export default function Main() {
                                                     }
                                                      
                                                     <div className={style.tableBtn}
-                                                        style={{backgroundColor: 'rgb(38, 166, 190)'}}
+                                                        style={{backgroundColor: '#1560BD'}}
                                                         onClick={() => setCalc(0)}
                                                     >
                                                         <span>Назад</span>
@@ -424,7 +450,7 @@ export default function Main() {
                                 }
                                 <div className={style.wrapBtn} style={{display: travels.length > 0 || getError ? 'none' : '', flexDirection: 'column', alignItems: 'center'}}>
                                     <span>На выбранные даты рейсов нет</span>
-                                    <div className={style.order} style={{backgroundColor: 'rgb(38, 166, 190)', width: 160}}
+                                    <div className={style.order} style={{backgroundColor: '#1560BD', width: 160}}
                                         onClick={() => setCalc(0)}
                                     >
                                         <span>Назад</span>
@@ -434,7 +460,7 @@ export default function Main() {
                                 {/* get error */}
                                 <div className={style.wrapGetError} style={{display: getError ? '' : 'none'}}>
                                     <span>Ошибка запроса рейсов <br/> Попробуйте позже еще раз</span>
-                                    <div className={style.order} style={{backgroundColor: 'rgb(38, 166, 190)', width: 160, marginTop: 20, marginRight: 0}}
+                                    <div className={style.order} style={{backgroundColor: '#1560BD', width: 160, marginTop: 20, marginRight: 0}}
                                         onClick={btnBack}
                                     >
                                         <span>Назад</span>
@@ -505,13 +531,13 @@ export default function Main() {
                                             <option>2</option>
                                             <option>3</option>
                                         </>
-                                    : Array(choiceRoutes[0]?.freeSeats).fill({id: uuid()}).map((item, index) => {return (
-                                        <option key={item.id}>{index +1}</option>
+                                    : Array(choiceRoutes[0]?.freeSeats).fill(0).map((item, index) => {return (
+                                        <option>{index +1}</option>
                                       )})
                                 }
                                 
                             </select>
-                            <span style={{fontWeight: '500', fontSize: 16, marginTop: 40}}>При оформлении заказа, Вы даете свое согласие на обработку персональных данных и проезд в составе организованной группы пассажиров.</span>
+                            <span style={{fontWeight: '500', fontSize: 16, marginTop: 30}}>При оформлении заказа, Вы даете свое согласие на обработку персональных данных и проезд в составе организованной группы пассажиров.</span>
                             
                             {/* error filling */}
                             <div className={style.wrapError} style={{display: errorFilling ? '' : 'none'}}>
@@ -528,15 +554,16 @@ export default function Main() {
                                     className={style.order}
                                     onClick={() => submitChecklist()}
                                 />
-                                <div className={style.order} style={{backgroundColor: 'rgb(38, 166, 190)', width: 160}}
+                                <div className={style.order} style={{backgroundColor: '#1560BD', width: 160}}
                                     onClick={btnBack}
                                 >
                                     <span>Назад</span>
                                 </div>
                             </div>
                         </div>
-                    </div>
                         
+                    </div>
+                    
                     {/* Чек */}
                     <div className={style.wrapTicket} style={{display: calc === 3 ? '' : 'none'}}>
                         <table style={{marginTop: 0}}>
@@ -579,14 +606,14 @@ export default function Main() {
                             
                         </table>
                         <div className={style.wrapBtn}>
-                            <span style={{display: showCode ? 'none' : 'block', marginBottom: 20}}>Для подтверждения брони необходимо получить код на телефон</span>
-                            <span style={{display: showCode && !removePostBtns ? 'block' : 'none', marginBottom: 20}}>
-                                На номер <span style={{fontWeight: '600'}}>{phoneNumber}</span> был выслан код подтверждения. <br/> Введите код в поле и после подтверждения сможете завершить заказ.
+                            <span style={{display: showCode ? 'none' : 'block', marginBottom: 20, marginTop: 0}}>Для подтверждения брони необходимо получить код на телефон</span>
+                            <span style={{display: showCode? 'block' : 'none', marginBottom: 20, marginTop: 0}}>
+                                На номер <span style={{fontWeight: '600'}}>{phoneNumber}</span> был выслан код подтверждения. <br/> Введите полученный код и подтвердите.
                             </span>
                             <div id="recaptcha-container"></div>
                             <div className={style.submit} style={{display: user ? 'none' : ''}}>
                                 {
-                                    showCode && !removePostBtns
+                                    showCode
                                     ? 
                                         <>
                                             <div className={style.getCode}
@@ -609,7 +636,7 @@ export default function Main() {
                                                 <span>Получить код</span>
                                             </div>
                                             <div className={style.order} 
-                                                style={{backgroundColor: 'rgb(38, 166, 190)'}}
+                                                style={{backgroundColor: '#1560BD'}}
                                                 onClick={btnBack}
                                             >
                                                 <span>Назад</span>
@@ -618,18 +645,18 @@ export default function Main() {
                                 }                               
                             </div>
                             <>
-                                <div className={style.getCode} style={{display: postSuccess ? '' : 'none', width: 300, marginTop: 20, marginRight: 0}}>
+                                {/* <div className={style.getCode} style={{display: postSuccess ? '' : 'none', width: 300, marginTop: 20, marginRight: 0}}>
                                     <span>Рейс забронирован!</span>
-                                </div>
-                                <div className={style.order} style={{display: postSuccess ? '' : 'none', backgroundColor: 'rgb(38, 166, 190)', width: 160, marginTop: 20, marginRight: 0}}
+                                </div> */}
+                                {/* <div className={style.order} style={{display: postSuccess ? '' : 'none', backgroundColor: '#1560BD', width: 160, marginTop: 20, marginRight: 0}}
                                     onClick={btnBack}
                                 >
                                     <span>Назад</span>
-                                </div>
+                                </div> */}
                             </>
                             <div className={style.wrapError} style={{display: postError ? '' : 'none', marginTop: 10}}>
                                 <span>Ошибка отправки данных <br/> Попробуйте позже еще раз</span>
-                                <div className={style.order} style={{backgroundColor: 'rgb(38, 166, 190)', width: 160, marginTop: 20, marginRight: 0}}
+                                <div className={style.order} style={{backgroundColor: '#1560BD', width: 160, marginTop: 20, marginRight: 0}}
                                     onClick={btnBack}
                                 >
                                     <span>Назад</span>
@@ -638,22 +665,25 @@ export default function Main() {
                         </div>
                     </div>
 
-                    <PersonalArea
-                        title='ОТМЕНА БРОНИ'
-                        textBtn='Брони'
-                    />
-                    <PersonalArea
-                        title='ЛИЧНЫЙ КАБИНЕТ'
-                        textBtn='Войти'
-                    />
-                    <AdminAccount/>
+                    <PersonalArea/>
+
+                    {/* <AdminAccount/> */}
+
                 </div>
             </div>
-
+            <ModalWrapper showModal={showModal}>
+                <div className={style.wrapModal}>
+                    <span className={style.title}>{textModal}</span> 
+                    <SmileOutlined 
+                        className={style.smile}
+                    />
+                </div>
+            </ModalWrapper>
+            <div className={style.line}/>
             {/* Футер */}
             <div className={style.footer}>
                 <div className={style.wrapApps}>
-                    <span>Для удобства вашего бронирования установите наше приложение на телефон</span>
+                    <span>Для удобства бронирования установите приложение на телефон</span>
                     <div className={style.blockApps}>
                         <div className={style.appStore} style={{marginLeft: 10}}/>
                         <div className={style.googlePlay}/>

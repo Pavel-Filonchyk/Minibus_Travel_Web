@@ -5,7 +5,7 @@ import { QUEUES_URL } from '../../../common/api'
 
 function* workerLoader() {
     const postQueue = yield select(state => state.postUserReducer.postQueue)
-    console.log(postQueue)
+
     try {
         const { data } = yield call(httpProvider.post, QUEUES_URL, {data: postQueue})
         

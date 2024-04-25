@@ -68,6 +68,13 @@ const postUserError = (data) => {
         payload: data 
     } 
 }
+
+const closePostSuccess = (data) => {
+    return {
+        type: 'CLOSE_POST_SUCCESS',
+        payload: data 
+    } 
+}
 const postQueue = (data) => {
     return {
         type: 'POST_QUEUE',
@@ -91,6 +98,7 @@ export {
     postUser,
     postUserSuccess,
     postUserError,
+    closePostSuccess,
     getCities,
     getCitiesSuccess,
     postQueue,
