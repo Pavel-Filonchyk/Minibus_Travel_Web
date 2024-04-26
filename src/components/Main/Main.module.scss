@@ -16,7 +16,7 @@ html {
     background-image: url(images/cloud.jpg);
     @media(max-width: 520px){
         max-width: 100vh;
-        height: 115px;
+        height: 110px;
         justify-content: space-around;
     }
     .logo {
@@ -134,14 +134,14 @@ html {
             .wrapText {
                 display: flex;
                 @media(max-width: 520px){
-                    margin-top: 30px;
+                    margin-top: 25px;
                 }
                 .title {
                     color: white;
                     font-weight: 700;
                     font-size: 3em;
                     @media(max-width: 520px){
-                        font-size: 1.8em;
+                        font-size: 1.6em;
                     }
                 }
             } 
@@ -159,8 +159,9 @@ html {
                 width: 440px;
                 height: 52px;
                 @media(max-width: 520px){
-                    width: 335px;
-                    margin-top: 30px;
+                    height: 50px;
+                    width: 320px;
+                    margin-top: 20px;
                     border-radius: 12px;
                 }
                 > span {
@@ -168,7 +169,7 @@ html {
                     font-weight: 700;
                     color: white;
                     @media(max-width: 520px){
-                        font-size: 20px;
+                        font-size: 19px;
                         font-weight: 700;
                     }
                 }
@@ -204,11 +205,12 @@ html {
                 }
                 
                 .clockImg {
-                    font-size: 26px;
-                    color: white;
+                    font-size: 28px;
+                    font-weight: 700;
+                    color: rgb(242, 33, 39);
                     @media(max-width: 520px){
-                        font-size: 24px;
-                        font-weight: bold;
+                        font-size: 28px;
+                        font-weight: 800;
                     }
                 }
             }
@@ -223,9 +225,9 @@ html {
                 background-color: rgb(242, 33, 39);
                 cursor: pointer;
                 @media(max-width: 520px){
-                    margin-top: 30px;
-                    width: 260px;
-                    height: 55px;
+                    margin-top: 20px;
+                    width: 230px;
+                    height: 48px;
                     border-radius: 12px;
                 }
                 > span {
@@ -233,7 +235,7 @@ html {
                     font-weight: 600;
                     color: white;
                     @media(max-width: 520px){
-                        font-size: 1.4em;
+                        font-size: 1.3em;
                     }
                 }
                 &:active {
@@ -256,7 +258,7 @@ html {
                 width: 100%;
                 max-width: 100vh;
                 height: 240px;
-                margin-bottom: 30px;
+                margin-bottom: 90px;
             }
             .autoPick {
                 width: 600px;
@@ -271,8 +273,8 @@ html {
                     opacity: 0.9;
                 }
                 @media(max-width: 520px){
-                    width: 360px;
-                    height: 245px;
+                    width: 335px;
+                    height: 225px;
                 }
             }
         }
@@ -309,7 +311,7 @@ html {
             color: white;
             @media(max-width: 520px){
                 font-size: 20px;
-                margin-bottom: 20px;
+                margin-bottom: 10px;
             }
         }
         .wrapForm {
@@ -381,6 +383,7 @@ html {
                 margin: 8px;
                 border-bottom: 2px solid #4F443B;
                 font-family: 'Montserrat', sans-serif;
+                background-color: white;
                 @media(max-width: 520px){
                     width: 100%;
                 }
@@ -461,6 +464,7 @@ html {
     > span {
         font-weight: 700;
         font-size: 22px;
+        color: white
     }
     .wrapGetError {
         display: flex;
@@ -518,7 +522,7 @@ html {
         border: none;
         outline: none;
         font-weight: 700;
-        font-size: 19px;
+        font-size: 18px;
         border-bottom: 3px solid white;
         background-color: transparent;
         font-family: 'Montserrat', sans-serif;
@@ -535,13 +539,13 @@ html {
     }
     > span {
         font-weight: 700;
-        font-size: 19px;
+        font-size: 18px;
         margin-bottom: 10px;
     }
     @media(max-width: 520px){
         width: 90%;
-        padding-left: 10px;
-        padding-right: 10px;
+        padding-left: 5px;
+        padding-right: 5px;
     }
 }
 .wrapTable {
@@ -553,7 +557,7 @@ table {
     border: 2px solid #4F443B;
     border-radius: 20px;
     background-color: white;
-    padding: 20px;
+    padding: 8px;
     @media(max-width: 520px){
         width: 95%;
     }
@@ -561,11 +565,11 @@ table {
         text-align: start;
         font-weight: 500;
         font-size: 20px;
-        height: 50px;
+        height: 40px;
         padding-left: 10px;
         @media(max-width: 520px){
-            font-size: 17px;
-            height: 50px;
+            font-size: 16px;
+            height: 35px;
             padding-left: 6px;
         }
     }
@@ -650,16 +654,20 @@ table {
     @media(max-width: 520px){
         width: 95%;
         margin-top: 10px; 
+        padding: 10px;
     }
     > span {
         font-weight: 600;
         font-size: 18px;
         margin-bottom: 10px;
+        @media(max-width: 520px){
+            font-size: 16px;
+        }
     }
     .label {
         font-weight: 500;
         font-size: 16px;
-        margin-top: 20px;
+        margin-top: 10px;
         margin-bottom: 10px;
     }
     .inputChecklist {
@@ -676,9 +684,10 @@ table {
         padding-left: 0;
         margin-left: 0;
         font-weight: 600;
-        font-size: 18px;
+        font-size: 16px;
         border-bottom: 2px solid #4F443B;
         font-family: 'Montserrat', sans-serif;
+        background-color: white
     }
 }
 .wrapError {
@@ -701,8 +710,9 @@ table {
     > span {
         font-family: 'Montserrat', sans-serif;
         margin-top: 20px;
-        font-weight: 600;
-        font-size: 18px;
+        font-weight: 700;
+        font-size: 16px;
+        color: white
     }
     .order {
          display: flex;
@@ -748,11 +758,16 @@ table {
         height: 40px;
     }
     .wrapBtn {
-        width: 90%;
+        width: 100%;
         display: flex;
         flex-direction: column;
         margin-top: 30px;
         align-items: center;
+        > span {
+            color: black;
+            font-size: 18px;
+            font-weight: 600;
+        }
         .submit {
             display: flex;
             width: 100%;
@@ -815,19 +830,19 @@ table {
     font-weight: 600;
     font-size: 18px;
     width: 240px;
-    border-bottom: 3px solid black;
+    border-bottom: 3px solid white;
     font-family: 'Montserrat', sans-serif;
     background-color: transparent;
-    color: black;
-    font-weight: 800;
-    font-size: 22px;
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
     @media(max-width: 520px){
-        width: 160px;
+        width: 155px;
     }
 }
 .inputTicket::placeholder {
-    color: black;
-    font-weight: 800;
+    color: white;
+    font-weight: 700;
   }
 
   .wrapModal {

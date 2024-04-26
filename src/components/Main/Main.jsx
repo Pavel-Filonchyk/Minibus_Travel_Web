@@ -339,7 +339,7 @@ export default function Main() {
                     <br/>
 
                     {/* Рейсы */}
-                    <div className={style.routes} style={{display: calc === 1 ? '' : 'none'}}><span>Рейсы</span></div>
+                    <div className={style.routes} style={{display: calc === 1 ? '' : 'none'}}><span>РЕЙСЫ</span></div>
                     {
                         calc === 1 
                         ?
@@ -349,7 +349,7 @@ export default function Main() {
                                        
                                         return (
                                             <>
-                                                <table key={item.blockId} >
+                                                <table key={item.blockId}>
                                                     <tr>
                                                         <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Отправление</th>
                                                         <th className={style.textTicket}>
@@ -449,7 +449,7 @@ export default function Main() {
                                     }) 
                                 }
                                 <div className={style.wrapBtn} style={{display: travels.length > 0 || getError ? 'none' : '', flexDirection: 'column', alignItems: 'center'}}>
-                                    <span>На выбранные даты рейсов нет</span>
+                                    <span style={{fontSize: 19, color: 'black', fontWeight: 800}}>На выбранные даты рейсов нет</span>
                                     <div className={style.order} style={{backgroundColor: '#1560BD', width: 160}}
                                         onClick={() => setCalc(0)}
                                     >
@@ -606,9 +606,9 @@ export default function Main() {
                             
                         </table>
                         <div className={style.wrapBtn}>
-                            <span style={{display: showCode ? 'none' : 'block', marginBottom: 20, marginTop: 0}}>Для подтверждения брони необходимо получить код на телефон</span>
+                            <span style={{display: showCode ? 'none' : 'block', marginBottom: 16, marginTop: 0}}>Для подтверждения брони необходимо получить код на телефон</span>
                             <span style={{display: showCode? 'block' : 'none', marginBottom: 20, marginTop: 0}}>
-                                На номер <span style={{fontWeight: '600'}}>{phoneNumber}</span> был выслан код подтверждения. <br/> Введите полученный код и подтвердите.
+                                На номер {phoneNumber} выслан код подтверждения. <br/> Введите его и подтвердите.
                             </span>
                             <div id="recaptcha-container"></div>
                             <div className={style.submit} style={{display: user ? 'none' : ''}}>
@@ -644,16 +644,6 @@ export default function Main() {
                                         </>
                                 }                               
                             </div>
-                            <>
-                                {/* <div className={style.getCode} style={{display: postSuccess ? '' : 'none', width: 300, marginTop: 20, marginRight: 0}}>
-                                    <span>Рейс забронирован!</span>
-                                </div> */}
-                                {/* <div className={style.order} style={{display: postSuccess ? '' : 'none', backgroundColor: '#1560BD', width: 160, marginTop: 20, marginRight: 0}}
-                                    onClick={btnBack}
-                                >
-                                    <span>Назад</span>
-                                </div> */}
-                            </>
                             <div className={style.wrapError} style={{display: postError ? '' : 'none', marginTop: 10}}>
                                 <span>Ошибка отправки данных <br/> Попробуйте позже еще раз</span>
                                 <div className={style.order} style={{backgroundColor: '#1560BD', width: 160, marginTop: 20, marginRight: 0}}
