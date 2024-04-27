@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { DatePicker } from 'antd'
+import { DatePicker, Spin } from 'antd'
 import dayjs from 'dayjs'
 import locale from 'antd/es/date-picker/locale/ru_RU'
-import { InteractionOutlined, ClockCircleOutlined } from '@ant-design/icons'
+import { InteractionOutlined, ClockCircleOutlined, SmileOutlined, FrownOutlined } from '@ant-design/icons'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth"
-import { SmileOutlined } from '@ant-design/icons'
 import uuid from 'react-uuid' 
 
 import PersonalArea from '../PersonalArea/PersonalArea'
 import AdminAccount from '../AdminAccount/AdminAccount'
 import ModalWrapper from '../../wrappers/ModalWrapper/ModalWrapper'
-import { getTravels, postUser, getDirections, closePostSuccess, postQueue } from '../../core/actions/bookTravelActions'
+import { getAllTravels, getTravels, postUser, getDirections, closePostSuccess, postQueue } from '../../core/actions/bookTravelActions'
 import { getCosts } from '../../core/actions/restAdminCostsActions'
 import style from './Main.module.scss'
 
@@ -48,8 +47,10 @@ export default function Main() {
 
     const [calc, setCalc] = useState(0)
     const [changeWay, setChengeWay] = useState(true)
+    const [spin, setSpin] = useState(true)
     const [showModal, setShowModal] = useState(false)
     const [textModal, setTextModal] = useState('')
+    const [smile, setSmile] = useState('')
     const [errorFilling , setErrorFilling] = useState(false)
     const [errorCostRoute, setErrorCostRoute] = useState(false)
     const [showCode, setShowCode] = useState(false)
@@ -74,6 +75,7 @@ export default function Main() {
         ?.busstops.filter(elem => elem.busstop === wayStop)[0]?.time
 
     useEffect(() => {
+        dispatch(getAllTravels())
         dispatch(getDirections())
         dispatch(getCosts())
     }, [])
@@ -101,13 +103,21 @@ export default function Main() {
     }, [user])
     
     useEffect(() => {
-        setTextModal('Бронирование успешно завершено!')
+        if(postSuccess === "На рейсе закончились места"){
+            setTextModal("На рейсе закончилось необходимое вам количество мест")
+            setSmile('badSmile')
+        }
+        if(postSuccess === "Бронирование успешно завершено!"){
+            setTextModal("Бронирование успешно завершено!")
+            setSmile('goodSmile')
+        }
+        
         if(postSuccess){
             setShowModal(true)
             setTimeout(() => {
                 setShowModal(false)
                 dispatch(closePostSuccess())
-            },2000)
+            },2500)
         }
     }, [postSuccess])
     
@@ -297,7 +307,7 @@ export default function Main() {
                                     className={style.arrows}
                                 />
                             </div>
-                            <div className={style.blockSelectWay}>
+                            <div className={style.blockSelectWay} style={{marginTop: 20}}>
                                 <span style={{marginBottom: 12, marginLeft: 15}}>Куда</span>
                                 <select 
                                     value={selectTo}
@@ -343,7 +353,7 @@ export default function Main() {
                     {
                         calc === 1 
                         ?
-                            <> 
+                            <>
                                 {
                                     travels?.map(item => {
                                        
@@ -566,9 +576,9 @@ export default function Main() {
                     
                     {/* Чек */}
                     <div className={style.wrapTicket} style={{display: calc === 3 ? '' : 'none'}}>
-                        <table style={{marginTop: 0}}>
+                        <table style={{marginTop: 0, padding: 8}}>
                             <tr>
-                                <th className={style.textTicket} style={{fontWeight: '700', height: 60}}>Онлайн заказ</th>
+                                <th className={style.textTicket} style={{fontWeight: '700', height: 40}}>Онлайн заказ</th>
                                 <th className={style.textTicket}></th>
                             </tr>
                             <tr>
@@ -657,16 +667,26 @@ export default function Main() {
 
                     <PersonalArea/>
 
-                    {/* <AdminAccount/> */}
+                    <AdminAccount/>
 
                 </div>
             </div>
             <ModalWrapper showModal={showModal}>
                 <div className={style.wrapModal}>
                     <span className={style.title}>{textModal}</span> 
-                    <SmileOutlined 
-                        className={style.smile}
-                    />
+                    {
+                        smile === "badSmile" 
+                        ?
+                            <FrownOutlined 
+                                className={style.smile}
+                            />
+                        : smile === "goodSmile"
+                        ?
+                            <SmileOutlined 
+                                className={style.smile}
+                            />
+                        : ''
+                    }
                 </div>
             </ModalWrapper>
             <div className={style.line}/>

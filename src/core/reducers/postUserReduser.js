@@ -1,6 +1,7 @@
 const initialState = {
     userData: [],
     blockId: '',
+    numberSeats: '',
     postSuccess: false,
     postError: false,
 
@@ -13,7 +14,7 @@ const postUserReducer = (state = initialState, action) => {
         case 'POST_USER':
             const ticketData = action.payload
             const cities = ticketData?.choiceRoutes[0]?.cities
-            const freeSeats = ticketData.choiceRoutes[0]?.freeSeats - ticketData.numberSeats
+            const freeSeats = ticketData?.choiceRoutes[0]?.freeSeats - ticketData.numberSeats
             const blockId = ticketData?.choiceRoutes[0]?.blockId
 
             // рейс со всеми пассажирами и вновь добавленным
@@ -34,15 +35,23 @@ const postUserReducer = (state = initialState, action) => {
                 ...state,
                 blockId,
                 userData,
+                numberSeats: ticketData.numberSeats,
                 postSuccess: false
             }
 
         case 'POST_USER_SUCCESS':
-            return {
-                ...state,
-                postSuccess: true,
+            console.log(action.payload)
+            if(action.payload === "На рейсе закончились места"){
+                return {
+                    ...state,
+                    postSuccess: "На рейсе закончились места",
+                }
+            }else{
+                return {
+                    ...state,
+                    postSuccess: "Бронирование успешно завершено!",
+                }
             }
-            
         case 'CLOSE_POST_SUCCESS':
         return {
             ...state,

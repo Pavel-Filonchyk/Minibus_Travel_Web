@@ -1,13 +1,26 @@
 const initialState = {
     directions: [],
+    allTravels: [],
     travels: [],
     // данные пользователя о бронировании
-    getTravelsData: [],
     getError: false
 }
 
 const getTravelsReducer = (state = initialState, action) => {
     switch (action.type){ 
+        
+        case 'GET_ALL_TRAVELS_SUCCESS':
+            const list = Object.keys(action.payload).map(key => ({...action.payload[key], blockId: key}))
+            return {
+                ...state,
+                allTravels: list
+            }
+        case 'GET_ALL_TRAVELS_ERROR':
+            return {
+                ...state,
+                getError: action.payload,
+            }
+
         case 'GET_DIRECTIONS_SUCCESS':
             const directions = Object.keys(action.payload).map(key => ({...action.payload[key], blockId: key}))
             return {
@@ -15,18 +28,11 @@ const getTravelsReducer = (state = initialState, action) => {
                 directions
             }
         case 'GET_TRAVELS':
-            return {
-                ...state,
-                getTravelsData: action.payload
-            }
-        case 'GET_TRAVELS_SUCCESS':
-            const list = Object.keys(action.payload).map(key => ({...action.payload[key], blockId: key}))
-         
-            const selectFrom = state.getTravelsData?.selectFrom
-            const selectTo = state.getTravelsData?.selectTo
-            const date = state.getTravelsData?.date
+            const selectFrom = action.payload?.selectFrom
+            const selectTo = action.payload?.selectTo
+            const date = action.payload?.date
             
-            const findDateRoutes = list.filter(item => item.dateTrip === date)
+            const findDateRoutes = state.allTravels?.filter(item => item.dateTrip === date)
             
             let collectRoutes = []
             for (let item of findDateRoutes) {
@@ -42,18 +48,13 @@ const getTravelsReducer = (state = initialState, action) => {
                     }
                 } // не показывает, т.к. пропадает cities при удалении
                 if(findRoutes() !== null){
-                    const findRoute = list.filter(item => item.blockId === findRoutes())
+                    const findRoute = state.allTravels?.filter(item => item.blockId === findRoutes())
                     collectRoutes.push(findRoute[0])
                 }
             }  
             return {
                 ...state,
                 travels: collectRoutes,
-            }
-        case 'GET_TRAVELS_ERROR':
-            return {
-                ...state,
-                getError: action.payload,
             }
 
         default: 

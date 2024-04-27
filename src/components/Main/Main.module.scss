@@ -123,7 +123,7 @@ html {
             justify-content: center;
             align-items: center;
             height: 100%;
-            margin-bottom: 40px;
+            margin-bottom: 60px;
             @media(max-width: 520px){
                 width: 90%;
                 align-items: start;
@@ -178,7 +178,7 @@ html {
                 display: flex;
                 align-items: center;
                 height: 50px;
-                margin-top: 30px;
+                margin-top: 50px;
                 margin-right: 28px;
                 @media(max-width: 520px){
                     margin-right: 0px;
@@ -187,6 +187,7 @@ html {
                     left: 22px;
                     bottom: 18px;
                     z-index: 10;
+                    height: 40px;
                 }
                 .wrapTextClock {
                    display: flex; 
@@ -258,7 +259,7 @@ html {
                 width: 100%;
                 max-width: 100vh;
                 height: 240px;
-                margin-bottom: 90px;
+                margin-bottom: 120px;
             }
             .autoPick {
                 width: 600px;
@@ -311,7 +312,7 @@ html {
             color: white;
             @media(max-width: 520px){
                 font-size: 20px;
-                margin-bottom: 10px;
+                margin-bottom: 16px;
             }
         }
         .wrapForm {
@@ -329,6 +330,7 @@ html {
             @media(max-width: 1030px){
                 width: 95%;
                 margin-top: 18px;
+                padding: 10px;
             }
             .wrapDirection {
                 width: 100%;
@@ -373,12 +375,15 @@ html {
                 flex-direction: column;
                 width: 100%;
                 align-items: center;
+                > span {
+                    font-size: 16px;
+                }
             }
             .selectWay {
                 border: none;
                 outline: none;
                 font-weight: 600;
-                font-size: 22px;
+                font-size: 20px;
                 width: 100%;
                 margin: 8px;
                 border-bottom: 2px solid #4F443B;
@@ -401,6 +406,13 @@ html {
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                @media(max-width: 520px){
+                    width: 100%;
+                    position: absolute;
+                    justify-content: flex-end;
+                   margin-right: 50px;
+                   margin-top: 30px;
+                }
                 .arrows {
                     font-size: 30px; 
                     margin: 15px; 
@@ -430,6 +442,9 @@ html {
                 justify-content: center;
                 width: 100%;
                 margin-top: 30px;
+                @media(max-width: 520px){
+                    margin-top: 15px;
+                }
                 .btn {
                     border: none;
                     font-weight: 600;
@@ -552,7 +567,7 @@ html {
     width: 100%;
 }
 table {
-    margin-top: 30px;
+    margin-top: 20px;
     width: 60%;
     border: 2px solid #4F443B;
     border-radius: 20px;
@@ -752,11 +767,7 @@ table {
         //width: 95%;
         
     }
-    .textTicket {
-        font-weight: 500;
-        font-size: 20px;
-        height: 40px;
-    }
+    
     .wrapBtn {
         width: 100%;
         display: flex;
@@ -767,7 +778,15 @@ table {
             color: black;
             font-size: 18px;
             font-weight: 600;
+            @media(max-width: 520px){
+                font-size: 16px;
+                color: white;
+                font-weight: 700;
+            };
         }
+        @media(max-width: 520px){
+            width: 90%;
+        };
         .submit {
             display: flex;
             width: 100%;
@@ -847,7 +866,7 @@ table {
 
   .wrapModal {
     width: 310px;
-    height: 230px;
+    height: 240px;
     background-color: #4F9BDE;
     border-radius: 36px;
     border: 3px solid rgba(18, 54, 106, 1);

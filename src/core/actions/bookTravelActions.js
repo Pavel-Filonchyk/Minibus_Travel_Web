@@ -1,3 +1,23 @@
+const getAllTravels = (data) => {
+    return {
+        type: 'GET_ALL_TRAVELS',
+        payload: data 
+    } 
+}
+export const GET_ALL_TRAVELS = 'GET_ALL_TRAVELS'
+
+const getAllTravelsSuccess = (data) => {
+    return {
+        type: 'GET_ALL_TRAVELS_SUCCESS',
+        payload: data 
+    } 
+}
+const getAllTravelsError = (data) => {
+    return {
+        type: 'GET_ALL_TRAVELS_ERROR',
+        payload: data 
+    } 
+}
 const getDirections = (data) => {
     return {
         type: 'GET_DIRECTIONS',
@@ -34,19 +54,6 @@ const getTravels = (data) => {
     } 
 }
 export const GET_TRAVELS = 'GET_TRAVELS'
-
-const getTravelsSuccess = (data) => {
-    return {
-        type: 'GET_TRAVELS_SUCCESS',
-        payload: data 
-    } 
-}
-const getTravelsError = (data) => {
-    return {
-        type: 'GET_TRAVELS_ERROR',
-        payload: data 
-    } 
-}
 
 const postUser = (data) => {
     return {
@@ -92,9 +99,10 @@ const postQueueSuccess = (data) => {
 export {
     getDirections,
     getDirectionsSuccess,
+    getAllTravels,
+    getAllTravelsSuccess,
+    getAllTravelsError,
     getTravels,
-    getTravelsSuccess,
-    getTravelsError,
     postUser,
     postUserSuccess,
     postUserError,
