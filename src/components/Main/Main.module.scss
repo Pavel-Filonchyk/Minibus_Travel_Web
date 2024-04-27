@@ -864,30 +864,31 @@ table {
     font-weight: 700;
   }
 
-  .wrapModal {
-    width: 310px;
-    height: 240px;
-    background-color: #4F9BDE;
-    border-radius: 36px;
-    border: 3px solid rgba(18, 54, 106, 1);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    text-align: center;
-    flex-direction: column;
-    .title {
-        font-family: 'Montserrat', sans-serif;
-        margin-top: 10px;
-        font-weight: 600;
-        font-size: 28px;
-        color: white;
-        line-height: 36px;
-    }
-    .smile {
-        font-size: 48px;
-        color: rgba(18, 54, 106, 1);
-    }
-  }
+.wrapModal {
+width: 310px;
+height: 240px;
+background-color: #4F9BDE;
+border-radius: 36px;
+border: 3px solid rgba(18, 54, 106, 1);
+display: flex;
+justify-content: space-around;
+align-items: center;
+text-align: center;
+flex-direction: column;
+.title {
+    font-family: 'Montserrat', sans-serif;
+    margin-top: 10px;
+    padding: 5px;
+    font-weight: 600;
+    font-size: 28px;
+    color: white;
+    line-height: 36px;
+}
+.smile {
+    font-size: 48px;
+    color: rgba(18, 54, 106, 1);
+}
+}
 // Футер
 .footer {
     width: 100%;
@@ -944,6 +945,9 @@ table {
                 border-radius: 10px;
                 width: 156px;
                 height: 46px;
+            };
+            &:active {
+                transform: translateY(8px);
             }
         }
         .appStore {
@@ -959,7 +963,11 @@ table {
                 border-radius: 10px;
                 width: 156px;
                 height: 46px;
+            };
+            &:active {
+                transform: translateY(8px);
             }
+
         }
     }  
    

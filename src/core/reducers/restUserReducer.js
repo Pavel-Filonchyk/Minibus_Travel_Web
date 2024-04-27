@@ -96,7 +96,8 @@ const restUserReducer = (state = initialState, action) => {
                 userQueue: deleteQueue
             }
         case 'DELETE_QUEUE_SUCCESS':
-            // console.log(action.payload)
+            
+        console.log(action.payload)
             // const deleteQueue = state.userQueue?.filter(item => item.blockId !== state.blockIdQueue)
             // console.log(deleteQueue)
             return {

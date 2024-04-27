@@ -47,10 +47,9 @@ export default function Main() {
 
     const [calc, setCalc] = useState(0)
     const [changeWay, setChengeWay] = useState(true)
-    const [spin, setSpin] = useState(true)
     const [showModal, setShowModal] = useState(false)
     const [textModal, setTextModal] = useState('')
-    const [smile, setSmile] = useState('')
+    const [smile, setSmile] = useState("goodSmile")
     const [errorFilling , setErrorFilling] = useState(false)
     const [errorCostRoute, setErrorCostRoute] = useState(false)
     const [showCode, setShowCode] = useState(false)
@@ -221,7 +220,14 @@ export default function Main() {
         setNumberSeats(1)
         //window.location.reload()
     }
-    
+    const onNoticeApp = () => {
+        setShowModal(true)
+        setTextModal('Приложение скоро будет доступно для скачивания')
+        setTimeout(() => {
+            setShowModal(false)
+            dispatch(closePostSuccess())
+        },2000)
+    }
     return (
         <>
             {/* Хеадер */}
@@ -695,8 +701,12 @@ export default function Main() {
                 <div className={style.wrapApps}>
                     <span>Для удобства бронирования установите приложение на телефон</span>
                     <div className={style.blockApps}>
-                        <div className={style.appStore} style={{marginLeft: 10}}/>
-                        <div className={style.googlePlay}/>
+                        <div className={style.appStore} style={{marginLeft: 10}}
+                            onClick={onNoticeApp}
+                        />
+                        <div className={style.googlePlay}
+                            onClick={onNoticeApp}
+                        />
                     </div>
                 </div>
                 
