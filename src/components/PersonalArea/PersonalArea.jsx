@@ -23,7 +23,7 @@ export default function PersonalArea({title, textBtn}) {
 
     const onGetCode = () => {
         setShowCode(true)
-        //onSignup()
+        onSignup()
     }
     function onCaptchVerify() {
         if (!window.recaptchaVerifier) {
@@ -55,15 +55,14 @@ export default function PersonalArea({title, textBtn}) {
     }
     const onOTPVerify = async () => {
 
-        // window.confirmationResult
-        //     ?.confirm(confirmCode)
-        //     .then(async (res) => {
-        //         dispatch(getUser({user: res.user, phoneNumber:`+${phoneNumber}`}))
-        //     })
-        //     .catch((err) => {
-        //         console.log(err)
-        //     })
-        dispatch(getUser({user: 'Ivan', phoneNumber:`+${phoneNumber}`}))
+        window.confirmationResult
+            ?.confirm(confirmCode)
+            .then(async (res) => {
+                dispatch(getUser({user: res.user, phoneNumber:`+${phoneNumber}`}))
+            })
+            .catch((err) => {
+                console.log(err)
+            })
         dispatch(getQueue())
         setBlockConfirm(false)
         setShowUserBlock(true)
@@ -93,7 +92,7 @@ export default function PersonalArea({title, textBtn}) {
                             <PhoneInput
                                 country={'by'}
                                 value={phoneNumber}
-                                onChange={setPhoneNumber}
+                                onChange={(e) => setPhoneNumber(e)}
                                 inputStyle={{width: 320, fontSize: 18, fontWeight: 600, height: 48, fontFamily: 'Montserrat'}}
                                 buttonStyle={{height: 48}}
                                 containerStyle={{width: 320, borderColor: 'black'}}

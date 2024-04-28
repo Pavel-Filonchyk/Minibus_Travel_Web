@@ -3,10 +3,10 @@ import { useSelector, useDispatch } from 'react-redux'
 import { DatePicker, Spin } from 'antd'
 import dayjs from 'dayjs'
 import locale from 'antd/es/date-picker/locale/ru_RU'
-import { InteractionOutlined, ClockCircleOutlined, SmileOutlined, FrownOutlined } from '@ant-design/icons'
+import { InteractionOutlined, ClockCircleOutlined, SmileOutlined, FrownOutlined, CloseOutlined } from '@ant-design/icons'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
-import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth"
+import { RecaptchaVerifier, signInWithPhoneNumber, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
 import uuid from 'react-uuid' 
 
 import PersonalArea from '../PersonalArea/PersonalArea'
@@ -31,28 +31,31 @@ export default function Main() {
     const postSuccess = useSelector(({postUserReducer: { postSuccess }}) => postSuccess)
     const postError = useSelector(({postUserReducer: { postError }}) => postError)
     const postQueueSuccess = useSelector(({postUserReducer: { postQueueSuccess }}) => postQueueSuccess)
+    
     // auth
-    const [confirmCode, setConfirmCode] = useState('')
     const [user, setUser] = useState(null)
-
+    console.log(user)
     // check
     const [selectFrom, setSelectFrom] = useState("Туров")
     const [selectTo, setSelectTo] = useState("Гомель")
     const [date, setDate] = useState(dayjs())
     const [fullName, setFullName] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [errorAuth, setErrorAuth] = useState(null)
     const [wayStart, setSelectWayStart] = useState("")
     const [wayStop, setSelectWayStop] = useState("")
     const [numberSeats, setNumberSeats] = useState(1)
-
+  console.log(errorAuth?.code)
     const [calc, setCalc] = useState(0)
     const [changeWay, setChengeWay] = useState(true)
     const [showModal, setShowModal] = useState(false)
     const [textModal, setTextModal] = useState('')
+    const [textAuth, setTextAuth] = useState(true)
     const [smile, setSmile] = useState("goodSmile")
     const [errorFilling , setErrorFilling] = useState(false)
     const [errorCostRoute, setErrorCostRoute] = useState(false)
-    const [showCode, setShowCode] = useState(false)
 
     // server data
     const [choiceRoutes, setChoiceRoutes] = useState([])
@@ -94,42 +97,41 @@ export default function Main() {
 
     useEffect(() => {
         if(user){
-            dispatch(postUser({
-                id: uuid(), choiceRoutes, selectFrom, selectTo, fullName, phoneNumber: `+${phoneNumber}`, 
-                wayStart, wayStop, timeStart, timeStop, costRoute: costRoute * numberSeats, numberSeats
-            }))
+            setCalc(calc +1)
+            setShowModal(false)
+            setErrorAuth(null)
         }
     }, [user])
     
-    useEffect(() => {
-        if(postSuccess === "На рейсе закончились места"){
-            setTextModal("На рейсе закончилось необходимое вам количество мест")
-            setSmile('badSmile')
-        }
-        if(postSuccess === "Бронирование успешно завершено!"){
-            setTextModal("Бронирование успешно завершено!")
-            setSmile('goodSmile')
-        }
+    // useEffect(() => {
+    //     if(postSuccess === "На рейсе закончились места"){
+    //         setTextModal("На рейсе закончилось необходимое вам количество мест")
+    //         setSmile('badSmile')
+    //     }
+    //     if(postSuccess === "Бронирование успешно завершено!"){
+    //         setTextModal("Бронирование успешно завершено!")
+    //         setSmile('goodSmile')
+    //     }
         
-        if(postSuccess){
-            setShowModal(true)
-            setTimeout(() => {
-                setShowModal(false)
-                dispatch(closePostSuccess())
-            },2500)
-        }
-    }, [postSuccess])
+    //     if(postSuccess){
+    //         setShowModal(true)
+    //         setTimeout(() => {
+    //             setShowModal(false)
+    //             dispatch(closePostSuccess())
+    //         },2500)
+    //     }
+    // }, [postSuccess])
     
-    useEffect(() => {
-        setTextModal('Вы записаны в очередь!')
-        if(postQueueSuccess){
-            setShowModal(true)
-            setTimeout(() => {
-                setShowModal(false)
-                dispatch(closePostSuccess())
-            },2000)
-        }
-    }, [postQueueSuccess])
+    // useEffect(() => {
+    //     setTextModal('Вы записаны в очередь!')
+    //     if(postQueueSuccess){
+    //         setShowModal(true)
+    //         setTimeout(() => {
+    //             setShowModal(false)
+    //             dispatch(closePostSuccess())
+    //         },2000)
+    //     }
+    // }, [postQueueSuccess])
 
     const getRoutes = () => {
         dispatch(getTravels({selectFrom, selectTo, date: date.format('DD.MM.YYYY')}))
@@ -138,10 +140,25 @@ export default function Main() {
     const onChoiceRoute = (id) => {
         const route = travels?.filter(item => item.blockId === id)
         setChoiceRoutes(route)
-    
-        setCalc(calc +1)
-    }
 
+        setTextModal("Регистрация")
+        setSmile("")
+        setShowModal(true)
+    }
+    const onAuth = (arg) => {
+        setErrorAuth(null)
+
+        if (arg){
+            createUserWithEmailAndPassword(auth, email, password)
+            .then(data => setUser(data))
+            .catch(data => setErrorAuth(data))
+        }else{
+            signInWithEmailAndPassword(auth, email, password)
+            .then(data => setUser(data))
+            .catch(data => setErrorAuth(data))
+        }
+        
+    }
     const onPostQueue = (dataTrip) => {
         if (fullName && phoneNumber) {
             dispatch(postQueue({...dataTrip, fullName, phoneNumber: `+${phoneNumber}`}))
@@ -166,51 +183,12 @@ export default function Main() {
             setErrorCostRoute(true)
         }
     }
-
-    const onGetCode = () => {
-        setShowCode(true)
-        //onSignup()
-    }
-    function onCaptchVerify() {
-        if (!window.recaptchaVerifier) {
-                window.recaptchaVerifier = new RecaptchaVerifier(
-                    auth, "recaptcha-container",
-                {
-                    size: "invisible",
-                    callback: (response) => {onSignup()},
-                    "expired-callback": () => {},
-                },
-                
-            )
-        }
-    }
-    function onSignup() {
-        onCaptchVerify()
-    
-        const appVerifier = window.recaptchaVerifier
-    
-        const formatPh = "+" +  phoneNumber
-    
-        signInWithPhoneNumber(auth, formatPh, appVerifier)
-          .then((confirmationResult) => {
-            window.confirmationResult = confirmationResult
-          })
-          .catch((error) => {
-            console.log(error)
-          });
-    }
-    const onOTPVerify = () => {
-        // window.confirmationResult
-        //   ?.confirm(confirmCode)
-        //   .then(async (res) => {
-        //     setUser(res.user)
-        //   })
-        //   .catch((err) => {
-        //     console.log(err)
-        //   })
-        setUser("Ivan")
+    const onPostUser = () => {
+        dispatch(postUser({
+            id: uuid(), choiceRoutes, selectFrom, selectTo, fullName, phoneNumber: `+${phoneNumber}`, 
+            wayStart, wayStop, timeStart, timeStop, costRoute: costRoute * numberSeats, numberSeats
+        }))
         setCalc(0)
-        //setRemovePostBtns(true)
     }
 
     const btnBack = () => {
@@ -293,7 +271,7 @@ export default function Main() {
                     <div className={style.wrapForm} style={{display: calc > 0 ? 'none' : ''}}>
                         <div className={style.wrapSelectWay}>
                             <div className={style.blockSelectWay}>
-                                <span style={{marginBottom: 12, marginLeft: 15}}>Откуда</span>
+                                <span style={{marginBottom: 12, marginLeft: 15, marginTop: 20}}>Откуда</span>
                                 <select 
                                     value={selectFrom}
                                     onChange={(e) => setSelectFrom(e.target.value)}
@@ -495,16 +473,6 @@ export default function Main() {
                         <span>Время прибытия: <span style={{fontWeight: '500'}}>{timeStop}</span></span>
                         <span>Цена: <span style={{fontWeight: '500'}}>{costRoute ? costRoute * numberSeats : '-'} б.р.</span></span>
                         <div style={{display: 'flex', flexDirection: 'column'}}>
-                            <span className={style.label}>Введите имя и фамилию</span>
-                            <input type="text" className={style.inputChecklist} value={fullName} onChange={(e) => setFullName(e.target.value)} required/>
-                            <span className={style.label}>Номер телефона</span>
-                            <PhoneInput
-                                country={'by'}
-                                value={phoneNumber}
-                                onChange={setPhoneNumber}
-                                inputStyle={{width: 260, fontSize: 16, fontWeight: 600, fontFamily: 'Montserrat'}}
-                                
-                            />
                             <span className={style.label}>Остановка посадки</span>
                             <select 
                                 value={wayStart}
@@ -553,6 +521,17 @@ export default function Main() {
                                 }
                                 
                             </select>
+                            <span className={style.label}>Введите имя и фамилию</span>
+                            <input type="text" className={style.inputChecklist} value={fullName} onChange={(e) => setFullName(e.target.value)} required/>
+                            <span className={style.label}>Номер телефона</span>
+                            <PhoneInput
+                                country={'by'}
+                                regions={'europe'}
+                                value={phoneNumber}
+                                onChange={(e) => setPhoneNumber(e)}
+                                inputStyle={{width: 260, fontSize: 16, fontWeight: 600, fontFamily: 'Montserrat'}}
+                                
+                            />
                             <span style={{fontWeight: '500', fontSize: 16, marginTop: 30}}>При оформлении заказа, Вы даете свое согласие на обработку персональных данных и проезд в составе организованной группы пассажиров.</span>
                             
                             {/* error filling */}
@@ -621,45 +600,19 @@ export default function Main() {
                             </tr>
                             
                         </table>
-                        <div className={style.wrapBtn}>
-                            <span style={{display: showCode ? 'none' : 'block', marginBottom: 16, marginTop: 0}}>Для подтверждения брони необходимо получить код на телефон</span>
-                            <span style={{display: showCode? 'block' : 'none', marginBottom: 20, marginTop: 0}}>
-                                На номер {phoneNumber} выслан код подтверждения. <br/> Введите его и подтвердите.
-                            </span>
-                            <div id="recaptcha-container"></div>
-                            <div className={style.submit} style={{display: user ? 'none' : ''}}>
-                                {
-                                    showCode
-                                    ? 
-                                        <>
-                                            <div className={style.getCode}
-                                                onClick={() => onOTPVerify()}
-                                            >
-                                                <span>Подтвердить</span>
-                                            </div>
-                                            <input 
-                                                type="number" 
-                                                className={style.inputTicket} 
-                                                placeholder='Введите код'
-                                                onChange={(e) => setConfirmCode(e.target.value)}
-                                            /> 
-                                        </>
-                                    : 
-                                        <>
-                                            <div className={style.getCode}
-                                                onClick={() => onGetCode()}
-                                            >
-                                                <span>Получить код</span>
-                                            </div>
-                                            <div className={style.order} 
-                                                style={{backgroundColor: '#1560BD'}}
-                                                onClick={btnBack}
-                                            >
-                                                <span>Назад</span>
-                                            </div>
-                                        </>
-                                }                               
+                        <div className={style.wrapBtn} style={{flexDirection: 'row'}}>
+                            <div className={style.order}
+                                onClick={onPostUser}
+                            >
+                                <span>Подтвердить</span>
                             </div>
+                            
+                            <div className={style.order} 
+                                style={{backgroundColor: '#1560BD'}}
+                                onClick={btnBack}
+                            >
+                                <span>Назад</span>
+                            </div>         
                             <div className={style.wrapError} style={{display: postError ? '' : 'none', marginTop: 10}}>
                                 <span>Ошибка отправки данных <br/> Попробуйте позже еще раз</span>
                                 <div className={style.order} style={{backgroundColor: '#1560BD', width: 160, marginTop: 20, marginRight: 0}}
@@ -678,8 +631,47 @@ export default function Main() {
                 </div>
             </div>
             <ModalWrapper showModal={showModal}>
-                <div className={style.wrapModal}>
-                    <span className={style.title}>{textModal}</span> 
+                <div className={style.wrapModal} style={{height: textModal === 'Регистрация' ? 320 : ''}}>
+                    <span className={style.title}>{textAuth ? textModal: 'Вход'}</span> 
+                    <CloseOutlined 
+                        className={style.x}
+                        onClick={() => setShowModal(false)}
+                    />
+                    {
+                        textModal === 'Регистрация'
+                        ?
+                            <>
+                                <span className={style.label}>Введите электронную почту</span>
+                                <input type='email' className={style.inputChecklist} value={email} onChange={(e) => setEmail(e.target.value)}/>
+                                <span className={style.label}>Пароль</span>
+                                <input type='password' className={style.inputChecklist} value={password} onChange={(e) => setPassword(e.target.value)}/> 
+                                <div className={style.wrapBtn} style={{justifyContent: 'flex-start'}}>
+                                    <div className={style.inter}
+                                        onClick={() => setTextAuth(item => !item)}
+                                    >
+                                        <span>{textAuth ? 'Вход' : 'Регистрация'}</span>
+                                    </div>
+                                </div>
+                                <div className={style.wrapError} style={{display:  errorAuth?.code == 'auth/email-already-in-use' ? '' : 'none', marginTop: 10}}>
+                                    <span className={style.textError} style={{fontSize: 14}}>Вы уже зарегестрированы<br/>Нажмите Вход и Подтвердить</span>
+                                </div>
+                                <div className={style.wrapError} style={{display: errorAuth?.code == 'auth/invalid-email' ? '' : 'none', marginTop: 10}}>
+                                    <span className={style.textError} style={{fontSize: 14}}>Проверьте Email, также длина пароля должна быть более 5 знаков</span>
+                                </div>
+                                <div className={style.wrapError} style={{display: errorAuth?.code == 'auth/invalid-credential' ? '' : 'none', marginTop: 10}}>
+                                    <span className={style.textError} style={{fontSize: 14}}>Такого пользователя не существует или неверный пароль</span>
+                                </div>
+                                <div className={style.wrapBtn} >
+                                    <div className={style.order}
+                                        style={{marginTop: 10, marginBottom: 12}}
+                                        onClick={() => onAuth(textAuth)}
+                                    >
+                                        <span>Подтвердить</span>
+                                    </div>
+                                </div>
+                            </>
+                        : ''
+                    }
                     {
                         smile === "badSmile" 
                         ?
