@@ -13,7 +13,7 @@ import style from './AdminAccount.module.scss'
 export default function AdminAccount() {
     const dispatch = useDispatch()
 
-    const user = useSelector(({restUserReducer: { user }}) => user)
+    const email = useSelector(({restUserReducer: { email }}) => email)
     const travelsData = useSelector(({restAdminTravelReducer: { travelsData }}) => travelsData)
     const queuesData = useSelector(({restAdminTravelReducer: { queuesData }}) => queuesData)
     const directionsData = useSelector(({restAdminTravelReducer: { directionsData }}) => directionsData)
@@ -118,8 +118,8 @@ export default function AdminAccount() {
     }
 
     return (
-        <div className={style.wrapAdmidAccount} >
-            {/* style={{display: user?.phoneNumber === '+375291738113' ? '' : 'none'}} */}
+        <div className={style.wrapAdmidAccount} style={{display: email === 'nikolay.davidovich1985@gmail.com' ? '' : 'none'}}>
+            {/*  */}
             <span style={{color: 'white'}}>УПРАВЛЕНИЕ РЕЙСАМИ</span>
             <div className={style.wrapBtn}>
                 <div className={style.btn} 

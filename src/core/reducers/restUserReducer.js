@@ -1,6 +1,6 @@
 const initialState = {
-    user: null,
-    phoneNumber: '',
+    //user: null,
+    email: '',
     userData: [],
     deleteUserData: [],
     travels: [],
@@ -16,10 +16,11 @@ const initialState = {
 const restUserReducer = (state = initialState, action) => {
     switch (action.type){ 
         case 'GET_USER':
+            console.log(action.payload)
             return {
                 ...state,
-                user: action.payload.user,
-                phoneNumber: action.payload.phoneNumber,
+                //user: action.payload.user,
+                email: action.payload.email,
             }
         case 'GET_USER_SUCCESS':
             const list = Object.keys(action.payload).map(key => ({...action.payload[key], blockId: key}))
@@ -30,7 +31,7 @@ const restUserReducer = (state = initialState, action) => {
                 }
             }
 
-            const userData = peoples.filter(item => item?.phoneNumber === state.phoneNumber)
+            const userData = peoples.filter(item => item?.email === state.email)
             return {
                 ...state,
                 userData,
@@ -83,7 +84,7 @@ const restUserReducer = (state = initialState, action) => {
 
         case 'GET_QUEUE_SUCCESS':
             const listQueue = Object.keys(action.payload).map(key => ({...action.payload[key], blockId: key}))
-            const findUserQueue = listQueue?.filter(item => item.phoneNumber === state.phoneNumber)
+            const findUserQueue = listQueue?.filter(item => item.email === state.email)
             return {
                 ...state,
                 userQueue: findUserQueue
@@ -96,10 +97,7 @@ const restUserReducer = (state = initialState, action) => {
                 userQueue: deleteQueue
             }
         case 'DELETE_QUEUE_SUCCESS':
-            
-        console.log(action.payload)
-            // const deleteQueue = state.userQueue?.filter(item => item.blockId !== state.blockIdQueue)
-            // console.log(deleteQueue)
+            console.log(action.payload)
             return {
                 ...state,
                 //userQueue: deleteQueue

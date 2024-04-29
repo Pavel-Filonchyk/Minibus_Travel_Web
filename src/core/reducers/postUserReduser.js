@@ -25,7 +25,7 @@ const postUserReducer = (state = initialState, action) => {
                 persons: [
                     ...ticketData?.choiceRoutes[0]?.persons,
                     {
-                        blockId, id: ticketData.id, fullName: ticketData.fullName, tripFrom: ticketData.selectFrom, tripTo: ticketData.selectTo, wayStart: ticketData.wayStart, wayStop: ticketData.wayStop, 
+                        blockId, id: ticketData.id, email: ticketData.email, fullName: ticketData.fullName, tripFrom: ticketData.selectFrom, tripTo: ticketData.selectTo, wayStart: ticketData.wayStart, wayStop: ticketData.wayStop, 
                         dateTrip: ticketData.choiceRoutes[0]?.dateTrip, phoneNumber: ticketData.phoneNumber, numberSeats: ticketData.numberSeats, 
                         timeStart: ticketData.timeStart, timeStop: ticketData.timeStop, cost: ticketData.costRoute
                     }

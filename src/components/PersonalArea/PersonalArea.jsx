@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import PhoneInput from 'react-phone-input-2'
-import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth"
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
 import _ from 'lodash'
 import { auth } from '../../firebase.config'
 import { getUser, deleteUser, getQueue, deleteQueue } from '../../core/actions/canselTravelActions'
@@ -11,66 +11,42 @@ import style from './PersonalArea.module.scss'
 export default function PersonalArea({title, textBtn}) {
     const dispatch = useDispatch()
 
-    const user = useSelector(({restUserReducer: { user }}) => user)
+    //const user = useSelector(({restUserReducer: { user }}) => user)
     const userData = useSelector(({restUserReducer: { userData }}) => userData)
     const deleteUserSuccess = useSelector(({restUserReducer: { deleteUserSuccess }}) => deleteUserSuccess)
     const userQueue = useSelector(({restUserReducer: { userQueue }}) => userQueue)
-    const [phoneNumber, setPhoneNumber] = useState('')
-    const [showCode, setShowCode] = useState(false)
-    const [showBlockConfirm, setBlockConfirm] = useState(true)
-    const [showUserBlock, setShowUserBlock] = useState(false)
-    const [confirmCode, setConfirmCode] = useState('')
+    console.log(userData)
+    const [user, setUser] = useState(null)
 
-    const onGetCode = () => {
-        setShowCode(true)
-        onSignup()
-    }
-    function onCaptchVerify() {
-        if (!window.recaptchaVerifier) {
-                window.recaptchaVerifier = new RecaptchaVerifier(
-                    auth, "recaptcha-container",
-                {
-                    size: "invisible",
-                    callback: (response) => {onSignup()},
-                    "expired-callback": () => {},
-                },
-                
-            )
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [errorAuth, setErrorAuth] = useState(null)
+    const [textAuth, setTextAuth] = useState(true)
+    const [showUserBlock, setShowUserBlock] = useState(false)
+
+    useEffect(() => {
+        if(user){
+            dispatch(getUser({email}))
+            dispatch(getQueue({email}))
+            setShowUserBlock(true)
+        }
+    }, [user])
+    
+
+    const onAuth = () => {
+        setErrorAuth(null)
+
+        if (textAuth){
+            signInWithEmailAndPassword(auth, email, password)
+            .then(data =>setUser(data))
+            .catch(data => setErrorAuth(data))
+        }else{
+            createUserWithEmailAndPassword(auth, email, password)
+            .then(data => setUser(data))
+            .catch(data => setErrorAuth(data))
         }
     }
-    function onSignup() {
-        onCaptchVerify()
-    
-        const appVerifier = window.recaptchaVerifier
-    
-        const formatPh = "+" +  phoneNumber
-    
-        signInWithPhoneNumber(auth, formatPh, appVerifier)
-            .then((confirmationResult) => {
-                window.confirmationResult = confirmationResult
-            })
-            .catch((error) => {
-                console.log(error)
-            })
-    }
-    const onOTPVerify = async () => {
-
-        window.confirmationResult
-            ?.confirm(confirmCode)
-            .then(async (res) => {
-                dispatch(getUser({user: res.user, phoneNumber:`+${phoneNumber}`}))
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-        dispatch(getQueue())
-        setBlockConfirm(false)
-        setShowUserBlock(true)
-    }
-
     const onBack = () => {
-        setBlockConfirm(true)
-        setShowCode(false)
         setShowUserBlock(false)
     }
     const onCloseBooking = (data) => {
@@ -79,58 +55,46 @@ export default function PersonalArea({title, textBtn}) {
     const onCloseQueue = (blockId) => {
         dispatch(deleteQueue(blockId))
     }
+    
     return (
         <div className={style.wrapPersonalArea}>
             <span>ЛИЧНЫЙ КАБИНЕТ И<br/> ОТМЕНА БРОНИ</span>
 
-            {/* блок подтверждения через смс */}
-            <div className={style.wrapBlockConfirm} style={{display: showBlockConfirm ? '' : 'none'}}>
-                {
-                    !showCode
-                    ?   
-                        <>            
-                            <PhoneInput
-                                country={'by'}
-                                value={phoneNumber}
-                                onChange={(e) => setPhoneNumber(e)}
-                                inputStyle={{width: 320, fontSize: 18, fontWeight: 600, height: 48, fontFamily: 'Montserrat'}}
-                                buttonStyle={{height: 48}}
-                                containerStyle={{width: 320, borderColor: 'black'}}
-                                
-                            />
-                            <div className={style.getBtn}
-                                onClick={onGetCode}
-                            >
-                                <span>Войти</span>
-                            </div>
-                        </>
-                    : 
-                        <div style={{flexDirection: 'column'}}>
-                            <span style={{fontSize: 18, fontWeight: '600', color: 'white'}}>
-                                На номер {phoneNumber} был выслан код подтверждения
-                            </span>
-                            <div style={{display: 'flex', flexDirection: 'row', marginTop: 20}}>
-                                <input 
-                                    type="number" 
-                                    className={style.inputTicket} 
-                                    placeholder='Введите код'
-                                    onChange={(e) => setConfirmCode(e.target.value)}
-                                /> 
-                                <div className={style.getBtn}
-                                    onClick={() => onOTPVerify()}
-                                >
-                                    <span>Подтвердить</span>
-                                </div>
-                            </div>
-                            <div className={style.getBtn}
-                                style={{marginLeft: 0, marginTop: 20, backgroundColor: '#1560BD'}}
-                                onClick={() => setShowCode(false)}
-                            >
-                                <span>Назад</span>
-                            </div>
+            {/* блок авторизации */}
+            <div className={style.booking}>
+                <div className={style.wrapForm}>
+                    <span className={style.title}>{textAuth ? 'Вход': 'Регистрация'}</span> 
+                    <span className={style.label}>Введите электронную почту</span>
+                    <input type='email' className={style.inputChecklist} value={email} onChange={(e) => setEmail(e.target.value)}/>
+                    <span className={style.label}>Пароль</span>
+                    <input type='password' className={style.inputChecklist} value={password} onChange={(e) => setPassword(e.target.value)}/> 
+                    <div className={style.wrapBtn} style={{justifyContent: 'flex-start'}}>
+                        <div className={style.inter}
+                            onClick={() => setTextAuth(item => !item)}
+                        >
+                            <span>{textAuth ? 'Регистрация' : 'Вход'}</span>
                         </div>
-                }
+                    </div>
+                    <div className={style.wrapError} style={{display:  errorAuth?.code == 'auth/email-already-in-use' ? '' : 'none', marginTop: 10}}>
+                        <span className={style.textError}>Вы уже зарегестрированы<br/>Нажмите Вход и Подтвердить</span>
+                    </div>
+                    <div className={style.wrapError} style={{display: errorAuth?.code == 'auth/invalid-email' ? '' : 'none', marginTop: 10}}>
+                        <span className={style.textError}>Проверьте Email, также длина пароля должна быть более 5 знаков</span>
+                    </div>
+                    <div className={style.wrapError} style={{display: errorAuth?.code == 'auth/invalid-credential' ? '' : 'none', marginTop: 10}}>
+                        <span className={style.textError}>Такого пользователя не существует или неверный пароль</span>
+                    </div>
+                    <div className={style.wrapBtn} >
+                        <div className={style.order}
+                            style={{marginTop: 10, marginBottom: 12}}
+                            onClick={onAuth}
+                        >
+                            <span>Подтвердить</span>
+                        </div>
+                    </div>
+                </div>
             </div>
+
 
             {/* брони */}
             <div style={{display: showUserBlock ? '' : 'none', width: '100%'}}>

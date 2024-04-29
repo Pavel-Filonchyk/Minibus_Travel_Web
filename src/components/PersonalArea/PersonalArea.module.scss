@@ -22,61 +22,134 @@
         }
     }
 
-    // блок подтверждения через смс
-    .wrapBlockConfirm {
-        width: 100%;
+
+    
+}
+.booking {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    @media(max-width: 520px){
+        margin-top: 40px;
+        width: 95%;
+        margin-bottom: 40px;
+    }
+    .title {
+        font-family: 'Montserrat', sans-serif;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        font-weight: 600;
+        font-size: 28px;
+        //color: white;
+        line-height: 36px;
+    }
+    > span {
+        font-size: 35px;
+        font-weight: 700;
+        border-bottom: 4px solid #f22127;
+        margin-bottom: 30px;
+        color: white;
+        @media(max-width: 520px){
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+    }
+    .wrapForm {
+        width: 60%;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: 'center';
+        font-weight: 600;
+        margin-top: 30px;
+        padding: 20px;
+        border: 2px solid #4F443B;
+        background-color: white;
+        border-radius: 20px;
         @media(max-width: 1030px){
-            flex-direction: column;
-            width: 93%;
+            width: 95%;
+            margin-top: 18px;
+            padding: 10px;
         }
-        .getBtn {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 180px; 
-            height: 48px;
-            border-radius: 12px;
-            background-color: green;//rgb(38, 166, 190);
-            margin-left: 60px;
-            cursor: pointer;
-            @media(max-width: 520px){
-                width: 180px;
-                margin-top: 25px;
-                margin-left: 0px;
-            }
-            &:active {
-                box-shadow: 0 5px gray;
-                transform: translateY(8px);
-            }
-            > span {
-                font-weight: 600;
-                font-size: 22px;
-                color: white;
-            }
-        }
-        .inputTicket {
-            border: none;
-            outline: none;
-            font-weight: 600;
-            font-size: 18px;
-            width: 240px;
-            border-bottom: 3px solid white;
-            font-family: 'Montserrat', sans-serif;
-            background-color: transparent;
-            color: white;
-            @media(max-width: 520px){
-                width: 140px;
-                margin-right: 10px;
-            }
-        }
-        .inputTicket::placeholder {
-            color: white;
-          }
     }
-    
+    .label {
+        font-weight: 600;
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+    .inputChecklist {
+        border: none;
+        outline: none;
+        font-weight: 600;
+        font-size: 18px;
+        border-bottom: 2px solid #4F443B;
+        font-family: 'Montserrat', sans-serif;
+        background-color: transparent;
+        margin-bottom: 15px;
+    }
+    .inter {
+        text-decoration: underline;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 18px;
+        //margin-left: 35px;
+        padding-top: 20px;
+        &:active {
+            transform: translateY(4px);
+        }
+    }
+}
+.wrapBtn {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: 'center';
+    width: 100%;
+    > span {
+        font-family: 'Montserrat', sans-serif;
+        margin-top: 20px;
+        font-weight: 700;
+        font-size: 16px;
+        color: white
+    }
+    .order {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         border: none;
+         outline: none;
+         width: 200px;
+         height: 48px;
+         margin-top: 30px;
+         background-color: green;
+         border-radius: 12px;
+         margin-right: 10px;
+         margin-left: 10px;
+         cursor: pointer;
+         font-family: 'Montserrat', sans-serif;
+         font-weight: 600;
+         font-size: 22px;
+         color: white;
+         @media(max-width: 520px){
+            border-radius: 8px;
+        };
+        &:active {
+            box-shadow: 0 5px gray;
+            transform: translateY(8px);
+        }
+    }
+}
+.wrapError {
+    width: 100%;
+    justify-content: center;
+    margin-top: 30px;
+    .textError {
+        font-family: 'Montserrat', sans-serif;
+        color: red;
+        font-weight: 600;
+        font-size: 16px;
+    }
 }
 .wrapTitle {
     width: 95%;

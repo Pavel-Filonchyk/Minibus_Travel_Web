@@ -34,7 +34,7 @@ export default function Main() {
     
     // auth
     const [user, setUser] = useState(null)
-    console.log(user)
+
     // check
     const [selectFrom, setSelectFrom] = useState("Туров")
     const [selectTo, setSelectTo] = useState("Гомель")
@@ -44,15 +44,16 @@ export default function Main() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [errorAuth, setErrorAuth] = useState(null)
+    const [queue, setQueue] = useState(null)
     const [wayStart, setSelectWayStart] = useState("")
     const [wayStop, setSelectWayStop] = useState("")
     const [numberSeats, setNumberSeats] = useState(1)
-  console.log(errorAuth?.code)
+
     const [calc, setCalc] = useState(0)
     const [changeWay, setChengeWay] = useState(true)
     const [showModal, setShowModal] = useState(false)
     const [textModal, setTextModal] = useState('')
-    const [textAuth, setTextAuth] = useState(true)
+    const [textAuth, setTextAuth] = useState(false)
     const [smile, setSmile] = useState("goodSmile")
     const [errorFilling , setErrorFilling] = useState(false)
     const [errorCostRoute, setErrorCostRoute] = useState(false)
@@ -96,42 +97,48 @@ export default function Main() {
     }, [changeWay])
 
     useEffect(() => {
-        if(user){
+        if(user && queue === null){
             setCalc(calc +1)
             setShowModal(false)
-            setErrorAuth(null)
+            setTextAuth(false)
+        }
+        if (user && queue){
+            dispatch(postQueue({...queue, email}))
+            setCalc(0)
+            setQueue(null)
+            setTextAuth(false)
         }
     }, [user])
     
-    // useEffect(() => {
-    //     if(postSuccess === "На рейсе закончились места"){
-    //         setTextModal("На рейсе закончилось необходимое вам количество мест")
-    //         setSmile('badSmile')
-    //     }
-    //     if(postSuccess === "Бронирование успешно завершено!"){
-    //         setTextModal("Бронирование успешно завершено!")
-    //         setSmile('goodSmile')
-    //     }
+    useEffect(() => {
+        if(postSuccess === "На рейсе закончились места"){
+            setTextModal("На рейсе закончилось необходимое вам количество мест")
+            setSmile('badSmile')
+        }
+        if(postSuccess === "Бронирование успешно завершено!"){
+            setTextModal("Бронирование успешно завершено!")
+            setSmile('goodSmile')
+        }
         
-    //     if(postSuccess){
-    //         setShowModal(true)
-    //         setTimeout(() => {
-    //             setShowModal(false)
-    //             dispatch(closePostSuccess())
-    //         },2500)
-    //     }
-    // }, [postSuccess])
+        if(postSuccess){
+            setShowModal(true)
+            setTimeout(() => {
+                setShowModal(false)
+                dispatch(closePostSuccess())
+            },2500)
+        }
+    }, [postSuccess])
     
-    // useEffect(() => {
-    //     setTextModal('Вы записаны в очередь!')
-    //     if(postQueueSuccess){
-    //         setShowModal(true)
-    //         setTimeout(() => {
-    //             setShowModal(false)
-    //             dispatch(closePostSuccess())
-    //         },2000)
-    //     }
-    // }, [postQueueSuccess])
+    useEffect(() => {
+        setTextModal('Вы записаны в очередь!')
+        if(postQueueSuccess){
+            setShowModal(true)
+            setTimeout(() => {
+                setShowModal(false)
+                dispatch(closePostSuccess())
+            },2000)
+        }
+    }, [postQueueSuccess])
 
     const getRoutes = () => {
         dispatch(getTravels({selectFrom, selectTo, date: date.format('DD.MM.YYYY')}))
@@ -145,30 +152,26 @@ export default function Main() {
         setSmile("")
         setShowModal(true)
     }
-    const onAuth = (arg) => {
+    const onAuth = () => {
         setErrorAuth(null)
 
-        if (arg){
-            createUserWithEmailAndPassword(auth, email, password)
+        if (textAuth){
+            signInWithEmailAndPassword(auth, email, password)
             .then(data => setUser(data))
             .catch(data => setErrorAuth(data))
+           
         }else{
-            signInWithEmailAndPassword(auth, email, password)
+            createUserWithEmailAndPassword(auth, email, password)
             .then(data => setUser(data))
             .catch(data => setErrorAuth(data))
         }
         
     }
     const onPostQueue = (dataTrip) => {
-        if (fullName && phoneNumber) {
-            dispatch(postQueue({...dataTrip, fullName, phoneNumber: `+${phoneNumber}`}))
-            setErrorFilling(false)
-            setCalc(0)
-        }
-        if (!fullName || !phoneNumber) {
-            setErrorFilling(true)
-        }
-        
+        setTextModal("Регистрация")
+        setSmile("")
+        setShowModal(true)
+        setQueue(dataTrip)
 
     }
     const submitChecklist = () => {
@@ -185,7 +188,7 @@ export default function Main() {
     }
     const onPostUser = () => {
         dispatch(postUser({
-            id: uuid(), choiceRoutes, selectFrom, selectTo, fullName, phoneNumber: `+${phoneNumber}`, 
+            id: uuid(), choiceRoutes, selectFrom, selectTo, fullName, phoneNumber: `+${phoneNumber}`, email,
             wayStart, wayStop, timeStart, timeStop, costRoute: costRoute * numberSeats, numberSeats
         }))
         setCalc(0)
@@ -388,23 +391,10 @@ export default function Main() {
                                                         <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Количество свободных мест</th>
                                                         <th className={style.textTicket}>{item.freeSeats >= 3 ? '3+' : item.freeSeats}</th>
                                                     </tr>
-                                                </table>     
+                                                </table>
+
                                                 <div className={style.wrapQueue} style={{display: item.freeSeats === 0 ? '' : 'none'}} >
-                                                    <span>Как только появятся свободные места, мы вам сообщим</span>
-                                                    <span className={style.label}>Введите имя и фамилию</span>
-                                                    <input type="text" className={style.inputChecklist} value={fullName} onChange={(e) => setFullName(e.target.value)} required/>
-                                                    <span className={style.label}>Номер телефона</span>
-                                                    <PhoneInput
-                                                        country={'by'}
-                                                        value={phoneNumber}
-                                                        onChange={setPhoneNumber}
-                                                        inputStyle={{width: 260, fontSize: 16, fontWeight: 600, fontFamily: 'Montserrat'}}
-                                                        
-                                                    />
-                                                    {/* error filling */}
-                                                    <div className={style.wrapError} style={{display: errorFilling ? '' : 'none'}}>
-                                                        <span className={style.textError}>Необходимо заполнить все поля</span>
-                                                    </div>
+                                                    <span>Вы можете стать в очередь и <br/> как только появятся свободные места на этот рейс, мы вам сообщим</span>   
                                                 </div>
                                                 
                                                 <div className={style.tdBtn}>
@@ -632,15 +622,15 @@ export default function Main() {
             </div>
             <ModalWrapper showModal={showModal}>
                 <div className={style.wrapModal} style={{height: textModal === 'Регистрация' ? 320 : ''}}>
-                    <span className={style.title}>{textAuth ? textModal: 'Вход'}</span> 
-                    <CloseOutlined 
-                        className={style.x}
-                        onClick={() => setShowModal(false)}
-                    />
+                    <span className={style.title}>{textAuth ? 'Вход' : textModal}</span>                  
                     {
                         textModal === 'Регистрация'
                         ?
                             <>
+                                 <CloseOutlined 
+                                    className={style.x}
+                                    onClick={() => setShowModal(false)}
+                                />
                                 <span className={style.label}>Введите электронную почту</span>
                                 <input type='email' className={style.inputChecklist} value={email} onChange={(e) => setEmail(e.target.value)}/>
                                 <span className={style.label}>Пароль</span>
@@ -649,7 +639,7 @@ export default function Main() {
                                     <div className={style.inter}
                                         onClick={() => setTextAuth(item => !item)}
                                     >
-                                        <span>{textAuth ? 'Вход' : 'Регистрация'}</span>
+                                        <span>{textAuth ? 'Регистрация' : 'Вход'}</span>
                                     </div>
                                 </div>
                                 <div className={style.wrapError} style={{display:  errorAuth?.code == 'auth/email-already-in-use' ? '' : 'none', marginTop: 10}}>
@@ -664,7 +654,7 @@ export default function Main() {
                                 <div className={style.wrapBtn} >
                                     <div className={style.order}
                                         style={{marginTop: 10, marginBottom: 12}}
-                                        onClick={() => onAuth(textAuth)}
+                                        onClick={onAuth}
                                     >
                                         <span>Подтвердить</span>
                                     </div>
@@ -704,6 +694,6 @@ export default function Main() {
                 
             </div>
         </>
-  )
+    )
 }
 
