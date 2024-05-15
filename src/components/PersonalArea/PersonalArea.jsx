@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import PhoneInput from 'react-phone-input-2'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
-import _ from 'lodash'
-import { auth } from '../../firebase.config'
+import 'react-phone-input-2/lib/style.css'
+
+import { sendCodeData, resetErrorCode } from '../../core/actions/authActions'
 import { getUser, deleteUser, getQueue, deleteQueue } from '../../core/actions/canselTravelActions'
 
 import style from './PersonalArea.module.scss'
@@ -11,39 +11,58 @@ import style from './PersonalArea.module.scss'
 export default function PersonalArea({title, textBtn}) {
     const dispatch = useDispatch()
 
-    //const user = useSelector(({restUserReducer: { user }}) => user)
+    // auth
+    const getCode = useSelector(({authReducer: { getCode }}) => getCode)
+    const errorCode = useSelector(({authReducer: { errorCode }}) => errorCode)
+    // брони и очереди
     const userData = useSelector(({restUserReducer: { userData }}) => userData)
-    const deleteUserSuccess = useSelector(({restUserReducer: { deleteUserSuccess }}) => deleteUserSuccess)
     const userQueue = useSelector(({restUserReducer: { userQueue }}) => userQueue)
-    console.log(userData)
-    const [user, setUser] = useState(null)
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [errorAuth, setErrorAuth] = useState(null)
-    const [textAuth, setTextAuth] = useState(true)
+    // блок авторизации
+    const [phoneNumber, setPhoneNumber] = useState(null)
+    const [createCode, setCreateCode] = useState(null)
+    const [writeCode, setWriteCode] = useState('')
+    
+    // show blocks
+    const [showBtn, setShowBtn] = useState(false)
+    const [errorTextPhone, setErrorTextPhone] = useState(false)
+    const [errorTextCode, setErrorTextCode] = useState(false)
     const [showUserBlock, setShowUserBlock] = useState(false)
+    
+    useEffect(() => {
+        if (createCode !== null) {
+            //dispatch(sendCodeData({code: createCode.toString(), phoneNumber: `+375${phoneNumber}`}))
+        }
+    }, [createCode])
 
     useEffect(() => {
-        if(user){
-            dispatch(getUser({email}))
-            dispatch(getQueue({email}))
-            setShowUserBlock(true)
+        if(getCode === true) {
+            setShowBtn(item => !item)
         }
-    }, [user])
-    
+    }, [getCode])
 
-    const onAuth = () => {
-        setErrorAuth(null)
-
-        if (textAuth){
-            signInWithEmailAndPassword(auth, email, password)
-            .then(data =>setUser(data))
-            .catch(data => setErrorAuth(data))
+    const onSendCode = () => {
+        if(phoneNumber !== null){
+            dispatch(resetErrorCode())
+            setCreateCode(Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000)
+            setErrorTextPhone(false)
         }else{
-            createUserWithEmailAndPassword(auth, email, password)
-            .then(data => setUser(data))
-            .catch(data => setErrorAuth(data))
+            setErrorTextPhone(true)
+        }
+    }
+    const onGetCode = () => {
+        if (createCode.toString() === writeCode.toString()){
+            console.log('УСПЕХ')
+            dispatch(getUser({phoneNumber: `+375${phoneNumber}`}))
+            dispatch(getQueue({phoneNumber: `+375${phoneNumber}`}))
+
+            setShowUserBlock(true)
+            setShowBtn(item => !item)
+            setErrorTextCode(false)
+            setCreateCode(null)
+        }
+        if (createCode.toString() !== writeCode.toString()){
+            setErrorTextCode(true)
         }
     }
     const onBack = () => {
@@ -63,34 +82,39 @@ export default function PersonalArea({title, textBtn}) {
             {/* блок авторизации */}
             <div className={style.booking}>
                 <div className={style.wrapForm}>
-                    <span className={style.title}>{textAuth ? 'Вход': 'Регистрация'}</span> 
-                    <span className={style.label}>Введите электронную почту</span>
-                    <input type='email' className={style.inputChecklist} value={email} onChange={(e) => setEmail(e.target.value)}/>
-                    <span className={style.label}>Пароль</span>
-                    <input type='password' className={style.inputChecklist} value={password} onChange={(e) => setPassword(e.target.value)}/> 
-                    <div className={style.wrapBtn} style={{justifyContent: 'flex-start'}}>
-                        <div className={style.inter}
-                            onClick={() => setTextAuth(item => !item)}
-                        >
-                            <span>{textAuth ? 'Регистрация' : 'Вход'}</span>
-                        </div>
+                    <span className={style.title}>Вход</span> 
+                    <span className={style.label}>Введите номер телефона</span>
+                    <div className={style.wrapPhoneInput}>
+                        <span className={style.labelCode}>+375</span>
+                        <input type='number' className={style.inputChecklist} value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)}/>
                     </div>
-                    <div className={style.wrapError} style={{display:  errorAuth?.code == 'auth/email-already-in-use' ? '' : 'none', marginTop: 10}}>
-                        <span className={style.textError}>Вы уже зарегестрированы<br/>Нажмите Вход и Подтвердить</span>
-                    </div>
-                    <div className={style.wrapError} style={{display: errorAuth?.code == 'auth/invalid-email' ? '' : 'none', marginTop: 10}}>
-                        <span className={style.textError}>Проверьте Email, также длина пароля должна быть более 5 знаков</span>
-                    </div>
-                    <div className={style.wrapError} style={{display: errorAuth?.code == 'auth/invalid-credential' ? '' : 'none', marginTop: 10}}>
-                        <span className={style.textError}>Такого пользователя не существует или неверный пароль</span>
+                    <span className={style.label}>Введите полученный код</span>
+                    <input type='number' className={style.inputChecklist} value={writeCode} onChange={(e) => setWriteCode(e.target.value)}/> 
+                    {/* error filling */}
+                    <div className={style.wrapError} >
+                        <span className={style.textError} style={{display: errorTextPhone ? '' : 'none'}}>Необходимо заполнить поле номера телефона</span>
+                        <span className={style.textError} style={{display: errorCode ? '' : 'none'}}>Проверьте номер телефона</span>
+                        <span className={style.textError} style={{display: errorTextCode ? '' : 'none'}}>Неверно введен код</span>
                     </div>
                     <div className={style.wrapBtn} >
-                        <div className={style.order}
-                            style={{marginTop: 10, marginBottom: 12}}
-                            onClick={onAuth}
-                        >
-                            <span>Подтвердить</span>
-                        </div>
+                        {
+                            !showBtn 
+                            ?
+                                <div className={style.order}
+                                    style={{marginTop: 10, marginBottom: 12}}
+                                    onClick={() => onSendCode()}
+                                >
+                                    <span>Получить код</span>
+                                </div>
+                            : 
+                                <div className={style.order}
+                                    style={{marginTop: 10, marginBottom: 12}}
+                                    onClick={() => onGetCode()}
+                                >
+                                    <span>Подтвердить</span>
+                                </div>
+                        }
+                         
                     </div>
                 </div>
             </div>
@@ -98,11 +122,11 @@ export default function PersonalArea({title, textBtn}) {
 
             {/* брони */}
             <div style={{display: showUserBlock ? '' : 'none', width: '100%'}}>
-                <div className={style.wrapTitle} style={{display: user ? '' : 'none'}}>
+                <div className={style.wrapTitle}>
                     <span>Ваши забронированные  билеты</span>
                 </div>
                 {
-                    user && userData?.length > 0
+                    userData?.length > 0
                     ?   userData?.map(item => {
                         return (
                             <div className={style.wrapTicket} key={item.id}>
@@ -170,12 +194,11 @@ export default function PersonalArea({title, textBtn}) {
                         </div>
                 }
 
-                <div className={style.wrapTitle} style={{display: user ? '' : 'none'}}>
+                <div className={style.wrapTitle}>
                     <span>Ваша очерёдность на рейс</span>
-                    
                 </div>
                 {
-                    user && userQueue?.length > 0
+                    userQueue?.length > 0
                     ? userQueue.map(item => {return (
                         <div className={style.wrapTicket} key={item.blockId}>
                             <table style={{marginTop: 0, padding: 8}}>

@@ -1,6 +1,5 @@
 const initialState = {
-    //user: null,
-    email: '',
+    phoneNumber: '',
     userData: [],
     deleteUserData: [],
     travels: [],
@@ -10,19 +9,19 @@ const initialState = {
 
     userQueue: [],
     blockIdQueue: '',
-    deleteQueueSuccess: false
+    deleteQueueSuccess: false,
 }
 
 const restUserReducer = (state = initialState, action) => {
     switch (action.type){ 
         case 'GET_USER':
-            console.log(action.payload)
             return {
                 ...state,
-                //user: action.payload.user,
-                email: action.payload.email,
+                phoneNumber: action.payload.phoneNumber,
             }
         case 'GET_USER_SUCCESS':
+            // т.к. в main подтягивает данные с сервака через useEffect на авто при переходе на страницу, поэтому можно брать данные из getAllTravels
+            // но необходимо заставить обновиться страницу main после брони
             const list = Object.keys(action.payload).map(key => ({...action.payload[key], blockId: key}))
             let peoples = []
             for (let i of list) {
@@ -72,10 +71,10 @@ const restUserReducer = (state = initialState, action) => {
                 deleteUserData,
             }
         case 'DELETE_USER_SUCCESS':   
-        return {
-            ...state,
-            deleteUserSuccess: true
-        }
+            return {
+                ...state,
+                deleteUserSuccess: true
+            }
         case 'GET_USER_ERROR':
             return {
                 ...state,

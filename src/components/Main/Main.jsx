@@ -6,14 +6,13 @@ import locale from 'antd/es/date-picker/locale/ru_RU'
 import { InteractionOutlined, ClockCircleOutlined, SmileOutlined, FrownOutlined, CloseOutlined } from '@ant-design/icons'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
-import { RecaptchaVerifier, signInWithPhoneNumber, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
 import uuid from 'react-uuid' 
 
 import PersonalArea from '../PersonalArea/PersonalArea'
 import AdminAccount from '../AdminAccount/AdminAccount'
-import ModalWrapper from '../../wrappers/ModalWrapper/ModalWrapper'
 import { getAllTravels, getTravels, postUser, getDirections, closePostSuccess, postQueue } from '../../core/actions/bookTravelActions'
 import { getCosts } from '../../core/actions/restAdminCostsActions'
+import { sendCodeData, resetErrorCode } from '../../core/actions/authActions'
 import style from './Main.module.scss'
 
 import { auth } from '../../firebase.config'
@@ -33,7 +32,26 @@ export default function Main() {
     const postQueueSuccess = useSelector(({postUserReducer: { postQueueSuccess }}) => postQueueSuccess)
     
     // auth
-    const [user, setUser] = useState(null)
+    const getCode = useSelector(({authReducer: { getCode }}) => getCode)
+    const errorCode = useSelector(({authReducer: { errorCode }}) => errorCode)
+    const [createCode, setCreateCode] = useState(null)
+    const [writeCode, setWriteCode] = useState('')
+    useEffect(() => {
+        if (createCode !== null) {
+            //dispatch(sendCodeData({code: createCode.toString(), phoneNumber: `+375${phoneNumber}`}))
+        }
+    }, [createCode])
+    useEffect(() => {
+        if(getCode === true) {
+            setShowBtn(item => !item)
+        }
+    }, [getCode])
+    useEffect(() => {
+        dispatch(getAllTravels())
+        dispatch(getDirections())
+        dispatch(getCosts())
+    }, [])
+    
 
     // check
     const [selectFrom, setSelectFrom] = useState("Туров")
@@ -48,9 +66,28 @@ export default function Main() {
     const [wayStart, setSelectWayStart] = useState("")
     const [wayStop, setSelectWayStop] = useState("")
     const [numberSeats, setNumberSeats] = useState(1)
+    
+    const [changeWay, setChengeWay] = useState(true)
+    useEffect(() => {
+        if (!changeWay) {
+            setSelectFrom(selectTo)
+        }else{
+            setSelectFrom(selectFrom)
+        }
+        if (changeWay) {
+            setSelectTo(selectTo)
+        }else{
+            setSelectTo(selectFrom)
+        }
+    }, [changeWay])
 
     const [calc, setCalc] = useState(0)
-    const [changeWay, setChengeWay] = useState(true)
+    
+    // show blocks
+    const [showBtn, setShowBtn] = useState(false)
+    const [errorTextPhone, setErrorTextPhone] = useState(false)
+    const [errorTextCode, setErrorTextCode] = useState(false)
+    
     const [showModal, setShowModal] = useState(false)
     const [textModal, setTextModal] = useState('')
     const [textAuth, setTextAuth] = useState(false)
@@ -77,38 +114,19 @@ export default function Main() {
     const timeStop = choiceRoutes[0]?.cities.filter(item => item.city === selectTo)[0]
         ?.busstops.filter(elem => elem.busstop === wayStop)[0]?.time
 
-    useEffect(() => {
-        dispatch(getAllTravels())
-        dispatch(getDirections())
-        dispatch(getCosts())
-    }, [])
-    
-    useEffect(() => {
-        if (!changeWay) {
-            setSelectFrom(selectTo)
-        }else{
-            setSelectFrom(selectFrom)
-        }
-        if (changeWay) {
-            setSelectTo(selectTo)
-        }else{
-            setSelectTo(selectFrom)
-        }
-    }, [changeWay])
-
-    useEffect(() => {
-        if(user && queue === null){
-            setCalc(calc +1)
-            setShowModal(false)
-            setTextAuth(false)
-        }
-        if (user && queue){
-            dispatch(postQueue({...queue, email}))
-            setCalc(0)
-            setQueue(null)
-            setTextAuth(false)
-        }
-    }, [user])
+    // useEffect(() => {
+    //     if(queue === null){
+    //         setCalc(calc +1)
+    //         setShowModal(false)
+    //         setTextAuth(false)
+    //     }
+    //     if (queue){
+    //         dispatch(postQueue({...queue, email}))
+    //         setCalc(0)
+    //         setQueue(null)
+    //         setTextAuth(false)
+    //     }
+    // }, [user])
     
     useEffect(() => {
         if(postSuccess === "На рейсе закончились места"){
@@ -125,7 +143,7 @@ export default function Main() {
             setTimeout(() => {
                 setShowModal(false)
                 dispatch(closePostSuccess())
-            },2500)
+            },2000)
         }
     }, [postSuccess])
     
@@ -147,26 +165,13 @@ export default function Main() {
     const onChoiceRoute = (id) => {
         const route = travels?.filter(item => item.blockId === id)
         setChoiceRoutes(route)
+        setCalc(calc +1)
 
         setTextModal("Регистрация")
         setSmile("")
         setShowModal(true)
     }
-    const onAuth = () => {
-        setErrorAuth(null)
-
-        if (textAuth){
-            signInWithEmailAndPassword(auth, email, password)
-            .then(data => setUser(data))
-            .catch(data => setErrorAuth(data))
-           
-        }else{
-            createUserWithEmailAndPassword(auth, email, password)
-            .then(data => setUser(data))
-            .catch(data => setErrorAuth(data))
-        }
-        
-    }
+    
     const onPostQueue = (dataTrip) => {
         setTextModal("Регистрация")
         setSmile("")
@@ -186,17 +191,38 @@ export default function Main() {
             setErrorCostRoute(true)
         }
     }
-    const onPostUser = () => {
-        dispatch(postUser({
-            id: uuid(), choiceRoutes, selectFrom, selectTo, fullName, phoneNumber: `+${phoneNumber}`, email,
-            wayStart, wayStop, timeStart, timeStop, costRoute: costRoute * numberSeats, numberSeats
-        }))
-        setCalc(0)
+    const onSendCode = () => {
+        if(phoneNumber !== null){
+            dispatch(resetErrorCode())
+            setCreateCode(Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000)
+            setErrorTextPhone(false)
+        }else{
+            setErrorTextPhone(true)
+        }
     }
 
+    const onPostUser = () => {
+        if (createCode.toString() === writeCode.toString()){
+            console.log('УСПЕХ')
+            // dispatch(postUser({
+            //     id: uuid(), choiceRoutes, selectFrom, selectTo, fullName, phoneNumber: `+${phoneNumber}`, email,
+            //     wayStart, wayStop, timeStart, timeStop, costRoute: costRoute * numberSeats, numberSeats
+            // }))
+            // setCalc(0)
+
+
+            setShowBtn(item => !item)
+            setErrorTextCode(false)
+            setCreateCode(null)
+        }
+        if (createCode.toString() !== writeCode.toString()){
+            setErrorTextCode(true)
+        }
+    }
+        
+    
     const btnBack = () => {
         setCalc(0)
-        setUser(null)
         setErrorCostRoute(false)
         setNumberSeats(1)
         //window.location.reload()
@@ -332,9 +358,7 @@ export default function Main() {
                             />
                         </div>
                     </div>
-
                     <br/>
-
                     {/* Рейсы */}
                     <div className={style.routes} style={{display: calc === 1 ? '' : 'none'}}><span>РЕЙСЫ</span></div>
                     {
@@ -590,19 +614,44 @@ export default function Main() {
                             </tr>
                             
                         </table>
-                        <div className={style.wrapBtn} style={{flexDirection: 'row'}}>
-                            <div className={style.order}
-                                onClick={onPostUser}
-                            >
-                                <span>Подтвердить</span>
+
+                        <div className={style.wrapInput}>
+                            <span className={style.label}>Введите полученный код</span>
+                            <input type='number' className={style.inputChecklist} value={writeCode} onChange={(e) => setWriteCode(e.target.value)}/> 
+                            {/* error filling */}
+                            <div className={style.wrapError} >
+                                <span className={style.textError} style={{display: errorTextPhone ? '' : 'none'}}>Необходимо заполнить поле номера телефона</span>
+                                <span className={style.textError} style={{display: errorCode ? '' : 'none'}}>Проверьте номер телефона</span>
+                                <span className={style.textError} style={{display: errorTextCode ? '' : 'none'}}>Неверно введен код</span>
                             </div>
-                            
+                        </div>
+
+                        <div className={style.wrapBtn} style={{flexDirection: 'row'}}>
+                            {
+                                !showBtn 
+                                ?
+                                    <div className={style.order}
+                                        style={{marginTop: 10, marginBottom: 12}}
+                                        onClick={() => onSendCode()}
+                                    >
+                                        <span>Получить код</span>
+                                    </div>
+                                : 
+                                    <div className={style.order}
+                                        style={{marginTop: 10, marginBottom: 12}}
+                                        onClick={onPostUser}
+                                    >
+                                        <span>Подтвердить</span>
+                                    </div>
+                            }
+ 
                             <div className={style.order} 
                                 style={{backgroundColor: '#1560BD'}}
                                 onClick={btnBack}
                             >
                                 <span>Назад</span>
-                            </div>         
+                            </div>  
+
                             <div className={style.wrapError} style={{display: postError ? '' : 'none', marginTop: 10}}>
                                 <span>Ошибка отправки данных <br/> Попробуйте позже еще раз</span>
                                 <div className={style.order} style={{backgroundColor: '#1560BD', width: 160, marginTop: 20, marginRight: 0}}
@@ -620,63 +669,7 @@ export default function Main() {
 
                 </div>
             </div>
-            <ModalWrapper showModal={showModal}>
-                <div className={style.wrapModal} style={{height: textModal === 'Регистрация' ? 320 : ''}}>
-                    <span className={style.title}>{textAuth ? 'Вход' : textModal}</span>                  
-                    {
-                        textModal === 'Регистрация'
-                        ?
-                            <>
-                                 <CloseOutlined 
-                                    className={style.x}
-                                    onClick={() => setShowModal(false)}
-                                />
-                                <span className={style.label}>Введите электронную почту</span>
-                                <input type='email' className={style.inputChecklist} value={email} onChange={(e) => setEmail(e.target.value)}/>
-                                <span className={style.label}>Пароль</span>
-                                <input type='password' className={style.inputChecklist} value={password} onChange={(e) => setPassword(e.target.value)}/> 
-                                <div className={style.wrapBtn} style={{justifyContent: 'flex-start'}}>
-                                    <div className={style.inter}
-                                        onClick={() => setTextAuth(item => !item)}
-                                    >
-                                        <span>{textAuth ? 'Регистрация' : 'Вход'}</span>
-                                    </div>
-                                </div>
-                                <div className={style.wrapError} style={{display:  errorAuth?.code == 'auth/email-already-in-use' ? '' : 'none', marginTop: 10}}>
-                                    <span className={style.textError} style={{fontSize: 14}}>Вы уже зарегестрированы<br/>Нажмите Вход и Подтвердить</span>
-                                </div>
-                                <div className={style.wrapError} style={{display: errorAuth?.code == 'auth/invalid-email' ? '' : 'none', marginTop: 10}}>
-                                    <span className={style.textError} style={{fontSize: 14}}>Проверьте Email, также длина пароля должна быть более 5 знаков</span>
-                                </div>
-                                <div className={style.wrapError} style={{display: errorAuth?.code == 'auth/invalid-credential' ? '' : 'none', marginTop: 10}}>
-                                    <span className={style.textError} style={{fontSize: 14}}>Такого пользователя не существует или неверный пароль</span>
-                                </div>
-                                <div className={style.wrapBtn} >
-                                    <div className={style.order}
-                                        style={{marginTop: 10, marginBottom: 12}}
-                                        onClick={onAuth}
-                                    >
-                                        <span>Подтвердить</span>
-                                    </div>
-                                </div>
-                            </>
-                        : ''
-                    }
-                    {
-                        smile === "badSmile" 
-                        ?
-                            <FrownOutlined 
-                                className={style.smile}
-                            />
-                        : smile === "goodSmile"
-                        ?
-                            <SmileOutlined 
-                                className={style.smile}
-                            />
-                        : ''
-                    }
-                </div>
-            </ModalWrapper>
+            
             <div className={style.line}/>
             {/* Футер */}
             <div className={style.footer}>

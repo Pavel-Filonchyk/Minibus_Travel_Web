@@ -4,6 +4,8 @@ import restUserReducer from './restUserReducer'
 import restAdminTravelReducer from './restAdminTravelReducer'
 import restAdminBusstopsReducer from './restAdminBusstopsReducer'
 import restAdminCostsReducer from './restAdminCostsReducer'
+import authReducer from './authReducer'
+import reportAdminReducer from './reportAdminReducer'
 
 export const rootReducer = () => {
     return { 
@@ -13,5 +15,7 @@ export const rootReducer = () => {
         restAdminTravelReducer, 
         restAdminBusstopsReducer, 
         restAdminCostsReducer,
+        authReducer,
+        reportAdminReducer
     }
 }
