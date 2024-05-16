@@ -22,7 +22,7 @@ export default function AdminAccount() {
     const travelsData = useSelector(({restAdminTravelReducer: { travelsData }}) => travelsData)
     const queuesData = useSelector(({restAdminTravelReducer: { queuesData }}) => queuesData)
     const report = useSelector(({reportAdminReducer: { report }}) => report)
-    console.log(report)
+  
     const directionsData = useSelector(({restAdminTravelReducer: { directionsData }}) => directionsData)
     const busstopsData = useSelector(({restAdminBusstopsReducer: { busstopsData }}) => busstopsData)
     const collectBusstops = useSelector(({restAdminBusstopsReducer: {citiesCollect  }}) => citiesCollect)

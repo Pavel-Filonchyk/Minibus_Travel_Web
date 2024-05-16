@@ -28,6 +28,7 @@ import watcherDeleteCostAdmin from './adminSagas/costsSagas/deleteCostAdminSaga'
 import watcherGetReport from './adminSagas/reportSagas/getReportSaga'
 import watcherDeleteReport from './adminSagas/reportSagas/deleteReportSaga'
 import watcherGetCodeSaga from './userSagas/getCodeSaga'
+import watcherPostMessage from './userSagas/postMessageSaga'
 
 export default function* rootSaga() {
     yield all([
@@ -60,6 +61,7 @@ export default function* rootSaga() {
         watcherGetReport(),
         watcherDeleteReport(),
 
-        watcherGetCodeSaga()
+        watcherGetCodeSaga(),
+        watcherPostMessage()
     ])
 }

@@ -15,7 +15,6 @@ const authReducer = (state = initialState, action) => {
                 phoneNumber: action.payload.phoneNumber
             }
         case 'SEND_CODE_DATA_SUCCESS':
-            console.log(action.payload)
             return {
                 ...state,
                 getCode: true
@@ -30,6 +29,19 @@ const authReducer = (state = initialState, action) => {
             return {
                 ...state,
                 errorCode: null
+            }
+
+        case 'POST_MESSAGE_SUCCESS':
+            console.log(action.payload)
+            return {
+                ...state,
+                
+            }
+        case 'POST_MESSAGE_ERROR':
+            console.log(action.payload)
+            return {
+                ...state,
+                
             }
         default: 
         return state;  

@@ -6,7 +6,10 @@ const initialState = {
     postError: false,
 
     postQueue: {},
-    postQueueSuccess: false
+    postQueueSuccess: false,
+
+    // данные брони для отправки смс после бронирования, как уведомления
+    ticketData: {}
 }
 
 const postUserReducer = (state = initialState, action) => {
@@ -36,10 +39,12 @@ const postUserReducer = (state = initialState, action) => {
                 blockId,
                 userData,
                 numberSeats: ticketData.numberSeats,
-                postSuccess: false
+                postSuccess: false,
+                ticketData
             }
 
         case 'POST_USER_SUCCESS':
+            console.log(action.payload)
             if(action.payload === "На рейсе закончились места"){
                 return {
                     ...state,

@@ -69,6 +69,7 @@ const postUserSuccess = (data) => {
         payload: data 
     } 
 }
+export const POST_USER_SUCCESS = 'POST_USER_SUCCESS'
 const postUserError = (data) => {
     return {
         type: 'POST_USER_ERROR',

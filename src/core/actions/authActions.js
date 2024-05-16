@@ -23,3 +23,22 @@ export const resetErrorCode = (data) => {
         payload: data 
     } 
 }
+// export const postMessage = (data) => {
+//     return {
+//         type: '',
+//         payload: data 
+//     } 
+// }
+// export const POST_MESSAGE = 'POST_MESSAGE'
+export const postMessageSuccess = (data) => {
+    return {
+        type: 'POST_MESSAGE_SUCCESS',
+        payload: data 
+    } 
+}
+export const postMessageError = (data) => {
+    return {
+        type: 'POST_MESSAGE_ERROR',
+        payload: data 
+    } 
+}
