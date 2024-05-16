@@ -10,12 +10,11 @@ import uuid from 'react-uuid'
 
 import PersonalArea from '../PersonalArea/PersonalArea'
 import AdminAccount from '../AdminAccount/AdminAccount'
+import ModalWrapper from '../../wrappers/ModalWrapper/ModalWrapper'
 import { getAllTravels, getTravels, postUser, getDirections, closePostSuccess, postQueue } from '../../core/actions/bookTravelActions'
 import { getCosts } from '../../core/actions/restAdminCostsActions'
 import { sendCodeData, resetErrorCode } from '../../core/actions/authActions'
 import style from './Main.module.scss'
-
-import { auth } from '../../firebase.config'
 
 export default function Main() {
 
@@ -36,9 +35,10 @@ export default function Main() {
     const errorCode = useSelector(({authReducer: { errorCode }}) => errorCode)
     const [createCode, setCreateCode] = useState(null)
     const [writeCode, setWriteCode] = useState('')
+    const [showBtn, setShowBtn] = useState(false)
     useEffect(() => {
         if (createCode !== null) {
-            //dispatch(sendCodeData({code: createCode.toString(), phoneNumber: `+375${phoneNumber}`}))
+            dispatch(sendCodeData({code: createCode?.toString(), phoneNumber: `+375${phoneNumber}`}))
         }
     }, [createCode])
     useEffect(() => {
@@ -46,12 +46,12 @@ export default function Main() {
             setShowBtn(item => !item)
         }
     }, [getCode])
+
     useEffect(() => {
         dispatch(getAllTravels())
         dispatch(getDirections())
         dispatch(getCosts())
-    }, [])
-    
+    }, []) 
 
     // check
     const [selectFrom, setSelectFrom] = useState("Туров")
@@ -59,10 +59,6 @@ export default function Main() {
     const [date, setDate] = useState(dayjs())
     const [fullName, setFullName] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [errorAuth, setErrorAuth] = useState(null)
-    const [queue, setQueue] = useState(null)
     const [wayStart, setSelectWayStart] = useState("")
     const [wayStop, setSelectWayStop] = useState("")
     const [numberSeats, setNumberSeats] = useState(1)
@@ -84,13 +80,11 @@ export default function Main() {
     const [calc, setCalc] = useState(0)
     
     // show blocks
-    const [showBtn, setShowBtn] = useState(false)
     const [errorTextPhone, setErrorTextPhone] = useState(false)
     const [errorTextCode, setErrorTextCode] = useState(false)
-    
+    const [showSpin, setShowSpin] = useState(false)
     const [showModal, setShowModal] = useState(false)
     const [textModal, setTextModal] = useState('')
-    const [textAuth, setTextAuth] = useState(false)
     const [smile, setSmile] = useState("goodSmile")
     const [errorFilling , setErrorFilling] = useState(false)
     const [errorCostRoute, setErrorCostRoute] = useState(false)
@@ -113,24 +107,10 @@ export default function Main() {
         ?.busstops.filter(elem => elem.busstop === wayStart)[0]?.time
     const timeStop = choiceRoutes[0]?.cities.filter(item => item.city === selectTo)[0]
         ?.busstops.filter(elem => elem.busstop === wayStop)[0]?.time
-
-    // useEffect(() => {
-    //     if(queue === null){
-    //         setCalc(calc +1)
-    //         setShowModal(false)
-    //         setTextAuth(false)
-    //     }
-    //     if (queue){
-    //         dispatch(postQueue({...queue, email}))
-    //         setCalc(0)
-    //         setQueue(null)
-    //         setTextAuth(false)
-    //     }
-    // }, [user])
     
     useEffect(() => {
         if(postSuccess === "На рейсе закончились места"){
-            setTextModal("На рейсе закончилось необходимое вам количество мест")
+            setTextModal("На рейсе закончились места. Посмотрите другое время")
             setSmile('badSmile')
         }
         if(postSuccess === "Бронирование успешно завершено!"){
@@ -146,6 +126,18 @@ export default function Main() {
             },2000)
         }
     }, [postSuccess])
+
+    useEffect(() => {
+        if(postError){
+            setShowModal(true)
+            setTextModal("Ошибка отправки . Попробуйте позже !")
+            setSmile('badSmile')
+            setTimeout(() => {
+                setShowModal(false)
+                dispatch(closePostSuccess())
+            },2000)
+        }
+    }, [postError])
     
     useEffect(() => {
         setTextModal('Вы записаны в очередь!')
@@ -166,19 +158,8 @@ export default function Main() {
         const route = travels?.filter(item => item.blockId === id)
         setChoiceRoutes(route)
         setCalc(calc +1)
-
-        setTextModal("Регистрация")
-        setSmile("")
-        setShowModal(true)
     }
     
-    const onPostQueue = (dataTrip) => {
-        setTextModal("Регистрация")
-        setSmile("")
-        setShowModal(true)
-        setQueue(dataTrip)
-
-    }
     const submitChecklist = () => {
         if (costRoute && fullName && phoneNumber && wayStart && wayStop) {
             setCalc(calc +1)
@@ -191,7 +172,13 @@ export default function Main() {
             setErrorCostRoute(true)
         }
     }
+
+    // auth / post
     const onSendCode = () => {
+        setShowSpin(true)
+        setTimeout(() => {
+            setShowSpin(false)
+        },2500)
         if(phoneNumber !== null){
             dispatch(resetErrorCode())
             setCreateCode(Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000)
@@ -200,27 +187,36 @@ export default function Main() {
             setErrorTextPhone(true)
         }
     }
-
-    const onPostUser = () => {
-        if (createCode.toString() === writeCode.toString()){
-            console.log('УСПЕХ')
-            // dispatch(postUser({
-            //     id: uuid(), choiceRoutes, selectFrom, selectTo, fullName, phoneNumber: `+${phoneNumber}`, email,
-            //     wayStart, wayStop, timeStart, timeStop, costRoute: costRoute * numberSeats, numberSeats
-            // }))
-            // setCalc(0)
-
-
+    const onPostQueue = (dataTrip) => {
+        if (createCode?.toString() === writeCode?.toString()){
+            dispatch(postQueue(dataTrip))
+            setCalc(0)
+            setWriteCode('')
             setShowBtn(item => !item)
             setErrorTextCode(false)
             setCreateCode(null)
         }
-        if (createCode.toString() !== writeCode.toString()){
+        if (createCode?.toString() !== writeCode?.toString()){
             setErrorTextCode(true)
         }
     }
-        
-    
+    const onPostUser = () => {
+        if (createCode?.toString() === writeCode?.toString()){
+            dispatch(postUser({
+                id: uuid(), choiceRoutes, selectFrom, selectTo, fullName, phoneNumber: `+${phoneNumber}`,
+                wayStart, wayStop, timeStart, timeStop, costRoute: costRoute * numberSeats, numberSeats
+            }))
+            setCalc(0)
+            setWriteCode('')
+            setShowBtn(item => !item)
+            setErrorTextCode(false)
+            setCreateCode(null)
+        }
+        if (createCode?.toString() !== writeCode?.toString()){
+            setErrorTextCode(true)
+        }
+    }
+          
     const btnBack = () => {
         setCalc(0)
         setErrorCostRoute(false)
@@ -412,40 +408,73 @@ export default function Main() {
                                                     </tr>
                                                     
                                                     <tr>
-                                                        <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Количество свободных мест</th>
+                                                        <th className={style.textTicket} style={{fontWeight: '700'}}>Количество свободных мест</th>
                                                         <th className={style.textTicket}>{item.freeSeats >= 3 ? '3+' : item.freeSeats}</th>
                                                     </tr>
                                                 </table>
 
-                                                <div className={style.wrapQueue} style={{display: item.freeSeats === 0 ? '' : 'none'}} >
-                                                    <span>Вы можете стать в очередь и <br/> как только появятся свободные места на этот рейс, мы вам сообщим</span>   
+                                                {/* Стать в очередь */}
+                                                <div className={style.wrapInput} style={{display: item.freeSeats === 0 ? '' : 'none', width: '60%',  alignItems: 'center'}}>
+                                                    <span className={style.label}>Вы можете стать в очередь и как только появятся <br/> свободные места на этот рейс, мы вам сообщим</span>   
+                                                    <span className={style.label}>Введите номер телефона</span>
+                                                    <div className={style.wrapPhoneInput} style={{width: '60%'}}>
+                                                        <span className={style.labelCode}>+375</span>
+                                                        <input type='number' className={style.inputChecklist}  value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)}/>
+                                                    </div>
+                                                    <span className={style.label}>Введите полученный код</span>
+                                                    <input type='number' className={style.inputChecklist} style={{width: '60%'}} value={writeCode} onChange={(e) => setWriteCode(e.target.value)}/> 
+                                                    {/* error filling */}
+                                                    <div className={style.wrapError} style={{alignItems: 'center'}}>
+                                                        <span className={style.textError} style={{display: errorTextPhone ? '' : 'none'}}>Необходимо заполнить поле номера телефона</span>
+                                                        <span className={style.textError} style={{display: errorCode ? '' : 'none'}}>Проверьте номер телефона</span>
+                                                        <span className={style.textError} style={{display: errorTextCode ? '' : 'none'}}>Неверно введен код</span>
+                                                    </div>
                                                 </div>
-                                                
-                                                <div className={style.tdBtn}>
+
+                                                <div className={style.wrapBtn}>
                                                     {
                                                         item.freeSeats === 0 
                                                         ? 
-                                                            <div className={style.tableBtn}
-                                                                style={{width: 260, textAlign: 'center'}}
-                                                                onClick={() => onPostQueue(
-                                                                    {
-                                                                        tripFrom: item.cities.filter(elem => elem.city === selectFrom)[0]?.city,
-                                                                        tripTo: item.cities.filter(elem => elem.city === selectTo)[0]?.city,
-                                                                        dateTrip: item.dateTrip,
-                                                                        time: item.cities.filter(elem => elem.city === selectFrom)[0]?.busstops[0]?.time,
-                                                                    })}
-                                                            >
-                                                                <span style={{fontSize: 20}} >Стать в очередь</span>
-                                                            </div>
+                                                            
+                                                                !showBtn 
+                                                                ?
+                                                                    <>
+                                                                        <div className={style.order}
+                                                                            style={{display: showSpin ? 'none' : 'flex', marginBottom: 12}}
+                                                                            onClick={() => onSendCode()}
+                                                                        >
+                                                                            <span>Получить код</span>
+                                                                        </div>
+                                                                        <div style={{display: showSpin ? 'block' : 'none', marginRight: 20, marginTop: 10}}>
+                                                                            <Spin 
+                                                                                size="large"
+                                                                            />
+                                                                        </div>
+                                                                    </>
+                                                                
+                                                                : 
+                                                                <div className={style.order}
+                                                                    style={{width: 260, textAlign: 'center'}}
+                                                                    onClick={() => onPostQueue(
+                                                                        {
+                                                                            phoneNumber,
+                                                                            tripFrom: item.cities.filter(elem => elem.city === selectFrom)[0]?.city,
+                                                                            tripTo: item.cities.filter(elem => elem.city === selectTo)[0]?.city,
+                                                                            dateTrip: item.dateTrip,
+                                                                            time: item.cities.filter(elem => elem.city === selectFrom)[0]?.busstops[0]?.time,
+                                                                        })}
+                                                                >
+                                                                    <span>Подтвердить</span>
+                                                                </div>   
                                                         : 
-                                                            <div className={style.tableBtn}
+                                                            <div className={style.order}
                                                                 onClick={() => onChoiceRoute(item.blockId)}
                                                             >
                                                                 <span>Заказать</span>
                                                             </div>
                                                     }
                                                      
-                                                    <div className={style.tableBtn}
+                                                     <div className={style.order}
                                                         style={{backgroundColor: '#1560BD'}}
                                                         onClick={() => setCalc(0)}
                                                     >
@@ -538,14 +567,10 @@ export default function Main() {
                             <span className={style.label}>Введите имя и фамилию</span>
                             <input type="text" className={style.inputChecklist} value={fullName} onChange={(e) => setFullName(e.target.value)} required/>
                             <span className={style.label}>Номер телефона</span>
-                            <PhoneInput
-                                country={'by'}
-                                regions={'europe'}
-                                value={phoneNumber}
-                                onChange={(e) => setPhoneNumber(e)}
-                                inputStyle={{width: 260, fontSize: 16, fontWeight: 600, fontFamily: 'Montserrat'}}
-                                
-                            />
+                            <div className={style.wrapPhoneInput}>
+                                <span className={style.labelCode}>+375</span>
+                                <input type='number' className={style.inputChecklist} style={{width: '100%'}}  value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)}/>
+                            </div>
                             <span style={{fontWeight: '500', fontSize: 16, marginTop: 30}}>При оформлении заказа, Вы даете свое согласие на обработку персональных данных и проезд в составе организованной группы пассажиров.</span>
                             
                             {/* error filling */}
@@ -602,7 +627,7 @@ export default function Main() {
                             </tr>
                             <tr>
                                 <th className={style.textTicket}>Номер телефона</th>
-                                <th className={style.textTicket}>{phoneNumber}</th>
+                                <th className={style.textTicket}>+{phoneNumber}</th>
                             </tr>
                             <tr>
                                 <th className={style.textTicket}>Количество мест</th>
@@ -626,16 +651,22 @@ export default function Main() {
                             </div>
                         </div>
 
-                        <div className={style.wrapBtn} style={{flexDirection: 'row'}}>
+                        <div className={style.wrapBtn} style={{flexDirection: 'row', marginTop: 0}}>
                             {
                                 !showBtn 
                                 ?
-                                    <div className={style.order}
-                                        style={{marginTop: 10, marginBottom: 12}}
-                                        onClick={() => onSendCode()}
-                                    >
-                                        <span>Получить код</span>
-                                    </div>
+                                    <>
+                                        <div className={style.order}
+                                            style={{display: showSpin ? 'none' : 'flex', marginTop: 10, marginBottom: 12}}
+                                            onClick={() => onSendCode()}
+                                        >
+                                            <span>Получить код</span>
+                                        </div>
+                                        <div style={{display: showSpin ? 'block' : 'none', marginRight: 20}}>
+                                            <Spin size="large"/>
+                                        </div>
+                                    </>
+                                   
                                 : 
                                     <div className={style.order}
                                         style={{marginTop: 10, marginBottom: 12}}
@@ -650,18 +681,28 @@ export default function Main() {
                                 onClick={btnBack}
                             >
                                 <span>Назад</span>
-                            </div>  
-
-                            <div className={style.wrapError} style={{display: postError ? '' : 'none', marginTop: 10}}>
-                                <span>Ошибка отправки данных <br/> Попробуйте позже еще раз</span>
-                                <div className={style.order} style={{backgroundColor: '#1560BD', width: 160, marginTop: 20, marginRight: 0}}
-                                    onClick={btnBack}
-                                >
-                                    <span>Назад</span>
-                                </div>
-                            </div>
+                            </div> 
                         </div>
                     </div>
+                    <ModalWrapper showModal={showModal}>
+                        <div className={style.wrapModal}>
+                            <span className={style.title}>{textModal}</span>                  
+                            
+                            {
+                                smile === "badSmile" 
+                                ?
+                                    <FrownOutlined 
+                                        className={style.badSmile}
+                                    />
+                                : smile === "goodSmile"
+                                ?
+                                    <SmileOutlined 
+                                        className={style.smile}
+                                    />
+                                : ''
+                            }
+                        </div>
+                    </ModalWrapper>
 
                     <PersonalArea/>
 

@@ -40,7 +40,6 @@ const postUserReducer = (state = initialState, action) => {
             }
 
         case 'POST_USER_SUCCESS':
-            console.log(action.payload)
             if(action.payload === "На рейсе закончились места"){
                 return {
                     ...state,
@@ -53,11 +52,17 @@ const postUserReducer = (state = initialState, action) => {
                 }
             }
         case 'CLOSE_POST_SUCCESS':
-        return {
-            ...state,
-            postSuccess: false,
-            postQueueSuccess: false
-        }
+            return {
+                ...state,
+                postSuccess: false,
+                postQueueSuccess: false
+            }
+        case 'POST_USER_ERROR':
+            return {
+                ...state,
+                postError: true
+            }
+        
         case 'POST_QUEUE':
             return {
                 ...state,
