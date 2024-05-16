@@ -15,6 +15,7 @@ const initialState = {
 const restUserReducer = (state = initialState, action) => {
     switch (action.type){ 
         case 'GET_USER':
+            console.log(action.payload)
             return {
                 ...state,
                 phoneNumber: action.payload.phoneNumber,
@@ -29,46 +30,40 @@ const restUserReducer = (state = initialState, action) => {
                     peoples.push(s)
                 }
             }
-
-            const userData = peoples.filter(item => item?.email === state.email)
+            const userData = peoples.filter(item => item?.phoneNumber === state.phoneNumber)
             return {
                 ...state,
                 userData,
-                travels: action.payload
+                travels: list
             }
         case 'DELETE_USER':
-            const blockId = action.payload.blockId
-            const id = action.payload.id
-            const numberSeats = action.payload.numberSeats
+            const blockIdDelete = action.payload?.blockId
+            const id = action.payload?.id
+            const numberSeats = action.payload?.numberSeats
             // удаление из массива на экране
-            const inx = state.userData.findIndex(item => item.id === id)
-            let newUserData =  [
-                ...state.userData.splice(0, inx),
-                ...state.userData.splice(inx + 1)
-            ]
-
+            const newUserData = state.userData.filter(item => item.id !== id)
+       
             // изменение на сервере 
-            const findBlockId = state.travels[blockId]
-            const freeSeats = findBlockId?.freeSeats + Number(numberSeats)
-            const index = findBlockId?.persons.findIndex(item => item.id === id)
-            
+            const findBlockId = state.travels.filter(item => item.blockId === blockIdDelete)[0]
+            const freeSeatsDelete = findBlockId?.freeSeats + Number(numberSeats)
+        
             let deleteUserData
             if (findBlockId?.persons.length > 1){
-                deleteUserData = {
+            deleteUserData = {
                     cities: findBlockId?.cities,
-                    tripFrom: findBlockId?.tripFrom, tripTo: findBlockId?.tripTo, dateTrip: findBlockId?.dateTrip, timeTrips: findBlockId?.timeTrips, blockId,
-                    freeSeats, 
-                    persons:  [
-                        ...findBlockId?.persons.splice(0, index),
-                        ...findBlockId?.persons.splice(index + 1)
-                    ]
+                    tripFrom: findBlockId?.tripFrom, tripTo: findBlockId?.tripTo, dateTrip: findBlockId?.dateTrip, timeTrips: findBlockId?.timeTrips, blockId: blockIdDelete,
+                    freeSeats: freeSeatsDelete, 
+                    persons: findBlockId.persons.filter(item => item?.id !== id)
                 }
             }
+            // изменение travels, т.к. при удалении одной брони на сервере, дальнейшее удаление не происходит, т.к. не меняетя сам travels
+            const newTravels = state.travels.filter(item => item.blockId !== blockIdDelete)
             return {
                 ...state,
-                blockId,
+                blockId: blockIdDelete,
                 userData: newUserData,
                 deleteUserData,
+                travels: [...newTravels, deleteUserData]
             }
         case 'DELETE_USER_SUCCESS':   
             return {
@@ -83,11 +78,16 @@ const restUserReducer = (state = initialState, action) => {
 
         case 'GET_QUEUE_SUCCESS':
             const listQueue = Object.keys(action.payload).map(key => ({...action.payload[key], blockId: key}))
-            const findUserQueue = listQueue?.filter(item => item.email === state.email)
+            const findUserQueue = listQueue?.filter(item => item?.phoneNumber === state.phoneNumber)
             return {
                 ...state,
                 userQueue: findUserQueue
             }
+        case 'GET_QUEUE_ERROR':
+        console.log(action.payload)
+        return {
+            ...state, 
+        }
         case 'DELETE_QUEUE':
             const deleteQueue = state.userQueue?.filter(item => item.blockId !== action.payload)
             return {

@@ -203,7 +203,7 @@ export default function Main() {
     const onPostUser = () => {
         if (createCode?.toString() === writeCode?.toString()){
             dispatch(postUser({
-                id: uuid(), choiceRoutes, selectFrom, selectTo, fullName, phoneNumber: `+${phoneNumber}`,
+                id: uuid(), choiceRoutes, selectFrom, selectTo, fullName, phoneNumber: `+375${phoneNumber}`,
                 wayStart, wayStop, timeStart, timeStop, costRoute: costRoute * numberSeats, numberSeats
             }))
             setCalc(0)
@@ -581,23 +581,23 @@ export default function Main() {
                                 <span className={style.textError}>На выбранный промежуток маршрута возможности забронировать нет
                             </span>
                             </div>
-                            <div className={style.wrapBtn}>
-                                <input 
-                                    type="submit" 
-                                    value='Забронировать'  
-                                    className={style.order}
-                                    onClick={() => submitChecklist()}
-                                />
-                                <div className={style.order} style={{backgroundColor: '#1560BD', width: 160}}
-                                    onClick={btnBack}
-                                >
-                                    <span>Назад</span>
-                                </div>
-                            </div>
                         </div>
-                        
+                        <div className={style.wrapBtn}>
+                            <input 
+                                type="submit" 
+                                value='Забронировать'  
+                                className={style.order}
+                                onClick={() => submitChecklist()}
+                            />
+                            <div className={style.order} style={{backgroundColor: '#1560BD', width: 160}}
+                                onClick={btnBack}
+                            >
+                                <span>Назад</span>
+                            </div>
+                            
+                        </div>
                     </div>
-                    
+
                     {/* Чек */}
                     <div className={style.wrapTicket} style={{display: calc === 3 ? '' : 'none'}}>
                         <table style={{marginTop: 0, padding: 8}}>

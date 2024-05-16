@@ -31,7 +31,7 @@ export default function PersonalArea({title, textBtn}) {
     
     useEffect(() => {
         if (createCode !== null) {
-            //dispatch(sendCodeData({code: createCode.toString(), phoneNumber: `+375${phoneNumber}`}))
+            dispatch(sendCodeData({code: createCode.toString(), phoneNumber: `+375${phoneNumber}`}))
         }
     }, [createCode])
 
@@ -121,7 +121,7 @@ export default function PersonalArea({title, textBtn}) {
 
 
             {/* брони */}
-            <div style={{display: showUserBlock ? '' : 'none', width: '100%'}}>
+            <div style={{display: showUserBlock ? 'flex' : 'none', width: '100%', flexDirection: 'column'}}>
                 <div className={style.wrapTitle}>
                     <span>Ваши забронированные  билеты</span>
                 </div>
@@ -185,7 +185,7 @@ export default function PersonalArea({title, textBtn}) {
                         )})
                     :   
                         <div className={style.wrapMessage}>
-                            <span style={{fontSize: 19, fontWeight: '700'}}>У вас нет забронированных рейсов</span>
+                            <span style={{fontSize: 19, fontWeight: '700', color: 'white'}}>У вас нет забронированных рейсов</span>
                             <div className={style.btnBack}
                                 onClick={onBack}
                             >
@@ -240,7 +240,7 @@ export default function PersonalArea({title, textBtn}) {
                     )})
                     : 
                         <div className={style.wrapMessage}>
-                            <span style={{fontSize: 19, fontWeight: '700'}}>Вы не стоите в очереди на рейс</span>
+                            <span style={{fontSize: 19, fontWeight: '700', color: 'white'}}>Вы не стоите в очереди на рейс</span>
                             <div className={style.btnBack}
                                 onClick={onBack}
                             >

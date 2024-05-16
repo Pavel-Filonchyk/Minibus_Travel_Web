@@ -52,6 +52,12 @@ const getQueueSuccess = (data) => {
         payload: data 
     } 
 }
+const getQueueError = (data) => {
+    return {
+        type: 'GET_QUEUE_ERROR',
+        payload: data 
+    } 
+}
 const deleteQueue = (data) => {
     return {
         type: 'DELETE_QUEUE',
@@ -74,6 +80,7 @@ export {
     deleteUserSuccess,
     deleteUserError,
     getQueue,
+    getQueueError,
     getQueueSuccess,
     deleteQueue,
     deleteQueueSuccess
