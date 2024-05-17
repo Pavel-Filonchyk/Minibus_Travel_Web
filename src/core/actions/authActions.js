@@ -42,3 +42,23 @@ export const postMessageError = (data) => {
         payload: data 
     } 
 }
+
+export const sendCodePersonal = (data) => {
+    return {
+        type: 'SEND_CODE_PERSONAL',
+        payload: data 
+    } 
+}
+export const SEND_CODE_PERSONAL = 'SEND_CODE_PERSONAL'
+export const sendCodePersonalSuccess = (data) => {
+    return {
+        type: 'SEND_CODE_PERSONAL_SUCCESS',
+        payload: data 
+    } 
+}
+export const sendCodePersonalError = (data) => {
+    return {
+        type: 'SEND_CODE_PERSONAL_ERROR',
+        payload: data 
+    } 
+}

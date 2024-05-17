@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import PhoneInput from 'react-phone-input-2'
-import 'react-phone-input-2/lib/style.css'
+import { Spin } from 'antd'
 
-import { sendCodeData, resetErrorCode } from '../../core/actions/authActions'
+import { sendCodePersonal, resetErrorCode } from '../../core/actions/authActions'
 import { getUser, deleteUser, getQueue, deleteQueue } from '../../core/actions/canselTravelActions'
 
 import style from './PersonalArea.module.scss'
@@ -12,8 +11,8 @@ export default function PersonalArea({title, textBtn}) {
     const dispatch = useDispatch()
 
     // auth
-    const getCode = useSelector(({authReducer: { getCode }}) => getCode)
-    const errorCode = useSelector(({authReducer: { errorCode }}) => errorCode)
+    const getCodePersonal = useSelector(({authReducer: { getCodePersonal }}) => getCodePersonal)
+    const errorCodePersonal = useSelector(({authReducer: { errorCodePersonal }}) => errorCodePersonal)
     // брони и очереди
     const userData = useSelector(({restUserReducer: { userData }}) => userData)
     const userQueue = useSelector(({restUserReducer: { userQueue }}) => userQueue)
@@ -25,23 +24,31 @@ export default function PersonalArea({title, textBtn}) {
     
     // show blocks
     const [showBtn, setShowBtn] = useState(false)
+    const [showAuthBlock, setShowAuthBlock] = useState(true)
+    const [showUserBlock, setShowUserBlock] = useState(false)
+    const [showSpin, setShowSpin] = useState(false)
     const [errorTextPhone, setErrorTextPhone] = useState(false)
     const [errorTextCode, setErrorTextCode] = useState(false)
-    const [showUserBlock, setShowUserBlock] = useState(false)
     
+    
+
     useEffect(() => {
         if (createCode !== null) {
-            dispatch(sendCodeData({code: createCode.toString(), phoneNumber: `+375${phoneNumber}`}))
+            dispatch(sendCodePersonal({code: createCode.toString(), phoneNumber: `+375${phoneNumber}`}))
         }
     }, [createCode])
 
     useEffect(() => {
-        if(getCode === true) {
+        if(getCodePersonal === true) {
             setShowBtn(item => !item)
         }
-    }, [getCode])
+    }, [getCodePersonal])
 
     const onSendCode = () => {
+        setShowSpin(true)
+        setTimeout(() => {
+            setShowSpin(false)
+        },2500)
         if(phoneNumber !== null){
             dispatch(resetErrorCode())
             setCreateCode(Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000)
@@ -52,10 +59,10 @@ export default function PersonalArea({title, textBtn}) {
     }
     const onGetCode = () => {
         if (createCode.toString() === writeCode.toString()){
-            console.log('УСПЕХ')
             dispatch(getUser({phoneNumber: `+375${phoneNumber}`}))
             dispatch(getQueue({phoneNumber: `+375${phoneNumber}`}))
 
+            setShowAuthBlock(false)
             setShowUserBlock(true)
             setShowBtn(item => !item)
             setErrorTextCode(false)
@@ -66,6 +73,7 @@ export default function PersonalArea({title, textBtn}) {
         }
     }
     const onBack = () => {
+        setShowAuthBlock(true)
         setShowUserBlock(false)
     }
     const onCloseBooking = (data) => {
@@ -80,7 +88,7 @@ export default function PersonalArea({title, textBtn}) {
             <span>ЛИЧНЫЙ КАБИНЕТ И<br/> ОТМЕНА БРОНИ</span>
 
             {/* блок авторизации */}
-            <div className={style.booking}>
+            <div className={style.booking} style={{display: showAuthBlock ? 'flex' : 'none'}}>
                 <div className={style.wrapForm}>
                     <span className={style.title}>Вход</span> 
                     <span className={style.label}>Введите номер телефона</span>
@@ -89,26 +97,33 @@ export default function PersonalArea({title, textBtn}) {
                         <input type='number' className={style.inputChecklist} value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)}/>
                     </div>
                     <span className={style.label}>Введите полученный код</span>
-                    <input type='number' className={style.inputChecklist} value={writeCode} onChange={(e) => setWriteCode(e.target.value)}/> 
+                    <input type='number' className={style.inputCode} value={writeCode} onChange={(e) => setWriteCode(e.target.value)}/> 
                     {/* error filling */}
                     <div className={style.wrapError} >
                         <span className={style.textError} style={{display: errorTextPhone ? '' : 'none'}}>Необходимо заполнить поле номера телефона</span>
-                        <span className={style.textError} style={{display: errorCode ? '' : 'none'}}>Проверьте номер телефона</span>
+                        <span className={style.textError} style={{display: errorCodePersonal ? '' : 'none'}}>Проверьте номер телефона</span>
                         <span className={style.textError} style={{display: errorTextCode ? '' : 'none'}}>Неверно введен код</span>
                     </div>
                     <div className={style.wrapBtn} >
                         {
                             !showBtn 
                             ?
-                                <div className={style.order}
-                                    style={{marginTop: 10, marginBottom: 12}}
-                                    onClick={() => onSendCode()}
-                                >
-                                    <span>Получить код</span>
-                                </div>
+                                <>
+                                    <div className={style.order}
+                                        style={{display: showSpin ? 'none' : 'flex', marginBottom: 12}}
+                                        onClick={() => onSendCode()}
+                                    >
+                                        <span>Получить код</span>
+                                    </div>
+                                    <div style={{display: showSpin ? 'block' : 'none', marginRight: 20}}>
+                                        <Spin 
+                                            size="large"
+                                        />
+                                    </div>
+                                </>
                             : 
                                 <div className={style.order}
-                                    style={{marginTop: 10, marginBottom: 12}}
+                                    style={{marginBottom: 12}}
                                     onClick={() => onGetCode()}
                                 >
                                     <span>Подтвердить</span>

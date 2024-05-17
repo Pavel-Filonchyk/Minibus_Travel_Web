@@ -3,7 +3,11 @@ const initialState = {
     phoneNumber: '',
     postMessage: '',
     getCode: null, 
-    errorCode: null
+    errorCode: null,
+
+    sendCodePersonal: '',
+    getCodePersonal: null,
+    errorCodePersonal: null
 }
 
 const authReducer = (state = initialState, action) => {
@@ -25,23 +29,40 @@ const authReducer = (state = initialState, action) => {
                 ...state,
                 errorCode: true
             }
-        case 'RESET_ERROR_CODE':
-            return {
-                ...state,
-                errorCode: null
-            }
 
-        case 'POST_MESSAGE_SUCCESS':
+        case 'SEND_CODE_PERSONAL':
             console.log(action.payload)
             return {
                 ...state,
-                
+                sendCodePersonal: action.payload.code,
+                phoneNumber: action.payload.phoneNumber
+            }
+        case 'SEND_CODE_PERSONAL_SUCCESS':
+            return {
+                ...state,
+                getCodePersonal: true
+            }
+        case 'SEND_CODE_PERSONAL_ERROR':
+            console.log(action.payload)
+            return {
+                ...state,
+                errorCodePersonal: true
+            }
+        case 'RESET_ERROR_CODE':
+            return {
+                ...state,
+                errorCode: null,
+                errorCodePersonal: null
+            }
+
+        case 'POST_MESSAGE_SUCCESS':
+            return {
+                ...state
             }
         case 'POST_MESSAGE_ERROR':
             console.log(action.payload)
             return {
-                ...state,
-                
+                ...state 
             }
         default: 
         return state;  

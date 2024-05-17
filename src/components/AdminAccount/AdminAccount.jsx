@@ -18,7 +18,7 @@ export default function AdminAccount() {
     const dispatch = useDispatch()
     const componentRef = useRef()
 
-    const email = useSelector(({restUserReducer: { email }}) => email)
+    const phoneNumber = useSelector(({restUserReducer: { phoneNumber }}) => phoneNumber)
     const travelsData = useSelector(({restAdminTravelReducer: { travelsData }}) => travelsData)
     const queuesData = useSelector(({restAdminTravelReducer: { queuesData }}) => queuesData)
     const report = useSelector(({reportAdminReducer: { report }}) => report)
@@ -134,8 +134,8 @@ export default function AdminAccount() {
     }
 
     return (
-        <div className={style.wrapAdmidAccount} >
-            {/* style={{display: email === 'nikolay.davidovich1985@gmail.com' ? '' : 'none'}} */}
+        <div className={style.wrapAdmidAccount} style={{display: phoneNumber === '+375259802774' ? '' : 'none'}}>
+            {/*  */}
             <span style={{color: 'white'}}>УПРАВЛЕНИЕ РЕЙСАМИ</span>
             <div className={style.wrapBtn}>
                 <div className={style.btn} 

@@ -741,7 +741,7 @@ table {
          outline: none;
          width: 200px;
          height: 48px;
-         margin-top: 30px;
+         margin-top: 20px;
          background-color: green;
          border-radius: 12px;
          margin-right: 10px;
@@ -751,6 +751,7 @@ table {
          font-weight: 600;
          font-size: 22px;
          color: white;
+         text-align: center;
          @media(max-width: 520px){
             border-radius: 8px;
         };
@@ -871,25 +872,45 @@ table {
     display: flex;
     flex-direction: column;
     margin-top: 25px;
-    //height: 80px;
+    width: 85%;
+    @media(max-width: 1030px){
+        width: 85%;
+    }
     .label {
         font-weight: 700;
-        font-size: 18px;
+        font-size: 16px;
         margin-bottom: 14px;
     }
     .inputChecklist {
-        width: 100%;
+        width: 40%;
         border: none;
         outline: none;
-        font-weight: 600;
+        font-weight: 700;
         font-size: 18px;
         border-bottom: 3px solid black;
         font-family: 'Montserrat', sans-serif;
         background-color: transparent;
         margin-bottom: 15px;
         padding-left: 10px;
+        @media(max-width: 1030px){
+            width: 72%;
+        }
     }
-    
+    .inputCode {
+        width: 20%;
+        border: none;
+        outline: none;
+        font-weight: 700;
+        font-size: 18px;
+        border-bottom: 3px solid black;
+        font-family: 'Montserrat', sans-serif;
+        background-color: transparent;
+        margin-bottom: 5px;
+        padding-left: 10px;
+        @media(max-width: 1030px){
+            width: 60%;
+        }
+    }
     .wrapError {
         width: 100%;
         display: flex;
@@ -908,10 +929,13 @@ table {
 .wrapPhoneInput {
     display: flex;
     justify-content: center;
-    width: 100%; 
+    width: 60%; 
+    @media(max-width: 1030px){
+        width: 100%;
+    }
     .labelCode {
-        font-weight: 700;
-        font-size: 18px;
+        font-weight: 800;
+        font-size: 19px;
         margin-right: 20px;
     }
 }

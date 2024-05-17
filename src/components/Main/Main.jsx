@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { DatePicker, Spin } from 'antd'
 import dayjs from 'dayjs'
+import updateLocale from 'dayjs/plugin/updateLocale'
 import locale from 'antd/es/date-picker/locale/ru_RU'
 import { InteractionOutlined, ClockCircleOutlined, SmileOutlined, FrownOutlined, CloseOutlined } from '@ant-design/icons'
-import PhoneInput from 'react-phone-input-2'
-import 'react-phone-input-2/lib/style.css'
 import uuid from 'react-uuid' 
 
 import PersonalArea from '../PersonalArea/PersonalArea'
@@ -339,6 +338,7 @@ export default function Main() {
                                     locale={locale}
                                     className={style.date}
                                     format={'DD-MM-YYYY'}
+                                    //calendarStartDay={1}
                                     defaultValue={dayjs()}
                                     onChange={(e) => setDate(e)}
                                 />
@@ -414,15 +414,15 @@ export default function Main() {
                                                 </table>
 
                                                 {/* Стать в очередь */}
-                                                <div className={style.wrapInput} style={{display: item.freeSeats === 0 ? '' : 'none', width: '60%',  alignItems: 'center'}}>
+                                                <div className={style.wrapInput} style={{display: item.freeSeats === 0 ? '' : 'none',  alignItems: 'center'}}>
                                                     <span className={style.label}>Вы можете стать в очередь и как только появятся <br/> свободные места на этот рейс, мы вам сообщим</span>   
                                                     <span className={style.label}>Введите номер телефона</span>
-                                                    <div className={style.wrapPhoneInput} style={{width: '60%'}}>
+                                                    <div className={style.wrapPhoneInput}>
                                                         <span className={style.labelCode}>+375</span>
                                                         <input type='number' className={style.inputChecklist}  value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)}/>
                                                     </div>
                                                     <span className={style.label}>Введите полученный код</span>
-                                                    <input type='number' className={style.inputChecklist} style={{width: '60%'}} value={writeCode} onChange={(e) => setWriteCode(e.target.value)}/> 
+                                                    <input type='number' className={style.inputCode} value={writeCode} onChange={(e) => setWriteCode(e.target.value)}/> 
                                                     {/* error filling */}
                                                     <div className={style.wrapError} style={{alignItems: 'center'}}>
                                                         <span className={style.textError} style={{display: errorTextPhone ? '' : 'none'}}>Необходимо заполнить поле номера телефона</span>
@@ -457,7 +457,7 @@ export default function Main() {
                                                                     style={{width: 260, textAlign: 'center'}}
                                                                     onClick={() => onPostQueue(
                                                                         {
-                                                                            phoneNumber,
+                                                                            phoneNumber: `+375${phoneNumber}`,
                                                                             tripFrom: item.cities.filter(elem => elem.city === selectFrom)[0]?.city,
                                                                             tripTo: item.cities.filter(elem => elem.city === selectTo)[0]?.city,
                                                                             dateTrip: item.dateTrip,
