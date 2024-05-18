@@ -32,6 +32,7 @@ export default function Main() {
     // auth
     const getCode = useSelector(({authReducer: { getCode }}) => getCode)
     const errorCode = useSelector(({authReducer: { errorCode }}) => errorCode)
+    const adminPhoneNumber = useSelector(({restUserReducer: { phoneNumber }}) => phoneNumber)
     const [createCode, setCreateCode] = useState(null)
     const [writeCode, setWriteCode] = useState('')
     const [showBtn, setShowBtn] = useState(false)
@@ -215,7 +216,12 @@ export default function Main() {
             setErrorTextCode(true)
         }
     }
-          
+    const onPostAdminUser = () => {
+        dispatch(postUser({
+            id: uuid(), choiceRoutes, selectFrom, selectTo, fullName, phoneNumber: `+375${phoneNumber}`,
+            wayStart, wayStop, timeStart, timeStop, costRoute: costRoute * numberSeats, numberSeats
+        }))
+    }   
     const btnBack = () => {
         setCalc(0)
         setErrorCostRoute(false)
@@ -627,7 +633,7 @@ export default function Main() {
                             </tr>
                             <tr>
                                 <th className={style.textTicket}>Номер телефона</th>
-                                <th className={style.textTicket}>+{phoneNumber}</th>
+                                <th className={style.textTicket}>+375{phoneNumber}</th>
                             </tr>
                             <tr>
                                 <th className={style.textTicket}>Количество мест</th>
@@ -639,8 +645,7 @@ export default function Main() {
                             </tr>
                             
                         </table>
-
-                        <div className={style.wrapInput}>
+                        <div className={style.wrapInput} style={{display: adminPhoneNumber === '+375291738113' ? 'none' : 'flex'}}>
                             <span className={style.label}>Введите полученный код</span>
                             <input type='number' className={style.inputChecklist} value={writeCode} onChange={(e) => setWriteCode(e.target.value)}/> 
                             {/* error filling */}
@@ -650,8 +655,7 @@ export default function Main() {
                                 <span className={style.textError} style={{display: errorTextCode ? '' : 'none'}}>Неверно введен код</span>
                             </div>
                         </div>
-
-                        <div className={style.wrapBtn} style={{flexDirection: 'row', marginTop: 0}}>
+                        <div className={style.wrapBtn} style={{display: adminPhoneNumber === '+375291738113' ? 'none' : 'flex', flexDirection: 'row', marginTop: 0}}>
                             {
                                 !showBtn 
                                 ?
@@ -682,6 +686,15 @@ export default function Main() {
                             >
                                 <span>Назад</span>
                             </div> 
+                        </div>
+                        <div className={style.wrapBtn} style={{display: adminPhoneNumber === '+375291738113' ? 'flex' : 'none'}}>
+                            {/*  */}
+                            <div className={style.order}
+                                style={{marginTop: 10, marginBottom: 12}}
+                                onClick={onPostAdminUser}
+                            >
+                                <span>Бронь</span>
+                            </div>
                         </div>
                     </div>
                     <ModalWrapper showModal={showModal}>

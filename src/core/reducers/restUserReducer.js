@@ -15,7 +15,6 @@ const initialState = {
 const restUserReducer = (state = initialState, action) => {
     switch (action.type){ 
         case 'GET_USER':
-            console.log(action.payload)
             return {
                 ...state,
                 phoneNumber: action.payload.phoneNumber,

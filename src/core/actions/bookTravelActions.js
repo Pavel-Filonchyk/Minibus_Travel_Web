@@ -96,7 +96,6 @@ const postQueueSuccess = (data) => {
         payload: data 
     } 
 }
-
 export {
     getDirections,
     getDirectionsSuccess,
@@ -111,5 +110,5 @@ export {
     getCities,
     getCitiesSuccess,
     postQueue,
-    postQueueSuccess
+    postQueueSuccess,
 }

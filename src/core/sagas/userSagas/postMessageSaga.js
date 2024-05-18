@@ -10,7 +10,7 @@ function* workerLoader() {
     const phoneNumber = yield select(state => state.authReducer.phoneNumber)
     const ticketData = yield select(state => state.postUserReducer.ticketData)
     
-    const message = `Ваш рейс: ${ticketData?.choiceRoutes[0].dateTrip} в ${ticketData?.timeStart}. Посадка: ${ticketData?.selectFrom}, ост. ${ticketData?.wayStop}. К оплате: ${ticketData?.costRoute}б.р. www.poleski-region.by/`
+    const message = `Ваш рейс: ${ticketData?.choiceRoutes[0].dateTrip} в ${ticketData?.timeStart}. Посадка: ${ticketData?.selectFrom}, ост. ${ticketData?.wayStart}. К оплате: ${ticketData?.costRoute} б.р. www.poleski-region.by/`
 
     try {
       const { data } = yield call(httpProvider.post, AUTH_URL, {
@@ -19,6 +19,7 @@ function* workerLoader() {
           alphaname_id,
           phone: phoneNumber,
           message
+          
         }
       })
       yield put(postMessageSuccess(data))

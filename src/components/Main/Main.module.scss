@@ -871,6 +871,7 @@ table {
 .wrapInput {
     display: flex;
     flex-direction: column;
+    align-items: center;
     margin-top: 25px;
     width: 85%;
     @media(max-width: 1030px){
