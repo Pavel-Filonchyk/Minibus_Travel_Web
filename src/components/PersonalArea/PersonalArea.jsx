@@ -57,7 +57,7 @@ export default function PersonalArea({title, textBtn}) {
             setErrorTextPhone(true)
         }
     }
-    const onGetCode = () => {
+    const onConfirmCode = () => {
         if (createCode.toString() === writeCode.toString()){
             dispatch(getUser({phoneNumber: `+375${phoneNumber}`}))
             dispatch(getQueue({phoneNumber: `+375${phoneNumber}`}))
@@ -124,7 +124,7 @@ export default function PersonalArea({title, textBtn}) {
                             : 
                                 <div className={style.order}
                                     style={{marginBottom: 12}}
-                                    onClick={() => onGetCode()}
+                                    onClick={() => onConfirmCode()}
                                 >
                                     <span>Подтвердить</span>
                                 </div>

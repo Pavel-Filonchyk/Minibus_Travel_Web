@@ -134,8 +134,8 @@ export default function AdminAccount() {
     }
 
     return (
-        <div className={style.wrapAdmidAccount} style={{display: phoneNumber === '+375291738113' ? '' : 'none'}}>
-            {/*  */}
+        <div className={style.wrapAdmidAccount} >
+            {/* style={{display: phoneNumber === '+375291738113' ? 'flex' : 'none'}} */}
             <span style={{color: 'white'}}>УПРАВЛЕНИЕ РЕЙСАМИ</span>
             <div className={style.wrapBtn}>
                 <div className={style.btn} 

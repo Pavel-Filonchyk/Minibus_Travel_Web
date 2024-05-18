@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { DatePicker, Spin } from 'antd'
 import dayjs from 'dayjs'
-import updateLocale from 'dayjs/plugin/updateLocale'
 import locale from 'antd/es/date-picker/locale/ru_RU'
 import { InteractionOutlined, ClockCircleOutlined, SmileOutlined, FrownOutlined, CloseOutlined } from '@ant-design/icons'
 import uuid from 'react-uuid' 
@@ -221,6 +220,7 @@ export default function Main() {
             id: uuid(), choiceRoutes, selectFrom, selectTo, fullName, phoneNumber: `+375${phoneNumber}`,
             wayStart, wayStop, timeStart, timeStop, costRoute: costRoute * numberSeats, numberSeats
         }))
+        setCalc(0)
     }   
     const btnBack = () => {
         setCalc(0)
@@ -688,7 +688,6 @@ export default function Main() {
                             </div> 
                         </div>
                         <div className={style.wrapBtn} style={{display: adminPhoneNumber === '+375291738113' ? 'flex' : 'none'}}>
-                            {/*  */}
                             <div className={style.order}
                                 style={{marginTop: 10, marginBottom: 12}}
                                 onClick={onPostAdminUser}

@@ -7,7 +7,6 @@ import { AUTH_URL } from '../../../common/api'
 function* workerLoader() {
     const token = 'eee5c109f44cc564cddcb00732f0834a'
     const alphaname_id = '5074'
-    const phoneNumber = yield select(state => state.authReducer.phoneNumber)
     const ticketData = yield select(state => state.postUserReducer.ticketData)
     
     const message = `Ваш рейс: ${ticketData?.choiceRoutes[0].dateTrip} в ${ticketData?.timeStart}. Посадка: ${ticketData?.selectFrom}, ост. ${ticketData?.wayStart}. К оплате: ${ticketData?.costRoute} б.р. www.poleski-region.by/`
@@ -17,7 +16,7 @@ function* workerLoader() {
         data: {
           token, 
           alphaname_id,
-          phone: phoneNumber,
+          phone: ticketData?.phoneNumber,
           message
           
         }
