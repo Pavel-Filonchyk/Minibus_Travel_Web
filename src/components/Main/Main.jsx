@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { DatePicker, Spin } from 'antd'
+import { DatePicker, Spin, ConfigProvider } from 'antd'
 import dayjs from 'dayjs'
 import locale from 'antd/es/date-picker/locale/ru_RU'
 import { InteractionOutlined, ClockCircleOutlined, SmileOutlined, FrownOutlined, CloseOutlined } from '@ant-design/icons'
@@ -15,7 +15,7 @@ import { sendCodeData, resetErrorCode } from '../../core/actions/authActions'
 import style from './Main.module.scss'
 
 export default function Main() {
-
+    
     const dispatch = useDispatch()
 
     // список всех рейсов
@@ -31,7 +31,6 @@ export default function Main() {
     // auth
     const getCode = useSelector(({authReducer: { getCode }}) => getCode)
     const errorCode = useSelector(({authReducer: { errorCode }}) => errorCode)
-    //const adminPhoneNumber = useSelector(({restUserReducer: { phoneNumber }}) => phoneNumber)
     const [createCode, setCreateCode] = useState(null)
     const [writeCode, setWriteCode] = useState('')
     const [showBtn, setShowBtn] = useState(false)
@@ -57,7 +56,8 @@ export default function Main() {
         dispatch(getDirections())
         dispatch(getCosts())
     }, []) 
-
+    // console.log(dayjs().format('h:mm'))
+    
     // check
     const [selectFrom, setSelectFrom] = useState("Туров")
     const [selectTo, setSelectTo] = useState("Гомель")
@@ -67,7 +67,6 @@ export default function Main() {
     const [wayStart, setSelectWayStart] = useState("")
     const [wayStop, setSelectWayStop] = useState("")
     const [numberSeats, setNumberSeats] = useState(1)
-    
     const [changeWay, setChengeWay] = useState(true)
     useEffect(() => {
         if (!changeWay) {
@@ -93,6 +92,7 @@ export default function Main() {
     const [smile, setSmile] = useState("goodSmile")
     const [errorFilling , setErrorFilling] = useState(false)
     const [errorCostRoute, setErrorCostRoute] = useState(false)
+    //const [timeStartError, setTimeStartError] = useState(false)
 
     // server data
     const [choiceRoutes, setChoiceRoutes] = useState([])
@@ -112,7 +112,6 @@ export default function Main() {
         ?.busstops.filter(elem => elem.busstop === wayStart)[0]?.time
     const timeStop = choiceRoutes[0]?.cities.filter(item => item.city === selectTo)[0]
         ?.busstops.filter(elem => elem.busstop === wayStop)[0]?.time
-    
     useEffect(() => {
         if(postSuccess === "На рейсе закончились места"){
             setTextModal("На рейсе закончились места. Посмотрите другое время")
@@ -166,7 +165,7 @@ export default function Main() {
     }
     
     const submitChecklist = () => {
-        if (costRoute && fullName && phoneNumber && wayStart && wayStop) {
+        if (costRoute && fullName && phoneNumber && wayStart && wayStop && timeStart > dayjs().format('h:mm')) {
             setCalc(calc +1)
             setErrorFilling(false)
         }
@@ -176,8 +175,11 @@ export default function Main() {
         if(costRoute === undefined){
             setErrorCostRoute(true)
         }
+        if(timeStart < dayjs().format('h:mm') ){
+
+        }
     }
-  
+    //console.log('28.05.2023' > '27.05.2024')
     // auth / post
     const onSendCode = () => {
         setShowSpin(true)
@@ -350,6 +352,7 @@ export default function Main() {
                                     locale={locale}
                                     className={style.date}
                                     format={'DD-MM-YYYY'}
+                                    //picker="week"
                                     //calendarStartDay={1}
                                     defaultValue={dayjs()}
                                     onChange={(e) => setDate(e)}
@@ -398,6 +401,20 @@ export default function Main() {
                                                     <tr> 
                                                         <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Дата отправления</th>
                                                         <th className={style.textTicket}>{item.dateTrip}</th>
+                                                    </tr>
+                                                    <tr> 
+                                                        <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>День недели</th>
+                                                        <th className={style.textTicket}>
+                                                            {
+                                                                date.weekday() === 1 ? 'Понедельник' :
+                                                                date.weekday() === 2 ? 'Вторник' :
+                                                                date.weekday() === 3 ? 'Среда' :
+                                                                date.weekday() === 4 ? 'Четверг' :
+                                                                date.weekday() === 5 ? 'Пятница' :
+                                                                date.weekday() === 6 ? 'Суббота' :
+                                                                date.weekday() === 7 ? 'Восктесенье' : ''
+                                                            }
+                                                        </th>
                                                     </tr>
                                                     <tr> 
                                                         <th className={style.textTicket} style={{fontWeight: '700', width: '60%'}}>Время отправления</th>
@@ -524,6 +541,17 @@ export default function Main() {
                         <span>Маршрутка до: <span style={{fontWeight: '500'}}>{choiceRoutes[0]?.tripTo}</span></span>
                         <span>Посадка - Высадка: <span style={{fontWeight: '500'}}>{selectFrom} - {selectTo}</span></span>
                         <span>Дата отправления: <span style={{fontWeight: '500'}}>{choiceRoutes[0]?.dateTrip}</span></span>
+                        <span>День недели: <span style={{fontWeight: '500'}}> 
+                            {
+                                date.weekday() === 1 ? 'Понедельник' :
+                                date.weekday() === 2 ? 'Вторник' :
+                                date.weekday() === 3 ? 'Среда' :
+                                date.weekday() === 4 ? 'Четверг' :
+                                date.weekday() === 5 ? 'Пятница' :
+                                date.weekday() === 6 ? 'Суббота' :
+                                date.weekday() === 7 ? 'Восктесенье' : ''
+                            }
+                            </span></span>
                         <span>Время отправления: <span style={{fontWeight: '500'}}>{timeStart}</span></span>
                         <span>Время прибытия: <span style={{fontWeight: '500'}}>{timeStop}</span></span>
                         <span>Цена: <span style={{fontWeight: '500'}}>{costRoute ? costRoute * numberSeats : '-'} б.р.</span></span>
@@ -628,6 +656,20 @@ export default function Main() {
                             <tr>
                                 <th className={style.textTicket}>Дата отправления</th>
                                 <th className={style.textTicket}>{choiceRoutes[0]?.dateTrip}</th>
+                            </tr>
+                            <tr>
+                                <th className={style.textTicket}>День недели</th>
+                                <th className={style.textTicket}>
+                                    {
+                                    date.weekday() === 1 ? 'Понедельник' :
+                                    date.weekday() === 2 ? 'Вторник' :
+                                    date.weekday() === 3 ? 'Среда' :
+                                    date.weekday() === 4 ? 'Четверг' :
+                                    date.weekday() === 5 ? 'Пятница' :
+                                    date.weekday() === 6 ? 'Суббота' :
+                                    date.weekday() === 7 ? 'Восктесенье' : ''
+                                }
+                                </th>
                             </tr>
                             <tr>
                                 <th className={style.textTicket}>Время отправления - прибытия</th>
