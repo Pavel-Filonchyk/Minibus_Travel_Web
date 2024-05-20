@@ -31,7 +31,7 @@ export default function Main() {
     // auth
     const getCode = useSelector(({authReducer: { getCode }}) => getCode)
     const errorCode = useSelector(({authReducer: { errorCode }}) => errorCode)
-    const adminPhoneNumber = useSelector(({restUserReducer: { phoneNumber }}) => phoneNumber)
+    //const adminPhoneNumber = useSelector(({restUserReducer: { phoneNumber }}) => phoneNumber)
     const [createCode, setCreateCode] = useState(null)
     const [writeCode, setWriteCode] = useState('')
     const [showBtn, setShowBtn] = useState(false)
@@ -45,6 +45,12 @@ export default function Main() {
             setShowBtn(item => !item)
         }
     }, [getCode])
+    const [phoneNumberStorage, setPhoneNumberStorage] = useState('')
+    useEffect(() => {
+        if(localStorage.getItem('phoneNumber448822') === '+375291738113'){
+            setPhoneNumberStorage('+375291738113')
+        }
+    }, [])
 
     useEffect(() => {
         dispatch(getAllTravels())
@@ -171,7 +177,7 @@ export default function Main() {
             setErrorCostRoute(true)
         }
     }
-
+  
     // auth / post
     const onSendCode = () => {
         setShowSpin(true)
@@ -645,7 +651,7 @@ export default function Main() {
                             </tr>
                             
                         </table>
-                        <div className={style.wrapInput} style={{display: adminPhoneNumber === '+375291738113' ? 'none' : 'flex'}}>
+                        <div className={style.wrapInput} style={{display: phoneNumberStorage === '+375291738113' ? 'none' : 'flex'}}>
                             <span className={style.label}>Введите полученный код</span>
                             <input type='number' className={style.inputChecklist} value={writeCode} onChange={(e) => setWriteCode(e.target.value)}/> 
                             {/* error filling */}
@@ -655,7 +661,7 @@ export default function Main() {
                                 <span className={style.textError} style={{display: errorTextCode ? '' : 'none'}}>Неверно введен код</span>
                             </div>
                         </div>
-                        <div className={style.wrapBtn} style={{display: adminPhoneNumber === '+375291738113' ? 'none' : 'flex', flexDirection: 'row', marginTop: 0}}>
+                        <div className={style.wrapBtn} style={{display: phoneNumberStorage === '+375291738113' ? 'none' : 'flex', flexDirection: 'row', marginTop: 0}}>
                             {
                                 !showBtn 
                                 ?
@@ -687,7 +693,7 @@ export default function Main() {
                                 <span>Назад</span>
                             </div> 
                         </div>
-                        <div className={style.wrapBtn} style={{display: adminPhoneNumber === '+375291738113' ? 'flex' : 'none'}}>
+                        <div className={style.wrapBtn} style={{display: phoneNumberStorage === '+375291738113' ? 'flex' : 'none'}}>
                             <div className={style.order}
                                 style={{marginTop: 10, marginBottom: 12}}
                                 onClick={onPostAdminUser}

@@ -18,7 +18,7 @@ export default function AdminAccount() {
     const dispatch = useDispatch()
     const componentRef = useRef()
 
-    const phoneNumber = useSelector(({restUserReducer: { phoneNumber }}) => phoneNumber)
+    //const phoneNumber = useSelector(({restUserReducer: { phoneNumber }}) => phoneNumber)
     const travelsData = useSelector(({restAdminTravelReducer: { travelsData }}) => travelsData)
     const queuesData = useSelector(({restAdminTravelReducer: { queuesData }}) => queuesData)
     const report = useSelector(({reportAdminReducer: { report }}) => report)
@@ -62,6 +62,13 @@ export default function AdminAccount() {
     const [showDirections, setShowDirections] = useState(false)
     const [showBusstops, setShowBusstops] = useState(false)
     const [showCosts, setShowCosts] = useState(false)
+
+    const [phoneNumberStorage, setPhoneNumberStorage] = useState('')
+    useEffect(() => {
+        if(localStorage.getItem('phoneNumber448822') === '+375291738113'){
+            setPhoneNumberStorage('+375291738113')
+        }
+    }, [])
 
     const onPostTravel = () => {
         const cities = filterCities?.filter(item => item?.cities[0]?.busstops[0]?.time === time)
@@ -134,8 +141,8 @@ export default function AdminAccount() {
     }
 
     return (
-        <div className={style.wrapAdmidAccount} >
-            {/* style={{display: phoneNumber === '+375291738113' ? 'flex' : 'none'}} */}
+        <div className={style.wrapAdmidAccount} style={{display: phoneNumberStorage === '+375291738113' ? 'flex' : 'none'}}>
+            {/* */}
             <span style={{color: 'white'}}>УПРАВЛЕНИЕ РЕЙСАМИ</span>
             <div className={style.wrapBtn}>
                 <div className={style.btn} 
@@ -273,7 +280,7 @@ export default function AdminAccount() {
                                                 </tr>
                                                 <tr style={{display: showPersons ? '' : 'none'}}>
                                                     <th className={style.textTicket}>Посадка-Высадка:</th>
-                                                    <th className={style.textTicket}>{elem?.tripFrom}-{elem?.tripTo}</th>
+                                                    <th className={style.textTicket}>{elem?.tripFrom}- <br/>{elem?.tripTo}</th>
                                                 </tr>
                                                 <tr style={{display: showPersons ? '' : 'none'}}>
                                                     <th className={style.textTicket}>Количество мест</th>

@@ -140,6 +140,7 @@
             background-color: white;
             @media(max-width: 520px){
                 width: 95%;
+                overflow: hidden;
             }
             .textTicket {
                 text-align: start;

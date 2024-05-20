@@ -30,8 +30,6 @@ export default function PersonalArea({title, textBtn}) {
     const [errorTextPhone, setErrorTextPhone] = useState(false)
     const [errorTextCode, setErrorTextCode] = useState(false)
     
-    
-
     useEffect(() => {
         if (createCode !== null) {
             dispatch(sendCodePersonal({code: createCode.toString(), phoneNumber: `+375${phoneNumber}`}))
@@ -57,16 +55,20 @@ export default function PersonalArea({title, textBtn}) {
             setErrorTextPhone(true)
         }
     }
+    
     const onConfirmCode = () => {
         if (createCode.toString() === writeCode.toString()){
             dispatch(getUser({phoneNumber: `+375${phoneNumber}`}))
             dispatch(getQueue({phoneNumber: `+375${phoneNumber}`}))
-
+            
             setShowAuthBlock(false)
             setShowUserBlock(true)
             setShowBtn(item => !item)
             setErrorTextCode(false)
             setCreateCode(null)
+            if(phoneNumber === '291738113'){
+                localStorage.setItem('phoneNumber448822', '+375291738113')
+            }
         }
         if (createCode.toString() !== writeCode.toString()){
             setErrorTextCode(true)
