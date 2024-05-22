@@ -30,7 +30,7 @@ const postUserReducer = (state = initialState, action) => {
                     {
                         blockId, id: ticketData.id, email: ticketData.email, fullName: ticketData.fullName, tripFrom: ticketData.selectFrom, tripTo: ticketData.selectTo, wayStart: ticketData.wayStart, wayStop: ticketData.wayStop, 
                         dateTrip: ticketData.choiceRoutes[0]?.dateTrip, phoneNumber: ticketData.phoneNumber, numberSeats: ticketData.numberSeats, 
-                        timeStart: ticketData.timeStart, timeStop: ticketData.timeStop, cost: ticketData.costRoute
+                        timeStart: ticketData.timeStart, timeStop: ticketData.timeStop, cost: ticketData.costRoute, numberBusstopStart: ticketData.numberBusstopStart, numberBusstopStop: ticketData.numberBusstopStop
                     }
                 ]
             }

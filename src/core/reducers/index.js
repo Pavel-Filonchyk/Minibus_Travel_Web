@@ -6,6 +6,7 @@ import restAdminBusstopsReducer from './restAdminBusstopsReducer'
 import restAdminCostsReducer from './restAdminCostsReducer'
 import authReducer from './authReducer'
 import reportAdminReducer from './reportAdminReducer'
+import restAdminDriverReducer from './restAdminDriverReucer'
 
 export const rootReducer = () => {
     return { 
@@ -16,6 +17,7 @@ export const rootReducer = () => {
         restAdminBusstopsReducer, 
         restAdminCostsReducer,
         authReducer,
-        reportAdminReducer
+        reportAdminReducer,
+        restAdminDriverReducer
     }
 }

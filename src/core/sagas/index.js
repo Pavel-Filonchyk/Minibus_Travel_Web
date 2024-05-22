@@ -9,6 +9,7 @@ import watcherDeleteUser from './userSagas/deleteUserSaga'
 import watcherPostQueue from './userSagas/postQueueSaga'
 import watcherGetQueue from './userSagas/getQueueSaga'
 import watcherDeleteQueue from './userSagas/deleteQueueSaga'
+
 import watcherDeleteQueueAdmin from './adminSagas/travelsSagas/deleteQueueAdminSaga'
 import watcherGetTravelsAdmin from './adminSagas/travelsSagas/getTravelsAdminSaga'
 import watcherDeleteTravelAdmin from './adminSagas/travelsSagas/deleteTravelAdminSaga'
@@ -27,6 +28,10 @@ import watcherGetCostsAdmin from './adminSagas/costsSagas/getCostsAdminSaga'
 import watcherDeleteCostAdmin from './adminSagas/costsSagas/deleteCostAdminSaga'
 import watcherGetReport from './adminSagas/reportSagas/getReportSaga'
 import watcherDeleteReport from './adminSagas/reportSagas/deleteReportSaga'
+import watcherGetDriversAdmin from './adminSagas/driversSagas/getDriversSaga'
+import watcherPostDriverAdmin from './adminSagas/driversSagas/postDriverSaga'
+import watcherDeleteDriverAdmin from './adminSagas/driversSagas/deleteDriverSaga'
+
 import watcherGetCodeSaga from './userSagas/getCodeSaga'
 import watcherGetCodePersonal from './userSagas/getCodePersonalSaga.js'
 import watcherPostMessage from './userSagas/postMessageSaga'
@@ -61,6 +66,9 @@ export default function* rootSaga() {
         watcherDeleteDirectionAdmin(),
         watcherGetReport(),
         watcherDeleteReport(),
+        watcherGetDriversAdmin(),
+        watcherPostDriverAdmin(),
+        watcherDeleteDriverAdmin(),
 
         watcherGetCodeSaga(),
         watcherGetCodePersonal(),

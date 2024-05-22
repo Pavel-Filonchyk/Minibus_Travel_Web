@@ -10,6 +10,7 @@ import { getTravels, postTravel, deleteTravel, deletePerson, postDirection,
     getDirections, deleteDirection, changeSeats, getQueues, deleteQueue } from '../../core/actions/restAdminTravelActions'
 import { postBusstop, getBusstops, deleteBusstop, busstopCollector, deleteBusstopCollector } from '../../core/actions/restAdminBusstopsActions'
 import { postCost, getCosts, deleteCost } from '../../core/actions/restAdminCostsActions'
+import { postDriver, getDrivers, deleteDriver } from '../../core/actions/restAdminDriverActions'
 import { getReport, deleteReport } from '../../core/actions/reportActions'
 
 import style from './AdminAccount.module.scss'
@@ -27,7 +28,8 @@ export default function AdminAccount() {
     const busstopsData = useSelector(({restAdminBusstopsReducer: { busstopsData }}) => busstopsData)
     const collectBusstops = useSelector(({restAdminBusstopsReducer: {citiesCollect  }}) => citiesCollect)
     const costsData = useSelector(({restAdminCostsReducer: { costsData }}) => costsData)
-
+    const driversData = useSelector(({restAdminDriverReducer: { driversData }}) => driversData)
+    
     // состояния редактирования рейсов
     const [travelFrom, setTravelFrom] = useState('')
     const [travelTo, setTravelTo] = useState('')
@@ -41,11 +43,16 @@ export default function AdminAccount() {
     // состояния редактирования направлений
     const [direction, setDirection] = useState('')
 
-    // состояние редактирования остановок
+    // состояния редактирования остановок
     const [cityDirection, setCityDirection] = useState('')
     const [city, setCity] = useState('')
     const [busstop, setBusstop] =  useState('')
     const [timeBusstop, setTimeBusstop] =  useState('')
+
+    // состояния редактирования водителей
+    const [driver, setDriver] = useState('')
+    const [phoneDriver, setPhoneDriver] = useState('')
+    const [errorFillDriver, setErrorFillDriver] = useState(false)
 
     // состояния редактирования стоимостей
     const [wayFrom, setWayFrom] = useState('')
@@ -62,6 +69,7 @@ export default function AdminAccount() {
     const [showDirections, setShowDirections] = useState(false)
     const [showBusstops, setShowBusstops] = useState(false)
     const [showCosts, setShowCosts] = useState(false)
+    const [showDrivers, setShowDrivers] = useState(false)
 
     const [phoneNumberStorage, setPhoneNumberStorage] = useState('')
     useEffect(() => {
@@ -124,6 +132,23 @@ export default function AdminAccount() {
         dispatch(getBusstops())
         setShowBusstops(item => !item)
     }
+
+    const onPostDriver = () => {
+        if (driver && phoneDriver) {
+            dispatch(postDriver({
+                driver, phoneDriver
+            }))
+            setErrorFillDriver(false)
+        }
+        if (!driver || !phoneDriver) {
+            setErrorFillDriver(true)
+        }
+    }
+    const onGetDrivers = () => {
+        dispatch(getDrivers())
+        setShowDrivers(item => !item)
+    }
+
     const onPostCost = () => {
         if (wayFrom && wayTo && cost) {
             dispatch(postCost({
@@ -141,8 +166,8 @@ export default function AdminAccount() {
     }
 
     return (
-        <div className={style.wrapAdmidAccount} style={{display: phoneNumberStorage === '+375291738113' ? 'flex' : 'none'}}>
-            {/*  */}
+        <div className={style.wrapAdmidAccount} >
+            {/* style={{display: phoneNumberStorage === '+375291738113' ? 'flex' : 'none'}} */}
             <span style={{color: 'white'}}>УПРАВЛЕНИЕ РЕЙСАМИ</span>
             <div className={style.wrapBtn}>
                 <div className={style.btn} 
@@ -553,8 +578,67 @@ export default function AdminAccount() {
                             </div>
                         )
                     })
-                
                 }
+
+                {/* Добавление водителей */}
+                <span className={style.title}>Добавить водителя</span>
+                <div className={style.wrapManageTravel}>
+                    <span className={style.label}>Имя и фамилия</span>
+                    <input type="text" className={style.inputChecklist} value={driver} onChange={(e) => setDriver(e.target.value)}/>
+                    <span className={style.label}>Телефон</span>
+                    <input type="text" className={style.inputChecklist} value={phoneDriver} onChange={(e) => setPhoneDriver(e.target.value)}/>
+                    <div className={style.wrapError} style={{display: errorFillDriver ? '' : 'none', marginBottom: 0}}>
+                        <span className={style.textError}>Необходимо заполнить все поля</span>
+                    </div>
+                    <div className={style.wrapBtn}>
+                        <div className={style.btn}
+                            style={{marginTop: 20}}
+                            onClick={onPostDriver}
+                        >
+                            <span>Добавить</span>
+                        </div>
+                    </div>
+                </div>
+                {/* Редактирование водителей */}
+                <span className={style.title}>Редактировать водителей</span>
+                <div className={style.wrapBtn}>
+                    <div className={style.btn}
+                        style={{marginTop: 0}}
+                        onClick={onGetDrivers}
+                    >
+                        <span>Водители</span>
+                    </div>
+                </div>
+                {
+                    driversData?.length > 0 
+                    ?
+                        driversData.map(item => {
+                            return(
+                                <div className={style.wrapTravels} style={{display: showDrivers ? '' : 'none'}}>
+                                    <table style={{marginTop: 20, marginBottom: 15}}>
+                                        <tr>
+                                            <th className={style.textTicket}>Имя и фамилия:</th>
+                                            <th className={style.textTicket}>{item.driver}</th>
+                                        </tr>
+                                        <tr>
+                                            <th className={style.textTicket}>Телефон</th>
+
+                                            <th className={style.textTicket}>{item.phoneDriver}</th>
+                                        </tr>
+                                    </table>
+                                    <div className={style.wrapBtn} style={{marginRight: 160}}>
+                                        <div className={style.btn} 
+                                            style={{backgroundColor: 'red', marginBottom: 0, marginTop: 0}}
+                                            onClick={() => dispatch(deleteDriver(item.blockId))}
+                                        >
+                                            <span>Удалить</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        })
+                    : ''
+                } 
 
                 {/* Добавление стоимостей */}
                 <span className={style.title}>Добавить стоимость</span>

@@ -31,7 +31,7 @@ const restAdminTravelReducer = (state = initialState, action) => {
                 cities: postData.cities,
                 tripFrom: postData.travelFrom, tripTo: postData.travelTo, dateTrip: postData.date, freeSeats: postData.freeSeats, timeTrips: postData.time,
                 persons: [{id: '00000000', blockId: '00000000', fullName: 'DEFAULT', tripFrom: '', wayStart: '', dateTrip:"00:00:00",  
-                    timeTrips: '', tripTo: '', wayStop: '', phoneNumber: '-', numberSeats: 0, timeStart: '00:00', timeStop: '00:00', cost: 0
+                    timeTrips: '', tripTo: '', wayStop: '', phoneNumber: '-', numberSeats: 0, timeStart: '00:00', timeStop: '00:00', cost: 0, numberBusstopStart: '', numberBusstopStop: ''
                 }]
             }
             return {
