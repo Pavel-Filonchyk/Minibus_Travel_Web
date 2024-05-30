@@ -44,10 +44,10 @@ export default function AdminAccount() {
     const [direction, setDirection] = useState('')
 
     // состояния редактирования остановок
-    const [cityDirection, setCityDirection] = useState('')
     const [city, setCity] = useState('')
     const [busstop, setBusstop] =  useState('')
     const [timeBusstop, setTimeBusstop] =  useState('')
+    const [numberBusstop, setNumberBusstop] =  useState(0)
 
     // состояния редактирования водителей
     const [driver, setDriver] = useState('')
@@ -119,7 +119,8 @@ export default function AdminAccount() {
     }
 
     const onCollectBusstops = () => {
-        dispatch(busstopCollector({city, busstop, timeBusstop}))
+        setNumberBusstop(numberBusstop +1)
+        dispatch(busstopCollector({city, busstop, timeBusstop, numberBusstop}))
     }
     
     const onDeleteBusstop = (index) => {
@@ -127,6 +128,7 @@ export default function AdminAccount() {
     }
     const onPostBusstop = () => {
         dispatch(postBusstop({cities: collectBusstops}))
+        setNumberBusstop(0)
     }
     const onGetBusstops = () => {
         dispatch(getBusstops())

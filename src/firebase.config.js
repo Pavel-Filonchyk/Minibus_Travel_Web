@@ -6,13 +6,12 @@ import { getFirestore } from "firebase/firestore"
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 const firebaseConfig = {
-  apiKey: "AIzaSyADrsKy6Tf2nSoEE8rZF_oSzqZBMNMFEJ4",
-  authDomain: "minibus-travel.firebaseapp.com",
-  projectId: "minibus-travel",
-  storageBucket: "minibus-travel.appspot.com",
-  messagingSenderId: "452875958929",
-  appId: "1:452875958929:web:0207a567337409d5bd9d30",
-  measurementId: "G-19TJV0VJ1Q"
+  apiKey: "AIzaSyApzzUid4uMiVNkkDj8Mw7YnX035JmBtTo",
+  authDomain: "minibus-travel-2c2aa.firebaseapp.com",
+  projectId: "minibus-travel-2c2aa",
+  storageBucket: "minibus-travel-2c2aa.appspot.com",
+  messagingSenderId: "815858586061",
+  appId: "1:815858586061:web:6500bd68711fdacb5ff484"
 }
 
 // Initialize Firebase

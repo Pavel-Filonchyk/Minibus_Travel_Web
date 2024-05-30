@@ -20,7 +20,8 @@ const restAdminBusstopsReducer = (state = initialState, action) => {
             const city = action.payload.city
             const busstop = action.payload.busstop
             const time = action.payload.timeBusstop
-            
+            const number = action.payload.numberBusstop
+            console.log(number)
             let citiesCollect
             if(state.citiesCollect.length > 0){
                 for (let item of state.citiesCollect) {
@@ -28,7 +29,7 @@ const restAdminBusstopsReducer = (state = initialState, action) => {
                         const index = state.citiesCollect.indexOf(item)
                         const newItem = {
                             city, 
-                            busstops: [...item.busstops, {busstop, time}]
+                            busstops: [...item.busstops, {busstop, time, number}]
                         }
                         citiesCollect = [
                             ...state.citiesCollect.splice(0, index),
@@ -36,7 +37,7 @@ const restAdminBusstopsReducer = (state = initialState, action) => {
                             ...state.citiesCollect.splice(index + 1)
                         ]
                     }else{
-                        citiesCollect = [...state.citiesCollect, {city, busstops: [{busstop, time}]}]
+                        citiesCollect = [...state.citiesCollect, {city, busstops: [{busstop, time, number}]}]
                     }
                 }
                 return {
@@ -46,7 +47,7 @@ const restAdminBusstopsReducer = (state = initialState, action) => {
             }else{
                 return {
                     ...state,
-                    citiesCollect: [{city, busstops: [{busstop, time}]}]
+                    citiesCollect: [{city, busstops: [{busstop, time, number}]}]
                 }
             }
         
@@ -63,6 +64,14 @@ const restAdminBusstopsReducer = (state = initialState, action) => {
             return {
                 ...state,
                 postBusstop: action.payload
+            }
+        case 'POST_BUSSTOP_SUCCESS':
+            return {
+                ...state
+            }
+        case 'POST_BUSSTOP_ERROR':
+            return {
+                ...state
             }
         case 'DELETE_BUSSTOP':
             const blockId = action.payload

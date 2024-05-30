@@ -256,10 +256,10 @@ export default function Main() {
                 <div className={style.logo}/>
                 <div className={style.wrapPhones}>
                     <a href="tel:+375295826000" aria-label="phone" style={{textDecoration: 'none'}}>
-                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(18, 54, 106, 1)'}}><span style={{color: 'red', fontWeight: '800'}}>MTS</span>&nbsp;&nbsp;<span>+375(29)582-6000</span></div>
+                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(18, 54, 106, 1)'}}><span style={{color: 'red', fontWeight: '800'}}>Life</span>&nbsp;&nbsp;<span>+375(25)980-2774</span></div>
                     </a>
                     <a href="tel:+375445826000" aria-label="phone" style={{textDecoration: 'none'}}>
-                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(18, 54, 106, 1)'}}><span style={{color: 'red', fontWeight: '800'}}>A<span style={{color: 'black', fontSize: 17}}>1</span></span>&nbsp;&nbsp;<span>+375(44)582-6000</span></div>
+                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(18, 54, 106, 1)'}}><span style={{color: 'white', fontWeight: '800'}}>Life</span>&nbsp;&nbsp;<span>+375(44)980-2774</span></div>
                     </a>
                 </div>
             </div>
@@ -286,7 +286,12 @@ export default function Main() {
                                     </span>
                                 </div>
                             </a>
+                            <div className={style.warning}>
+                            <span>Внимание! Тестовый сайт</span>
+                            <span>Забронировать нельзя!</span>
+                            </div>
                         </div>
+                        
                         <div className={style.orderAroundClock}>
                             <ClockCircleOutlined className={style.clockImg}/>
                             <div className={style.wrapTextClock}>

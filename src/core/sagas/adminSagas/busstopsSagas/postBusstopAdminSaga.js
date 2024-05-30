@@ -7,7 +7,7 @@ function* workerLoader() {
     const postBusstop = yield select(state => state.restAdminBusstopsReducer.postBusstop)
     try {
         const { data } = yield call(httpProvider.post, CITIES_URL, {data: postBusstop})
-    
+        console.log(data)
         yield put(postBusstopSuccess(data))
       } catch (error) {
         yield put(postBusstopError(error))
