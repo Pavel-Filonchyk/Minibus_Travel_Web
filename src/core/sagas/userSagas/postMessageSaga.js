@@ -12,16 +12,16 @@ function* workerLoader() {
     const message = `Ваш рейс: ${ticketData?.choiceRoutes[0].dateTrip} в ${ticketData?.timeStart}. Посадка: ${ticketData?.selectFrom}, ост. ${ticketData?.wayStart}. К оплате: ${ticketData?.costRoute} б.р. www.poleski-region.by/`
 
     try {
-      const { data } = yield call(httpProvider.post, AUTH_URL, {
-        data: {
-          token, 
-          alphaname_id,
-          phone: ticketData?.phoneNumber,
-          message
+      // const { data } = yield call(httpProvider.post, AUTH_URL, {
+      //   data: {
+      //     token, 
+      //     alphaname_id,
+      //     phone: ticketData?.phoneNumber,
+      //     message
           
-        }
-      })
-      yield put(postMessageSuccess(data))
+      //   }
+      // })
+      // yield put(postMessageSuccess(data))
     } catch (error) {
       yield put(postMessageError(error))
     }

@@ -1,8 +1,8 @@
 // https://minibus-travel-2c2aa-default-rtdb.europe-west1.firebasedatabase.app/
 // https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/
-export const TRAVELS_URL = 'https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/travels.json'
+export const TRAVELS_URL = 'https://minibus-travel-2c2aa-default-rtdb.europe-west1.firebasedatabase.app/travels.json'
 export const travelUrl = (index) => {
-    return `https://minibus-travel-default-rtdb.europe-west1.firebasedatabase.app/${index}.json`
+    return `https://minibus-travel-2c2aa-default-rtdb.europe-west1.firebasedatabase.app/travels/${index}.json`
 }
 
 export const CITIES_URL = 'https://minibus-travel-2c2aa-default-rtdb.europe-west1.firebasedatabase.app/cities.json'

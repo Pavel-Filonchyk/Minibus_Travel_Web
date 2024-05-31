@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { DatePicker, Spin, ConfigProvider } from 'antd'
+import {Link} from 'react-router-dom'
 import dayjs from 'dayjs'
 import locale from 'antd/es/date-picker/locale/ru_RU'
 import { InteractionOutlined, ClockCircleOutlined, SmileOutlined, FrownOutlined, CloseOutlined } from '@ant-design/icons'
@@ -47,9 +48,10 @@ export default function Main() {
     }, [getCode])
     const [phoneNumberStorage, setPhoneNumberStorage] = useState('')
     useEffect(() => {
-        if(localStorage.getItem('phoneNumber448822') === '+375291738113'){
-            setPhoneNumberStorage('+375291738113')
+        if(localStorage.getItem('phoneNumber448822') === '+375259802774'){
+            setPhoneNumberStorage('+375259802774')
         }
+
     }, [])
 
     useEffect(() => {
@@ -183,7 +185,7 @@ export default function Main() {
             setErrorCostRoute(true)
         }
     }
-    //console.log('28.05.2023' > '27.05.2024')
+
     // auth / post
     const onSendCode = () => {
         setShowSpin(true)
@@ -255,11 +257,11 @@ export default function Main() {
             <div className={style.header}>
                 <div className={style.logo}/>
                 <div className={style.wrapPhones}>
-                    <a href="tel:+375295826000" aria-label="phone" style={{textDecoration: 'none'}}>
+                    <a href="tel:+375259802774" aria-label="phone" style={{textDecoration: 'none'}}>
                         <div className={style.phoneNumber} style={{backgroundColor: 'rgba(18, 54, 106, 1)'}}><span style={{color: 'red', fontWeight: '800'}}>Life</span>&nbsp;&nbsp;<span>+375(25)980-2774</span></div>
                     </a>
-                    <a href="tel:+375445826000" aria-label="phone" style={{textDecoration: 'none'}}>
-                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(18, 54, 106, 1)'}}><span style={{color: 'white', fontWeight: '800'}}>Life</span>&nbsp;&nbsp;<span>+375(44)980-2774</span></div>
+                    <a href="tel:+375259802774" aria-label="phone" style={{textDecoration: 'none'}}>
+                        <div className={style.phoneNumber} style={{backgroundColor: 'rgba(18, 54, 106, 1)'}}><span style={{color: 'white', fontWeight: '800'}}>Life</span>&nbsp;&nbsp;<span>+375(25)980-2774</span></div>
                     </a>
                 </div>
             </div>
@@ -288,7 +290,7 @@ export default function Main() {
                             </a>
                             <div className={style.warning}>
                             <span>Внимание! Тестовый сайт</span>
-                            <span>Забронировать нельзя!</span>
+                            <span>Тестовое бронирование!</span>
                             </div>
                         </div>
                         
@@ -310,9 +312,7 @@ export default function Main() {
 
             <div className={style.wrapBooking}>
                 <a name="Забронировать"></a>
-        
                 <div className={style.booking}>
-
                     {/* Выбрать рейсы */}
                     <span>ОНЛАЙН БРОНИРОВАНИЕ</span>
                     <div className={style.wrapForm} style={{display: calc > 0 ? 'none' : ''}}>
@@ -701,7 +701,7 @@ export default function Main() {
                             </tr>
                             
                         </table>
-                        <div className={style.wrapInput} style={{display: phoneNumberStorage === '+375291738113' ? 'none' : 'flex'}}>
+                        <div className={style.wrapInput} style={{display: phoneNumberStorage === '+375259802774' ? 'none' : 'flex'}}>
                             <span className={style.label}>Введите полученный код</span>
                             <input type='number' className={style.inputChecklist} style={{textAlign: 'center'}} value={writeCode} onChange={(e) => setWriteCode(e.target.value)}/> 
                             {/* error filling */}
@@ -711,7 +711,7 @@ export default function Main() {
                                 <span className={style.textError} style={{display: errorTextCode ? '' : 'none'}}>Неверно введен код</span>
                             </div>
                         </div>
-                        <div className={style.wrapBtn} style={{display: phoneNumberStorage === '+375291738113' ? 'none' : 'flex', flexDirection: 'row', marginTop: 0}}>
+                        <div className={style.wrapBtn} style={{display: phoneNumberStorage === '+375259802774' ? 'none' : 'flex', flexDirection: 'row', marginTop: 0}}>
                             {
                                 !showBtn 
                                 ?
@@ -743,7 +743,7 @@ export default function Main() {
                                 <span>Назад</span>
                             </div> 
                         </div>
-                        <div className={style.wrapBtn} style={{display: phoneNumberStorage === '+375291738113' ? 'flex' : 'none'}}>
+                        <div className={style.wrapBtn} style={{display: phoneNumberStorage === '+375259802774' ? 'flex' : 'none'}}>
                             <div className={style.order}
                                 style={{marginTop: 10, marginBottom: 12}}
                                 onClick={onPostAdminUser}
@@ -776,6 +776,9 @@ export default function Main() {
 
                     <AdminAccount/>
 
+                    <Link className={style.link} to="/privacy-policy-client">
+                        <span>Политика конфиденциальности</span>
+                    </Link>
                 </div>
             </div>
             

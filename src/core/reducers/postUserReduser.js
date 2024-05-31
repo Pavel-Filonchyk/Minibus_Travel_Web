@@ -43,6 +43,7 @@ const postUserReducer = (state = initialState, action) => {
                 ticketData
             }
         case 'POST_USER_SUCCESS':
+            console.log(action.payload)
             if(action.payload === "На рейсе закончились места"){
                 return {
                     ...state,

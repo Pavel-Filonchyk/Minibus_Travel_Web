@@ -73,8 +73,8 @@ export default function AdminAccount() {
 
     const [phoneNumberStorage, setPhoneNumberStorage] = useState('')
     useEffect(() => {
-        if(localStorage.getItem('phoneNumber448822') === '+375291738113'){
-            setPhoneNumberStorage('+375291738113')
+        if(localStorage.getItem('phoneNumber448822') === '+375259802774'){
+            setPhoneNumberStorage('+375259802774')
         }
     }, [])
 
@@ -168,8 +168,8 @@ export default function AdminAccount() {
     }
 
     return (
-        <div className={style.wrapAdmidAccount} >
-            {/* style={{display: phoneNumberStorage === '+375291738113' ? 'flex' : 'none'}} */}
+        <div className={style.wrapAdmidAccount} style={{display: phoneNumberStorage === '+375259802774' ? 'flex' : 'none'}}>
+            {/*  */}
             <span style={{color: 'white'}}>УПРАВЛЕНИЕ РЕЙСАМИ</span>
             <div className={style.wrapBtn}>
                 <div className={style.btn} 

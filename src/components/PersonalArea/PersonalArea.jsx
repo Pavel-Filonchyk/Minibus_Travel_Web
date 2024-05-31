@@ -7,7 +7,7 @@ import { getUser, deleteUser, getQueue, deleteQueue } from '../../core/actions/c
 
 import style from './PersonalArea.module.scss'
 
-export default function PersonalArea({title, textBtn}) {
+export default function PersonalArea() {
     const dispatch = useDispatch()
 
     // auth
@@ -66,8 +66,8 @@ export default function PersonalArea({title, textBtn}) {
             setShowBtn(item => !item)
             setErrorTextCode(false)
             setCreateCode(null)
-            if(phoneNumber === '291738113'){
-                localStorage.setItem('phoneNumber448822', '+375291738113')
+            if(phoneNumber === '259802774'){
+                localStorage.setItem('phoneNumber448822', '+375259802774')
             }
         }
         if (createCode.toString() !== writeCode.toString()){

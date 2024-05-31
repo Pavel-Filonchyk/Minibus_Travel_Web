@@ -8,6 +8,7 @@ function* workerLoader() {
     const userData = yield select(state => state.postUserReducer.userData)
     const blockId = yield select(state => state.postUserReducer.blockId)
     const numberSeats = yield select(state => state.postUserReducer.numberSeats)
+    console.log(blockId, numberSeats, userData)
     try {
       const { data } = yield call(httpProvider.get, TRAVELS_URL)
       const list = Object.keys(data).map(key => ({...data[key], blockId: key}))

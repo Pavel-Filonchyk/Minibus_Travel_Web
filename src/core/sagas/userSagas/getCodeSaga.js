@@ -10,15 +10,15 @@ function* workerLoader() {
     const sendCode = yield select(state => state.authReducer.sendCode)
 
     try {
-      const { data } = yield call(httpProvider.post, AUTH_URL, {
-        data: {
-          token, 
-          alphaname_id,
-          phone: phoneNumber,
-          message: sendCode
-        }
-      })
-      yield put(sendCodeDataSuccess(data))
+      // const { data } = yield call(httpProvider.post, AUTH_URL, {
+      //   data: {
+      //     token, 
+      //     alphaname_id,
+      //     phone: phoneNumber,
+      //     message: sendCode
+      //   }
+      // })
+      // yield put(sendCodeDataSuccess(data))
     } catch (error) {
       yield put(sendCodeDataError(error))
     }
