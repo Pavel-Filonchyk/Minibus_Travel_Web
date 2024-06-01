@@ -120,7 +120,6 @@ export default function Main() {
         ?.busstops.filter(elem => elem.busstop === wayStart)[0]?.number
     const numberBusstopStop = choiceRoutes[0]?.cities.filter(item => item.city === selectTo)[0]
         ?.busstops.filter(elem => elem.busstop === wayStop)[0]?.number
-    
     useEffect(() => {
         if(postSuccess === "На рейсе закончились места"){
             setTextModal("На рейсе закончились места. Посмотрите другое время")
@@ -232,7 +231,7 @@ export default function Main() {
     const onPostAdminUser = () => {
         dispatch(postUser({
             id: uuid(), choiceRoutes, selectFrom, selectTo, fullName, phoneNumber: `+375${phoneNumber}`,
-            wayStart, wayStop, timeStart, timeStop, costRoute: costRoute * numberSeats, numberSeats
+            wayStart, wayStop, timeStart, timeStop, costRoute: costRoute * numberSeats, numberSeats, numberBusstopStart, numberBusstopStop
         }))
         setCalc(0)
     }   

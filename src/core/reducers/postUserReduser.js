@@ -19,7 +19,7 @@ const postUserReducer = (state = initialState, action) => {
             const cities = ticketData?.choiceRoutes[0]?.cities
             const freeSeats = ticketData?.choiceRoutes[0]?.freeSeats - ticketData.numberSeats
             const blockId = ticketData?.choiceRoutes[0]?.blockId
-
+            console.log(ticketData)
             // рейс со всеми пассажирами и вновь добавленным
             const userData = {
                 cities,
