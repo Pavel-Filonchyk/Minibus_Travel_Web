@@ -3,16 +3,13 @@ import {Link} from 'react-router-dom'
 
 import style from './PrivacyPolicy.module.scss'
 
-export default function PrivacyPolicy() {
+export default function PrivacyPolicyClient() {
 
     const [showLang, setShowLang] = useState(true)
 
     return (
         <div className={style.wrapPrivacyPolicy}>
             <div className={style.header}>
-                <Link className={style.text} style={{textDecoration: 'underline'}} to="/">
-                    <span>Вернуться на главную</span>
-                </Link>
                 <div className={style.wrapText}> 
                     <span className={style.text}
                         onClick={() => setShowLang(item => !item)}
@@ -24,7 +21,9 @@ export default function PrivacyPolicy() {
                         style={{textDecoration: showLang ? 'none' : 'underline'}}
                     >ru</span>
                 </div>
-                <span className={style.text} style={{textDecoration: 'underline'}}>Политика кофиденциальности для <br/> Водительского приложения</span>
+                <Link className={style.text} style={{textDecoration: 'underline'}} to="/">
+                    <span>Вернуться на главную</span>
+                </Link>
             </div>
 
             {/* Политика конфиденциальности на английском */}
@@ -33,7 +32,7 @@ export default function PrivacyPolicy() {
                 <br/>
                 <br/>
                 <span>
-                    This privacy policy applies to the Minibus Travel app (hereby referred to as "Application") for mobile devices that was created by Filonchyk Pavel (hereby referred to as "Service Provider") as a Free service. This service is intended for use "AS IS".
+                    This privacy policy applies to the Booking minibus tickets (hereby referred to as "Application") for mobile devices that was created by Filonchyk Pavel (hereby referred to as "Service Provider") as a Free service. This service is intended for use "AS IS".
                     <br/>
                     <br/>
                     Information Collection and Use
@@ -57,6 +56,11 @@ export default function PrivacyPolicy() {
                     <br/>
                     <br/>
                     For a better experience, while using the Application, the Service Provider may require you to provide us with certain personally identifiable information. The information that the Service Provider request will be retained by them and used as described in this privacy policy.
+                    <br/>
+                    <br/>
+                    Ads
+                    <br/>
+                    The application does not contain ads
                     <br/>
                     <br/>
                     Third Party Access
@@ -90,10 +94,10 @@ export default function PrivacyPolicy() {
                     <br/>
                     Children
                     <br/>
-                    The Service Provider does not use the Application to knowingly solicit data from or market to children under the age of 13.
+                    The Service Provider does not use the Application to knowingly solicit data from or market to children under the age of 18.
                     <br/>
                     <br/>
-                    The Application does not address anyone under the age of 13. The Service Provider does not knowingly collect personally identifiable information from children under 13 years of age. In the case the Service Provider discover that a child under 13 has provided personal information, the Service Provider will immediately delete this from their servers. If you are a parent or guardian and you are aware that your child has provided us with personal information, please contact the Service Provider (p_filonchyk@mail.ru) so that they will be able to take the necessary actions.
+                    The Application does not address anyone under the age of 18. The Service Provider does not knowingly collect personally identifiable information from children under 18 years of age. In the case the Service Provider discover that a child under 18 has provided personal information, the Service Provider will immediately delete this from their servers. If you are a parent or guardian and you are aware that your child has provided us with personal information, please contact the Service Provider (p_filonchyk@mail.ru) so that they will be able to take the necessary actions.
                     <br/>
                     <br/>
                     Security
@@ -126,7 +130,7 @@ export default function PrivacyPolicy() {
                 <br/>
                 <br/>
                 <span>
-                    Настоящая политика конфиденциальности распространяется на приложение для путешествий в микроавтобусе (далее - "Приложение") для мобильных устройств, созданное Павлом Филончиком (далее - "Поставщик услуг") в качестве бесплатной услуги. Эта услуга предназначена для использования "КАК ЕСТЬ".
+                    Настоящая политика конфиденциальности распространяется на Бронирование билетов на микроавтобус (далее - "Приложение") для мобильных устройств, созданное Павлом Филончиком (далее - "Поставщик услуг") в качестве бесплатной услуги. Эта услуга предназначена для использования "КАК ЕСТЬ".
                     <br/>
                     <br/>
                     Сбор и использование информации
@@ -150,6 +154,11 @@ export default function PrivacyPolicy() {
                     <br/>
                     <br/>
                     Для удобства использования Приложения Поставщик услуг может потребовать, чтобы вы предоставили нам определенную личную информацию. Информация, запрашиваемая Поставщиком услуг, будет сохранена и использована в соответствии с настоящей политикой конфиденциальности.
+                    <br/>
+                    <br/>
+                    Реклама
+                    <br/>
+                    Приложение не содержит рекламу
                     <br/>
                     <br/>
                     Доступ третьих лиц
@@ -183,10 +192,10 @@ export default function PrivacyPolicy() {
                     <br/>
                     Дети
                     <br/>
-                    Поставщик услуг не использует Приложение для сознательного запроса данных у детей младше 13 лет или для их распространения на рынке.
+                    Поставщик услуг не использует Приложение для сознательного запроса данных у детей младше 18 лет или для их распространения на рынке.
                     <br/>
                     <br/>
-                    Приложение не предназначено для лиц младше 13 лет. Поставщик услуг сознательно не собирает личную информацию о детях младше 13 лет, позволяющую установить их личность. В случае, если Поставщик услуг обнаружит, что ребенок младше 13 лет предоставил личную информацию, Поставщик услуг немедленно удалит ее со своих серверов. Если вы являетесь родителем или опекуном и вам известно, что ваш ребенок предоставил нам личную информацию, пожалуйста, свяжитесь с Поставщиком услуг (p_filonchyk@mail.ru), чтобы он смог предпринять необходимые действия.
+                    Приложение не предназначено для лиц младше 18 лет. Поставщик услуг сознательно не собирает личную информацию о детях младше 18 лет, позволяющую установить их личность. В случае, если Поставщик услуг обнаружит, что ребенок младше 18 лет предоставил личную информацию, Поставщик услуг немедленно удалит ее со своих серверов. Если вы являетесь родителем или опекуном и вам известно, что ваш ребенок предоставил нам личную информацию, пожалуйста, свяжитесь с Поставщиком услуг (p_filonchyk@mail.ru), чтобы он смог предпринять необходимые действия.
                     <br/>
                     <br/>
                     Безопасность
@@ -199,7 +208,7 @@ export default function PrivacyPolicy() {
                     Настоящая Политика конфиденциальности может время от времени обновляться по любой причине. Поставщик услуг уведомит вас о любых изменениях в Политике конфиденциальности, обновив эту страницу новой Политикой конфиденциальности. Мы рекомендуем вам регулярно просматривать эту Политику конфиденциальности на предмет любых изменений, поскольку дальнейшее использование считается одобрением всех изменений.
                     <br/>
                     <br/>
-                    Настоящая политика конфиденциальности вступает в силу с 2024-04-03 г.
+                    Настоящая политика конфиденциальности вступает в силу с 2024-06-02 г.
                     <br/>
                     <br/>
                     Ваше согласие

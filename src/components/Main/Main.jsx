@@ -775,7 +775,7 @@ export default function Main() {
 
                     <AdminAccount/>
 
-                    <Link className={style.link} to="/privacy-policy-client">
+                    <Link className={style.link} to="/privacy">
                         <span>Политика конфиденциальности</span>
                     </Link>
                 </div>
